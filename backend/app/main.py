@@ -1,10 +1,17 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+
 from app.db.database import init_db
+from app.models.user import User
+from app.models.bank_account import BankAccount
 
 app = FastAPI()
 
 
-@app.on_event("startup")
-def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     init_db()
-    print("Banco de dados conectou")
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
