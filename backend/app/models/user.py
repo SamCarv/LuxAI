@@ -1,7 +1,10 @@
 # from datetime import datetime
 from datetime import datetime
-from typing import List
+from typing import TYPE_CHECKING, List
 from sqlmodel import Relationship, SQLModel, Field
+
+if TYPE_CHECKING:
+    from .bank_account import BankAccount
 
 
 class User(SQLModel, table=True):
@@ -10,6 +13,6 @@ class User(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: str
     is_active: bool = Field(default=True)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    accounts: List["BankAccount"] = Relationship(back_populates="user")
+    accounts: List[BankAccount] = Relationship(back_populates="user")
