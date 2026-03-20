@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import sqlalchemy as sa
 from sqlmodel import Field, Relationship, SQLModel
@@ -8,9 +8,11 @@ from app.enums import AccountType, Currency
 
 if TYPE_CHECKING:
     from .user import User
+    from .transaction import Transaction
 
 
 class BankAccount(SQLModel, table=True):
+    __tablename__: str = "bank_account"
     id: int | None = Field(default=None, primary_key=True)
     name: str
     balance: Decimal = Field(
@@ -21,3 +23,4 @@ class BankAccount(SQLModel, table=True):
 
     user_id: int = Field(foreign_key="user.id")
     user: User = Relationship(back_populates="accounts")
+    transactions: List["Transaction"] = Relationship(back_populates="account")
