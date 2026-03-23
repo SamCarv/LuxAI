@@ -16,27 +16,21 @@ export const useKeyboardShortcut = (shortcutKeys: string[], callback: ()=>void) 
         "The second parameter to `useKeyboardShortcut` must be a function that will be invoked when the keys are pressed."  
     )
 
-    const pressedKeys = useRef<Set<string>>(new Set());
-
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
-        pressedKeys.current.add(event.key);
+        const key = event.key.toLowerCase()
 
-        const allPressed = shortcutKeys.every((k) =>
-          pressedKeys.current.has(k)
-        );
-
-        if (allPressed && !event.repeat) {
-          callback();
+        if (shortcutKeys.map(k => k.toLowerCase()).includes(key)) {
+          callback()
         }
-      };
+      }
 
       window.addEventListener("keydown", handleKeyDown)
 
       return () => {
         window.removeEventListener("keydown", handleKeyDown)
       }
-    }, [shortcutKeys, callback]);
+  }, [shortcutKeys, callback])
 }
 
 
