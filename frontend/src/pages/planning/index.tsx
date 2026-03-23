@@ -1,8 +1,6 @@
-import React from 'react'
-
 const Planning = () => {
   return (
-    <div className=''></div>
+    <div className=''>Planning</div>
   )
 }
 

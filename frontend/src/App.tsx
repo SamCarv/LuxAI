@@ -1,17 +1,26 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Planning from './pages/planning'
 import './App.css'
-import Sidebar from './components/sidebar'
-import Navigation from './components/navigation'
+import Layout from './layout'
+import Dashboard from './pages/dashboard'
+import Planning from './pages/planning'
+import Investment from './pages/investment'
+import Bank from './pages/bank'
+import Files from './pages/files'
+import Chat from './pages/chat'
 
 function App() {
 
   return (
     <BrowserRouter>
-      <Sidebar />
-      <Navigation />
       <Routes>
-        <Route path='/' element={<Planning />}/>
+        <Route path='/' element={<Layout />}>
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/planning' element={<Planning />} />
+          <Route path='/investment' element={<Investment />} />
+          <Route path='/bank' element={<Bank />} />
+          <Route path='/files' element={<Files />} />
+          <Route path='/chat' element={<Chat />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )

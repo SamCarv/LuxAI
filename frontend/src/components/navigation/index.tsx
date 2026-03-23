@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { supportedLanguages, languagesMap} from './navigation.constants'
+import { Button } from '../ui/button'
 
 const Navigation = () => {
     const [lightMode, setLighMode] = useState(true)
@@ -17,7 +18,7 @@ const Navigation = () => {
                 </button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className='cursor-pointer hover:bg-slate-300'>{i18n.language}</button>
+                        {i18n.language}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuGroup>
