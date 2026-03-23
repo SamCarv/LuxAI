@@ -18,25 +18,25 @@ export const useKeyboardShortcut = (shortcutKeys: string[], callback: ()=>void) 
 
     const pressedKeys = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      pressedKeys.current.add(event.key);
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        pressedKeys.current.add(event.key);
 
-      const allPressed = shortcutKeys.every((k) =>
-        pressedKeys.current.has(k)
-      );
+        const allPressed = shortcutKeys.every((k) =>
+          pressedKeys.current.has(k)
+        );
 
-      if (allPressed && !event.repeat) {
-        callback();
+        if (allPressed && !event.repeat) {
+          callback();
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown)
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown)
       }
-    };
-
-    window.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [shortcutKeys, callback]);
+    }, [shortcutKeys, callback]);
 }
 
 
