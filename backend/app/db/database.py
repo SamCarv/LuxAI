@@ -1,4 +1,5 @@
 import os
+from sqlalchemy import text
 from sqlmodel import create_engine, Session, SQLModel
 from dotenv import load_dotenv
 
@@ -15,6 +16,10 @@ engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
 
 def init_db():
+    with engine.connect() as conn:
+        with conn.begin():
+            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+
     SQLModel.metadata.create_all(engine)
 
 

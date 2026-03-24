@@ -1,8 +1,11 @@
+import numpy as np
+
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from pgvector.sqlalchemy import Vector
+from pydantic import field_serializer
 from sqlalchemy import JSON, Column, DateTime, Numeric, text
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -36,8 +39,15 @@ class Transaction(SQLModel, table=True):
 
     description_vector: Optional[List[float]] = Field(
         default=None,
-        sa_column=Column(Vector(2560), nullable=True),
+        sa_column=Column(Vector(768), nullable=True),
     )
+
+    @field_serializer("description_vector")
+    @classmethod
+    def validate_vector(cls, v):
+        if isinstance(v, np.ndarray):
+            return v.tolist()
+        return v
 
     metadata_info: Optional[Dict[str, Any]] = Field(
         default_factory=dict,
