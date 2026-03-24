@@ -1,7 +1,7 @@
 // layout.tsx
 import { Outlet } from 'react-router-dom'
 import Sidebar from './components/sidebar'
-import Navigation from './components/navigation'
+import NavBar from './components/navbar'
 
 const Layout = () => {
   return (
@@ -11,7 +11,7 @@ const Layout = () => {
         </aside>
         <div className="flex flex-col flex-1">
             <header className="bg-gray-200 flex justify-end items-center">
-                <Navigation />
+                <NavBar />
             </header>
             <main className="flex-1 bg-gray-50 p-4">
                 <Outlet />

@@ -22,20 +22,22 @@ const SideBar = () => {
                 </div>
             </section>
             <section className='flex-1'>
-                {sections.map((section) =>  {
-                    const Icon = section.icon
+                <ul>
+                    {sections.map((section) =>  {
+                        const Icon = section.icon
 
-                    return (
-                        <SectionSideBar 
-                            key={section.id}
-                            icon={<Icon/>}
-                            title={t(section.id)}
-                            shortcut={[t(section.id.charAt(0))]}
-                            isActive={location.pathname === `/${section.id}`}
-                            to={section.id}
-                        />
-                    )
-                })}
+                        return (
+                            <SectionSideBar 
+                                key={section.id}
+                                icon={<Icon/>}
+                                title={t(section.id)}
+                                shortcut={[t(section.id.charAt(0))]}
+                                isActive={location.pathname === `/${section.id}`}
+                                to={section.id}
+                            />
+                        )
+                    })}
+                </ul>
             </section>
             <section className='mt-auto'>
                 <div className='flex justify-between bg-slate-200/40 w-66 h-13 px-4'>

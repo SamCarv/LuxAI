@@ -15,18 +15,20 @@ const SectionSideBar = ({icon, title, shortcut, isActive, to}: SectionSideBarPro
   useKeyboardShortcut(shortcut, ()=>navigate(`/${to}`))
 
   return (
-      <NavLink to={to} className={`flex items-center justify-between w-full h-13 hover:cursor-pointer hover:bg-slate-300 hover:animate-pulse
-        ${isActive ? 'bg-slate-200' : ''}
-    ` }>
-        <div className='flex items-center gap-x-2 w-full h-full'>
-          <div className={`w-4 h-13
-              ${isActive ? 'bg-gold-500' : 'hover:animate-pulse hover:bg-gold-400'}
-              `}></div>
-          {icon}
-          <h2>{title}</h2>
-        </div>
-        <p className='flex items-center justify-center border-slate-400 text-slate-500 border-2 rounded-sm w-6 h-6 mr-4'>{shortcut}</p>
-    </NavLink>
+      <li>
+        <NavLink to={to} className={`flex items-center justify-between w-full h-13 hover:cursor-pointer hover:bg-slate-300 hover:animate-pulse
+          ${isActive ? 'bg-slate-200' : ''}
+      ` }>
+          <div className='flex items-center gap-x-2 w-full h-full'>
+            <div className={`w-4 h-13
+                ${isActive ? 'bg-gold-500' : 'hover:animate-pulse hover:bg-gold-400'}
+                `}></div>
+            {icon}
+            <h2>{title}</h2>
+          </div>
+          <p className='flex items-center justify-center border-slate-400 text-slate-500 border-2 rounded-sm w-6 h-6 mr-4'>{shortcut}</p>
+        </NavLink>
+      </li>
   )
 }
 

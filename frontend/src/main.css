@@ -55,11 +55,6 @@
     --sidebar-ring: oklch(0.708 0 0);
 }
 
-@font-face {
-    font-family: Inter;
-    src: url(fonts/Inter-Regular.woff2);
-}
-
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
