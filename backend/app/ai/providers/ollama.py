@@ -1,8 +1,8 @@
 import httpx
 import os
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_API_URL = f"{OLLAMA_BASE_URL}/api/embeddings"
+OLLAMA_HOST = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_API_URL = f"{OLLAMA_HOST}/api/embeddings"
 
 
 async def get_embedding(text: str, is_search: bool) -> list[float]:
