@@ -10,7 +10,15 @@ host = os.getenv("DB_HOST", "localhost")
 port = os.getenv("DB_PORT", "5432")
 db_name = os.getenv("DB_NAME")
 
-DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db_name}"
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    user = os.getenv("DB_USER", "postgres")
+    password = os.getenv("DB_PASSWORD", "password123")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "5432")
+    db_name = os.getenv("DB_NAME", "luxai_db")
+    DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db_name}"
 
 engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
