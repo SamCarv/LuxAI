@@ -11,12 +11,12 @@ const SideBar = () => {
     const { t } = useTranslation()
 
     return (
-        <nav className='bg-slate-100 flex flex-col gap-y-16 w-66 h-full'>
+        <nav className='bg-smoke-100 flex flex-col gap-y-16 w-66 h-full'>
             <section>
                 <div className='flex items-center justify-between bg-slate-200/40 w-66 h-13 px-4'>
                     <div className='flex gap-2 items-center'>
                         <img className='w-8 h-8' src={iconX} alt="logo" />
-                        <h1 className=''><a href="/">LuxAI</a></h1>
+                        <h1 className='heading-md'><a href="/">LuxAI</a></h1>
                     </div>
                     <Sidebar className='flex w-6 h-6'/>
                 </div>

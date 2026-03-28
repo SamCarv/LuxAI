@@ -4,5 +4,17 @@
     "investment": "Investimento",
     "bank": "Banco",
     "files": "Arquivos",
-    "chat": "Chat"
+    "chat": "Chat",
+
+
+    "bank.accounts": "Contas",
+    "bank.wallets": "Carteiras",
+    "bank.transactions": "Historíco",
+
+
+    "section.bank.desc": "Última movimentação foi há {{time}}",
+
+    "today": "Hoje",
+    "yesterday": "Ontem"
+
 }

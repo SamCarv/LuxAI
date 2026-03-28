@@ -1,26 +1,54 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --color-gold-50: hsl(57, 100%, 96%);
-    --color-gold-100: hsl(56, 100%, 88%);
-    --color-gold-200: hsl(54, 100%, 77%);
-    --color-gold-300: hsl(53, 100%, 64%);
-    --color-gold-400: hsl(51, 100%, 53%);
-    --color-gold-500: hsl(52, 100%, 45%);
-    --color-gold-600: hsl(48, 100%, 40%);
-    --color-gold-700: hsl(43, 99%, 31%);
-    --color-gold-800: hsl(37, 87%, 27%);
-    --color-gold-900: hsl(33, 77%, 24%);
-    --color-gold-950: hsl(32, 91%, 13%);
+    /*
+    --color-bg-dark-lm: hsl(00, 00%, 90%);
+    --color-bg-lm: hsl(00, 00%, 95%);
+    --color-bg-light-lm: hsl(00, 00%, 100%);
+    --color-border-lm: hsl(00, 00%, 74%);
+    --color-txt-dark-lm: hsl(51, 80%, 5%);
+    --color-txt-lm: hsl(00, 00%, 25%);
+    --color-txt-ligh-lm: hsl(00, 00%, 50%);
+    */
+    --color-smoke-50: hsl(00, 00%, 99%);
+    --color-smoke-100: hsl(00, 00%, 95%);
+    --color-smoke-200: hsl(00, 00%, 92%);
+    --color-smoke-300: hsl(00, 00%, 74%);
+    --color-smoke-400: hsl(00, 00%, 50%);
+    --color-smoke-500: hsl(00, 00%, 25%);
+    --color-smoke-600: hsl(51, 80%, 5%);
+    
+    --color-paris-daisy-50: hsl(60, 100%, 95%);
+    --color-paris-daisy-100: hsl(60, 100%, 88%);
+    --color-paris-daisy-200: hsl(57, 100%, 77%);
+    --color-paris-daisy-300: hsl(54, 100%, 70%);
+    --color-paris-daisy-400: hsl(52, 96%, 53%);
+    --color-paris-daisy-500: hsl(50, 95%, 47%);
+    --color-paris-daisy-600: hsl(46, 98%, 39%);
+    --color-paris-daisy-700: hsl(41, 90%, 31%);
+    --color-paris-daisy-800: hsl(36, 83%, 27%);
+    --color-paris-daisy-900: hsl(32, 74%, 25%);
+    --color-paris-daisy-950: hsl(30, 88%, 13%);
+
+
+    --color-candy-corn-50: hsl(56, 100%, 95%);
+    --color-candy-corn-100: hsl(55, 100%, 88%);
+    --color-candy-corn-200: hsl(52, 100%, 77%);
+    --color-candy-corn-300: hsl(49, 100%, 70%);
+    --color-candy-corn-400: hsl(48, 96%, 53%);
+    --color-candy-corn-500: hsl(45, 95%, 47%);
+    --color-candy-corn-600: hsl(42, 98%, 39%);
+    --color-candy-corn-700: hsl(38, 90%, 31%);
+    --color-candy-corn-800: hsl(33, 83%, 27%);
+    --color-candy-corn-900: hsl(30, 74%, 25%);
+    --color-candy-corn-950: hsl(28, 88%, 13%);
 }
 
 :root {
-    font-family: "Inter";
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);

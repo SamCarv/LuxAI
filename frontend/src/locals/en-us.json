@@ -4,5 +4,15 @@
     "investment": "Investment",
     "bank": "Bank",
     "files": "Files",
-    "chat": "Chat"
+    "chat": "Chat",
+
+    "bank.accounts": "Accounts",
+    "bank.wallets": "Wallets",
+    "bank.transactions": "Transactions",
+
+
+    "section.bank.desc": "The last movement was {{time}} ago",
+
+    "today": "Today",
+    "yesterday": "Yesterday"
 }
