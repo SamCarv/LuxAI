@@ -1,5 +1,7 @@
 import os
+import time
 from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 from sqlmodel import create_engine, Session, SQLModel
 from dotenv import load_dotenv
 
@@ -19,11 +21,20 @@ engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
 
 def init_db():
-    with engine.connect() as conn:
-        with conn.begin():
-            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+    retries = 10
+    while retries > 0:
+        try:
+            with engine.connect() as conn:
+                with conn.begin():
+                    conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
 
-    SQLModel.metadata.create_all(engine)
+            SQLModel.metadata.create_all(engine)
+            return
+        except OperationalError:
+            retries -= 1
+            time.sleep(2)
+
+    raise Exception("Failed to connect to database")
 
 
 def get_session():

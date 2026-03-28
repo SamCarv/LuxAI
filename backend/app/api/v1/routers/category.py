@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
@@ -28,7 +29,7 @@ async def get_all_category(
 
 
 @router.get("/{category_id}")
-async def get_one_category(category_id: int, session: SessionDep):
+async def get_one_category(category_id: UUID, session: SessionDep):
     category = session.get(Category, category_id)
 
     if not category:

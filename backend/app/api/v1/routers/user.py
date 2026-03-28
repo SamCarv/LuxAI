@@ -1,5 +1,7 @@
+from typing import Annotated
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.api.v1.schemas.user import UserCreate, UserPublic
 from app.core.security import get_password_hash
@@ -12,6 +14,30 @@ router = APIRouter(
     tags=["user"],
     responses={404: {"description": "Not found"}},
 )
+
+SessionDep = Annotated[Session, Depends(get_session)]
+
+
+@router.get("/", response_model=UserPublic)
+async def get_users(session: SessionDep, limit: int = 5, offset: int = 0):
+
+    users = session.exec(select(User).offset(offset).limit(limit)).all()
+
+    if not users:
+        raise HTTPException(404, "No users found")
+
+    return users
+
+
+@router.get("/{user_id}", response_model=UserPublic)
+async def get_user_by_id(user_id: UUID, session: SessionDep):
+
+    user = session.get(User, user_id)
+
+    if not user:
+        raise HTTPException(404, "User not found!")
+
+    return user
 
 
 @router.post("/", response_model=UserPublic)

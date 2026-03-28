@@ -1,6 +1,12 @@
+from uuid import UUID
 from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
 
-from app.models.user import UserBase
+
+class UserBase(SQLModel):
+    full_name: str
+    email: str = Field(unique=True, index=True)
+    is_active: bool = Field(default=True)
 
 
 class UserCreate(UserBase):
@@ -8,4 +14,4 @@ class UserCreate(UserBase):
 
 
 class UserPublic(UserBase):
-    id: int
+    id: UUID
