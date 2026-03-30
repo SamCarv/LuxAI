@@ -60,7 +60,7 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
       <div className='flex flex-col gap-y-1'>
         <p className='heading-sm'>Cor do Card</p>
         <div className='flex w-min h-22  flex-col flex-wrap'>
-          <button onClick={() => setColor(shuffleColor(color, preColorsSelection))} className={`rounded-full border-4 size-10 flex justify-center items-center cursor-pointer hover:bg-slate-200 border-slate-200`}>
+          <button type='button' onClick={() => setColor(shuffleColor(color, preColorsSelection))} className={`rounded-full border-4 size-10 flex justify-center items-center cursor-pointer hover:bg-slate-200 border-slate-200`}>
             <div className="rounded-full size-6" style={{ background: `radial-gradient(circle, white 0%, transparent 40%), conic-gradient(red, yellow, lime, cyan, blue, magenta, red)`}}/>
           </button>
           {preColorsSelection.map(c => (
@@ -92,7 +92,7 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
           </div>
         </div>
         <div className='flex items-end gap-x-3'>
-          <button className='w-32 h-15 bg-white rounded-4xl shadow-2xl heading-md cursor-pointer hover:bg-slate-200' onClick={() => onClose()}>Cancelar</button>
+          <button className='w-32 h-15 bg-white rounded-4xl shadow-2xl heading-md cursor-pointer hover:bg-slate-200' type='button' onClick={() => onClose()}>Cancelar</button>
           <button className='w-32 h-15 bg-candy-corn-400 rounded-4xl shadow-2xl heading-md cursor-pointer hover:bg-candy-corn-400/60' type='submit'>Salvar</button>
         </div>
       </div>
