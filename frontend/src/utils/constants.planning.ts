@@ -3,7 +3,7 @@ from "lucide-react"
 
 import type { Category } from "../types/category";
 
-export const categories: Category[] = [
+export let categories: Category[] = [
     {
         id: 1,
         name: 'Moradia',
@@ -60,9 +60,11 @@ export const categories: Category[] = [
         color: '33CC61',
         user_id: 1
     },
-    
-
 ]
+
+export const setCategories = (actualCategories: Category[]) => {
+    categories = actualCategories
+}
 
 export const preColorsSelection = [
     'FFC0B3',

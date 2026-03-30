@@ -8,29 +8,34 @@ import { PanelItemInfo, PanelItemInfoDetail, PanelItemInfoTitle } from "../../co
 import { useState } from "react"
 import CreateCategoryModal from "./create-category-modal"
 import { DynamicIcon, type IconName } from "./dynamic-icon"
+import { deleteCategory } from "./functions/delete-category"
+import { NavLink } from "react-router-dom"
+
 const Planning = () => {
   const { t } = useTranslation()
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false)
 
   return (
     <section className="flex flex-col w-full h-full gap-y-5 max-w-300">
-      <h1 className="heading-lg self-baseline">{t('planning')}</h1>
+      <h1 className="heading-lg self-baseline">{t('planning')}</h1> 
       <div className="bg-smoke-100 w-full h-80"></div>
       <div className="flex justify-center">
         <PanelGroup className="flex-row flex-wrap gap-10 max-w-286">
           {categories.map((category) => (
             <PanelItem key={category.id} className="w-64">
-              <PanelItemIcon style={{ backgroundColor: `#${category.color}`}} className="group-hover:brightness-110 transition">
-                {category ? 
-                  (<DynamicIcon name={category.icon as IconName} />) : 
-                  (<Home />)
-                }
-              </PanelItemIcon>
-              <PanelItemInfo className="flex-1">
-                <PanelItemInfoTitle>{category.name}</PanelItemInfoTitle>
-                <PanelItemInfoDetail>Custos - 1900</PanelItemInfoDetail>
-              </PanelItemInfo>
-              <button className="flex flex-none items-baseline">
+              <NavLink className={'flex w-full'} to={category.id.toString()}>
+                <PanelItemIcon style={{ backgroundColor: `#${category.color}`}} className="group-hover:brightness-110 transition">
+                  {category ? 
+                    (<DynamicIcon name={category.icon as IconName} />) : 
+                    (<Home />)
+                  }
+                </PanelItemIcon>
+                <PanelItemInfo className="flex-1">
+                  <PanelItemInfoTitle>{category.name}</PanelItemInfoTitle>
+                  <PanelItemInfoDetail>Custos - 1900</PanelItemInfoDetail>
+                </PanelItemInfo>
+              </NavLink>
+              <button onClick={() => deleteCategory(category)} className="flex flex-none items-baseline cursor-pointer hover:bg-slate-300">
                 <X />
               </button>
             </PanelItem>

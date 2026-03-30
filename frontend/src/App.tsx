@@ -7,6 +7,7 @@ import Investment from './pages/investment'
 import Bank from './pages/bank'
 import Files from './pages/files'
 import Chat from './pages/chat'
+import CategoryDetails from './pages/planning/category-details'
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path='/' element={<Layout />}>
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/planning' element={<Planning />} />
+          <Route path='/planning/:id' element={<CategoryDetails />} />
           <Route path='/investment' element={<Investment />} />
           <Route path='/bank' element={<Bank />} />
           <Route path='/files' element={<Files />} />
