@@ -7,6 +7,7 @@ import { categories } from "../../utils/constants.planning"
 import { PanelItemInfo, PanelItemInfoDetail, PanelItemInfoTitle } from "../../components/panel/panel.info"
 import { useState } from "react"
 import CreateCategoryModal from "./create-category-modal"
+import { DynamicIcon, type IconName } from "./dynamic-icon"
 const Planning = () => {
   const { t } = useTranslation()
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false)
@@ -20,7 +21,10 @@ const Planning = () => {
           {categories.map((category) => (
             <PanelItem key={category.id} className="w-64">
               <PanelItemIcon style={{ backgroundColor: `#${category.color}`}} className="group-hover:brightness-110 transition">
-                <Home />
+                {category ? 
+                  (<DynamicIcon name={category.icon as IconName} />) : 
+                  (<Home />)
+                }
               </PanelItemIcon>
               <PanelItemInfo className="flex-1">
                 <PanelItemInfoTitle>{category.name}</PanelItemInfoTitle>

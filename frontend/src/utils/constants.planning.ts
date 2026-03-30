@@ -7,56 +7,56 @@ export const categories: Category[] = [
     {
         id: 1,
         name: 'Moradia',
-        icon: 'home',
+        icon: 'Home',
         color: '99E500',
         user_id: 1
     },
     {
         id: 2,
         name: 'Saúde',
-        icon: 'health',
+        icon: 'HeartPlus',
         color: 'EC9393',
         user_id: 1
     },
     {
         id: 3,
         name: 'Lazer',
-        icon: 'book',
+        icon: 'Bike',
         color: 'F2B3FF',
         user_id: 1
     },
     {
         id: 4,
         name: 'Finanças',
-        icon: 'dollar',
+        icon: 'DollarSign',
         color: 'FFD500',
         user_id: 1
     },
     {
         id: 5,
         name: 'Compras',
-        icon: 'cart',
+        icon: 'CakeSlice',
         color: 'B3E6FF',
         user_id: 1
     },
     {
         id: 6,
         name: 'Transporte',
-        icon: 'cart',
+        icon: 'Truck',
         color: 'CCB3FF',
         user_id: 1
     },
     {
         id: 7,
         name: 'Educação',
-        icon: 'cart',
+        icon: 'BookOpen',
         color: 'DB1F1F',
         user_id: 1
     },
     {
         id: 8,
         name: 'Limpeza',
-        icon: 'cart',
+        icon: 'BrushCleaning',
         color: '33CC61',
         user_id: 1
     },

@@ -44,7 +44,7 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
           <PanelItem className='mt-10 h-16'>
             <PanelItemIcon style={{ backgroundColor: `#${color}` }} className='group-hover:brightness-110 transition'>
               {iconName ? (
-                <DynamicIcon name={iconName as IconName} />
+                <DynamicIcon name={iconName as IconName}/>
               ) : (
                 <Home size={30} strokeWidth={2.2} absoluteStrokeWidth />
               )}
@@ -82,11 +82,11 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
           </div>
           <div className='bg-smoke-200 flex flex-wrap w-full h-full p-2 gap-2 overflow-auto scrollbar rounded-md'>
             {preIconsSelection.map((icon) => (
-              <button type='button' key={icon} onClick={() => {setIconName(icon)}} className={`
+              <button key={icon} type='button' onClick={() => {setIconName(icon)}} className={`
                 size-10 bg-smoke-50 flex items-center justify-center rounded-lg cursor-pointer hover:bg-slate-200 border-4 group
                 ${iconName === icon && 'border-candy-corn-400'}
               `}>
-                <DynamicIcon name={icon}/>
+                <DynamicIcon name={icon} className='group-hover:stroke-candy-corn-500/80'/>
               </button>
             ))}
           </div>
