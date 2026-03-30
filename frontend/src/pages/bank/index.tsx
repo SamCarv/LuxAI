@@ -10,7 +10,7 @@ import Amount from '../../components/amount'
 import { AmountCurrency, AmountValue } from '../../components/amount/price'
 import { walletItems } from '../../components/panel/constants'
 import { groupTransaction } from '../../utils/sort'
-import { transactions } from '../../utils/constants.example'
+import { transactions } from '../../utils/constants.bank'
 import { dateToHour } from '../../utils/date'
 
 const Bank = () => {

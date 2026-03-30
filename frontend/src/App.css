@@ -62,3 +62,16 @@ text {
   font-weight: 400;
   line-height: 140%;
 }
+
+.scrollbar {
+  scrollbar-width: unset;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(48, 96%, 53%);
+  border-radius: 10px;
+}

@@ -31,7 +31,7 @@ const SideBar = () => {
                                 key={section.id}
                                 icon={<Icon/>}
                                 title={t(section.id)}
-                                shortcut={[t(section.id.charAt(0))]}
+                                shortcut={{key: t(section.id.charAt(0)), ctrl: false, alt: false}}
                                 isActive={location.pathname === `/${section.id}`}
                                 to={section.id}
                             />
