@@ -7,7 +7,7 @@ from app.models.bank_account import BankAccount
 from app.models.category import Category
 from app.models.transaction import Transaction
 
-from app.api.v1.routers import user, transaction, bank_account, category
+from app.api.v1.routers import auth, user, transaction, bank_account, category
 
 
 @asynccontextmanager
@@ -22,6 +22,7 @@ app.include_router(transaction.router)
 app.include_router(bank_account.router)
 app.include_router(user.router)
 app.include_router(category.router)
+app.include_router(auth.router)
 
 
 @app.get("/")
