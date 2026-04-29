@@ -1,22 +1,34 @@
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, List, Optional
+from uuid import UUID, uuid7
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import JSON, Column, DateTime, Numeric, text
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship
 
-from app.enums.transaction_type import TransactionType
+from app.api.v1.schemas.transaction import TransactionBase
 
 if TYPE_CHECKING:
     from .bank_account import BankAccount
     from .category import Category
 
+from sqlmodel import (
+    Column,
+    DateTime,
+    Numeric,
+    text,
+)
 
-class Transaction(SQLModel, table=True):
-    __tablename__: str = "transaction"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    description: str
+
+class Transaction(TransactionBase, table=True):
+    __tablename__: str = "transaction"  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    id: UUID = Field(
+        default_factory=uuid7,
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
 
     amount: Decimal = Field(sa_column=Column(Numeric(10, 2), nullable=False))
 
@@ -29,19 +41,12 @@ class Transaction(SQLModel, table=True):
         ),
     )
 
-    type: TransactionType = Field(default=TransactionType.EXPENSE, nullable=False)
-
-    category_id: int = Field(foreign_key="category.id", nullable=False)
-    account_id: int = Field(foreign_key="bank_account.id", nullable=False)
+    category_id: UUID = Field(foreign_key="category.id")
+    account_id: UUID = Field(foreign_key="bank_account.id")
 
     description_vector: Optional[List[float]] = Field(
         default=None,
-        sa_column=Column(Vector(2560), nullable=True),
-    )
-
-    metadata_info: Optional[Dict[str, Any]] = Field(
-        default_factory=dict,
-        sa_column=Column(JSON, nullable=True, default=dict),
+        sa_column=Column(Vector(768), nullable=True),
     )
 
     category: Optional["Category"] = Relationship(back_populates="transactions")
