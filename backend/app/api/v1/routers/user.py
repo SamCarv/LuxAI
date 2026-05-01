@@ -1,13 +1,13 @@
 from typing import Annotated
 from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.api.v1.schemas.user import UserCreate, UserPublic
-from app.core.security import get_password_hash
+from app.api.v1.schemas.user import UserCreate, UserPublic, UserUpdate
+from app.core.security import encrypt_string, get_password_hash
 from app.db.database import get_session
 from app.models.user import User
-
 
 router = APIRouter(
     prefix="/user",
@@ -67,8 +67,9 @@ async def create_user(
             detail=f"Error to save user: {str(e)}",
         )
 
+
 @router.patch("/{user_id}", response_model=UserPublic)
-async def update_user(user_id: UUID, data: UserCreate, session: SessionDep):
+async def update_user(user_id: UUID, data: UserUpdate, session: SessionDep):
 
     user = session.get(User, user_id)
 
@@ -81,6 +82,15 @@ async def update_user(user_id: UUID, data: UserCreate, session: SessionDep):
         new_vector = get_password_hash(update_data["password"])
         update_data["hashed_password"] = new_vector
         del update_data["password"]
+
+    if "google_api_key" in update_data:
+        if update_data["google_api_key"]:
+            update_data["encrypted_google_api_key"] = encrypt_string(
+                update_data["google_api_key"]
+            )
+        else:
+            update_data["encrypted_google_api_key"] = None
+        del update_data["google_api_key"]
 
     for key, value in update_data.items():
         setattr(user, key, value)
@@ -97,10 +107,11 @@ async def update_user(user_id: UUID, data: UserCreate, session: SessionDep):
             detail=f"Error to update user: {str(e)}",
         )
 
+
 @router.delete("/{user_id}")
 async def delete_user(user_id: UUID, session: SessionDep):
     user = session.get(User, user_id)
-    
+
     try:
         session.delete(user)
         session.commit()

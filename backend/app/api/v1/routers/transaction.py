@@ -1,19 +1,20 @@
 from typing import Annotated, List
 from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from app.ai.providers.ollama import get_embedding
-from app.core.security import CurrentUser
+
 from app.api.v1.schemas.transaction import (
     TransactionCreate,
     TransactionRead,
     TransactionUpdate,
 )
+from app.core.security import CurrentUser, decrypt_string
 from app.db.database import get_session
 from app.models.bank_account import BankAccount
 from app.models.category import Category
 from app.models.transaction import Transaction
-
+from app.services.ai_service import get_embedding
 
 router = APIRouter(
     prefix="/transaction",
@@ -37,7 +38,14 @@ async def search_transactions(
     if not account_ids:
         return []
 
-    query_vector = await get_embedding(query, is_search=True)
+    api_key = (
+        decrypt_string(current_user.encrypted_google_api_key)
+        if current_user.encrypted_google_api_key
+        else None
+    )
+    query_vector = await get_embedding(
+        query, is_search=True, provider=current_user.ai_provider, api_key=api_key
+    )
 
     statement = (
         select(Transaction)
@@ -68,7 +76,17 @@ async def create_transaction(
     if not category or category.user_id != current_user.id:
         raise HTTPException(404, "Category not found!")
 
-    vector = await get_embedding(data.description, is_search=False)
+    api_key = (
+        decrypt_string(current_user.encrypted_google_api_key)
+        if current_user.encrypted_google_api_key
+        else None
+    )
+    vector = await get_embedding(
+        data.description,
+        is_search=False,
+        provider=current_user.ai_provider,
+        api_key=api_key,
+    )
 
     new_transaction = Transaction(
         description=data.description,
@@ -112,7 +130,17 @@ async def update_transaction(
     update_data = data.model_dump(exclude_unset=True)
 
     if "description" in update_data:
-        new_vector = await get_embedding(update_data["description"], is_search=False)
+        api_key = (
+            decrypt_string(current_user.encrypted_google_api_key)
+            if current_user.encrypted_google_api_key
+            else None
+        )
+        new_vector = await get_embedding(
+            update_data["description"],
+            is_search=False,
+            provider=current_user.ai_provider,
+            api_key=api_key,
+        )
         update_data["description_vector"] = new_vector
 
     if "account_id" in update_data:
@@ -139,6 +167,7 @@ async def update_transaction(
             status_code=500,
             detail=f"Error to update transaction: {str(e)}",
         )
+
 
 @router.delete("/{transaction_id}")
 async def delete_transaction(
