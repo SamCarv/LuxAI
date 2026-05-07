@@ -17,6 +17,7 @@ dependencies = [
   "psycopg2-binary>=2.9.11",
   "psycopg[binary]>=3.3.3",
   "pyjwt>=2.10.1",
+  "pydantic-ai",
   "pytest-asyncio>=1.3.0",
   "python-dotenv>=1.2.2",
   "sqlmodel>=0.0.37",
