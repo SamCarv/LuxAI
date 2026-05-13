@@ -1,14 +1,19 @@
 from typing import Annotated
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, select
 
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
+
+from app.agents.category import (
+    create_category_service,
+    delete_category_service,
+    get_category_service,
+    list_categories_service,
+    update_category_service,
+)
 from app.api.v1.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
 from app.core.security import CurrentUser
 from app.db.database import get_session
-from app.models.category import Category
-
 
 router = APIRouter(
     prefix="/category",
@@ -28,52 +33,22 @@ async def get_all_category(
     limit: int = 5,
     offset: int = 0,
 ):
-    statement = (
-        select(Category)
-        .where(Category.user_id == current_user.id)
-        .offset(offset)
-        .limit(limit)
-    )
-    return session.exec(statement).all()
+    return list_categories_service(session, current_user, limit=limit, offset=offset)
 
 
 @router.get("/{category_id}", response_model=CategoryRead)
-async def get_one_category(category_id: UUID, session: SessionDep, current_user: CurrentUser):
-    category = session.get(Category, category_id)
-
-    if not category or category.user_id != current_user.id:
-        raise HTTPException(status_code=404, detail="Category not found")
-
-    return category
+async def get_one_category(
+    category_id: UUID, session: SessionDep, current_user: CurrentUser
+):
+    return get_category_service(session, current_user, category_id)
 
 
 @router.post("/", response_model=CategoryRead)
-async def create_category(data: CategoryCreate, session: SessionDep, current_user: CurrentUser):
+async def create_category(
+    data: CategoryCreate, session: SessionDep, current_user: CurrentUser
+):
+    return create_category_service(session, current_user, data)
 
-    new_category = Category(
-        name=data.name,
-        color=data.color,
-        icon=data.icon,
-        user_id=current_user.id,
-    )
-
-    try:
-        session.add(new_category)
-        session.commit()
-        session.refresh(new_category)
-        return new_category
-    except IntegrityError:
-        session.rollback()
-        raise HTTPException(
-            status_code=409,
-            detail="Category name already exists for this user",
-        )
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error to save category: {str(e)}",
-        )
 
 @router.patch("/{category_id}", response_model=CategoryRead)
 async def update_category(
@@ -82,48 +57,11 @@ async def update_category(
     session: SessionDep,
     current_user: CurrentUser,
 ):
-    category = session.get(Category, category_id)
+    return update_category_service(session, current_user, category_id, data)
 
-    if not category or category.user_id != current_user.id:
-        raise HTTPException(status_code=404, detail="Category not found")
 
-    update_data = data.model_dump(exclude_unset=True)
-
-    for key, value in update_data.items():
-        setattr(category, key, value)
-
-    try:
-        session.add(category)
-        session.commit()
-        session.refresh(category)
-        return category
-    except IntegrityError:
-        session.rollback()
-        raise HTTPException(
-            status_code=409,
-            detail="Category name already exists for this user",
-        )
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error to update category: {str(e)}",
-        )
-        
 @router.delete("/{category_id}")
-async def delete_category(category_id: UUID, session: SessionDep, current_user: CurrentUser):
-    category = session.get(Category, category_id)
-
-    if not category or category.user_id != current_user.id:
-        raise HTTPException(status_code=404, detail="Category not found")
-
-    try:
-        session.delete(category)
-        session.commit()
-        return {"detail": "Category deleted successfully"}
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error to delete category: {str(e)}",
-        )
+async def delete_category(
+    category_id: UUID, session: SessionDep, current_user: CurrentUser
+):
+    return delete_category_service(session, current_user, category_id)

@@ -22,19 +22,27 @@ services:
     container_name: luxai_backend
     restart: always
     volumes:
-      - ./backend:/app 
+      - ./backend:/app
       - /app/.venv
     command: uv run fastapi dev app/main.py --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     environment:
       DATABASE_URL: "postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-password123}@db:5432/${DB_NAME:-finance_db}"
-      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+      DB_USER: "${DB_USER:-postgres}"
+      DB_PASSWORD: "${DB_PASSWORD:-password123}"
+      DB_NAME: "${DB_NAME:-finance_db}"
+      DB_HOST: "${DB_HOST:-db}"
+      DB_PORT: "${DB_PORT:-5432}"
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://host.docker.internal:11434}"
+      GOOGLE_API_KEY: "${GOOGLE_API_KEY}"
+      ENCRYPTION_KEY: "${ENCRYPTION_KEY:-oUeX9wX9v4j2M_4a1_2Qy3D-L_9fL7XnNf1M8KzWvWc=}"
     depends_on:
       db:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
 
 volumes:
   postgres_data:

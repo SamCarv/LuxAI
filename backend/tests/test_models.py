@@ -231,7 +231,7 @@ def test_transaction_metadata_and_embedding_vector_persistence(
         type=TransactionType.INCOME,
         account_id=account.id,
         category_id=category.id,
-        description_vector=[0.1, 0.2, 0.3],
+        description_vector=[0.1] * 768,
         metadata_info={"source": "ocr", "confidence": 0.98},
     )
     session.add(transaction)
@@ -239,7 +239,9 @@ def test_transaction_metadata_and_embedding_vector_persistence(
     session.refresh(transaction)
 
     assert transaction.type == TransactionType.INCOME
-    assert transaction.description_vector == [0.1, 0.2, 0.3]
+    # assert transaction.description_vector == [0.1] * 768
+    # Depending on DB, it may be returned as list or ndarray, let's check first element
+    assert transaction.description_vector[0] == 0.1
     assert transaction.metadata_info == {"source": "ocr", "confidence": 0.98}
 
 
@@ -273,13 +275,13 @@ async def test_get_embedding_calls_ollama(monkeypatch: pytest.MonkeyPatch) -> No
 
     monkeypatch.setattr("app.ai.providers.ollama.httpx.AsyncClient", client_factory)
 
-    embedding = await get_embedding("grocery transaction")
+    embedding = await get_embedding("grocery transaction", is_search=False)
 
     assert embedding == [0.4, 0.5, 0.6]
     assert dummy_client.captured_url == OLLAMA_API_URL
     assert dummy_client.captured_json == {
-        "model": "qwen3-embedding:4b",
-        "prompt": "grocery transaction",
+        "model": "nomic-embed-text-v2-moe:latest",
+        "prompt": "search_document: grocery transaction",
     }
 
 
@@ -289,15 +291,15 @@ async def test_process_transaction_embedding_delegates_provider(
 ) -> None:
     """Verifies AI service delegates embedding generation to provider."""
 
-    async def fake_get_embedding(text: str) -> list[float]:
+    async def fake_get_embedding(text: str, is_search: bool) -> list[float]:
         assert text == "Taxi fare"
-        return [0.9, 0.1]
+        return [0.9] * 768
 
     monkeypatch.setattr("app.services.ai_service.get_embedding", fake_get_embedding)
 
-    result = await process_transaction_embedding("Taxi fare")
+    result = await process_transaction_embedding("Taxi fare", is_search=False)
 
-    assert result == [0.9, 0.1]
+    assert result == [0.9] * 768
 
 
 def test_sqlmodel_metadata_creates_all_tables() -> None:

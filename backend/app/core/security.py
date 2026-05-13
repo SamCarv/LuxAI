@@ -1,10 +1,11 @@
 import os
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from uuid import UUID
 
 import bcrypt
 import jwt
+from cryptography.fernet import Fernet
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
@@ -13,12 +14,23 @@ from sqlmodel import Session, select
 from app.db.database import get_session
 from app.models.user import User
 
-
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-me-in-production")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(
-    os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "60")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+
+ENCRYPTION_KEY = os.getenv(
+    "ENCRYPTION_KEY", "oUeX9wX9v4j2M_4a1_2Qy3D-L_9fL7XnNf1M8KzWvWc="
 )
+cipher_suite = Fernet(ENCRYPTION_KEY)
+
+
+def encrypt_string(text: str) -> str:
+    return cipher_suite.encrypt(text.encode("utf-8")).decode("utf-8")
+
+
+def decrypt_string(encrypted_text: str) -> str:
+    return cipher_suite.decrypt(encrypted_text.encode("utf-8")).decode("utf-8")
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -57,7 +69,9 @@ def authenticate_user(session: Session, email: str, password: str):
     return user
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], session: SessionDep):
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)], session: SessionDep
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -70,7 +84,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
         if sub is None:
             raise credentials_exception
         user_id = UUID(sub)
-    except (InvalidTokenError, ValueError):
+    except InvalidTokenError, ValueError:
         raise credentials_exception
 
     user = session.get(User, user_id)
