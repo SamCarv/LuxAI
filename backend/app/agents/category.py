@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import HTTPException
 from pydantic_ai import Agent, RunContext
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from app.agents.deps import AgentDeps
@@ -16,22 +17,28 @@ def list_categories_service(
     current_user: User,
     limit: int = 5,
     offset: int = 0,
-) -> list[CategoryRead]:
+) -> list[Category]:
     statement = (
         select(Category)
         .where(Category.user_id == current_user.id)
+        .options(selectinload(Category.transactions))  # type: ignore[arg-type]
         .offset(offset)
         .limit(limit)
     )
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
 def get_category_service(
     session: Session, current_user: User, category_id: UUID
-) -> CategoryRead:
-    category = session.get(Category, category_id)
+) -> Category:
+    statement = (
+        select(Category)
+        .where(Category.id == category_id, Category.user_id == current_user.id)
+        .options(selectinload(Category.transactions))  # type: ignore[arg-type]
+    )
+    category = session.exec(statement).first()
 
-    if not category or category.user_id != current_user.id:
+    if not category:
         raise HTTPException(status_code=404, detail="Category not found")
 
     return category
@@ -39,7 +46,7 @@ def get_category_service(
 
 def create_category_service(
     session: Session, current_user: User, data: CategoryCreate
-) -> CategoryRead:
+) -> Category:
     new_category = Category(
         name=data.name,
         color=data.color,
@@ -71,7 +78,7 @@ def update_category_service(
     current_user: User,
     category_id: UUID,
     data: CategoryUpdate,
-) -> CategoryRead:
+) -> Category:
     category = session.get(Category, category_id)
 
     if not category or category.user_id != current_user.id:
@@ -121,7 +128,7 @@ def delete_category_service(
         )
 
 
-def build_category_agent(model_name: str) -> Agent:
+def build_category_agent(model_name: str) -> Agent[AgentDeps, str]:
     agent = Agent(model_name, deps_type=AgentDeps)
 
     @agent.tool
@@ -131,16 +138,18 @@ def build_category_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return list_categories_service(
+        categories = list_categories_service(
             ctx.deps.session, current_user, limit=limit, offset=offset
         )
+        return [CategoryRead.model_validate(category) for category in categories]
 
     @agent.tool
     def get_category(ctx: RunContext[AgentDeps], category_id: UUID) -> CategoryRead:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return get_category_service(ctx.deps.session, current_user, category_id)
+        category = get_category_service(ctx.deps.session, current_user, category_id)
+        return CategoryRead.model_validate(category)
 
     @agent.tool
     def create_category(
@@ -149,7 +158,8 @@ def build_category_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return create_category_service(ctx.deps.session, current_user, data)
+        category = create_category_service(ctx.deps.session, current_user, data)
+        return CategoryRead.model_validate(category)
 
     @agent.tool
     def update_category(
@@ -160,9 +170,10 @@ def build_category_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return update_category_service(
+        category = update_category_service(
             ctx.deps.session, current_user, category_id, data
         )
+        return CategoryRead.model_validate(category)
 
     @agent.tool
     def delete_category(

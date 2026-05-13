@@ -19,7 +19,7 @@ def list_bank_accounts_service(
     current_user: User,
     limit: int = 5,
     offset: int = 0,
-) -> list[BankAccountRead]:
+) -> list[BankAccount]:
     try:
         bank_accounts = session.exec(
             select(BankAccount)
@@ -28,7 +28,7 @@ def list_bank_accounts_service(
             .limit(limit)
         ).all()
 
-        return bank_accounts
+        return list(bank_accounts)
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -38,7 +38,7 @@ def list_bank_accounts_service(
 
 def get_bank_account_service(
     session: Session, current_user: User, bank_account_id: UUID
-) -> BankAccountRead:
+) -> BankAccount:
     bank_account = session.get(BankAccount, bank_account_id)
 
     if not bank_account or bank_account.user_id != current_user.id:
@@ -49,7 +49,7 @@ def get_bank_account_service(
 
 def create_bank_account_service(
     session: Session, current_user: User, data: BankAccountCreate
-) -> BankAccountRead:
+) -> BankAccount:
     new_bank_account = BankAccount(
         name=data.name,
         balance=data.balance,
@@ -76,7 +76,7 @@ def update_bank_account_service(
     current_user: User,
     bank_account_id: UUID,
     data: BankAccountUpdate,
-) -> BankAccountRead:
+) -> BankAccount:
     bank_account = session.get(BankAccount, bank_account_id)
 
     if not bank_account or bank_account.user_id != current_user.id:
@@ -120,7 +120,7 @@ def delete_bank_account_service(
         )
 
 
-def build_bank_account_agent(model_name: str) -> Agent:
+def build_bank_account_agent(model_name: str) -> Agent[AgentDeps, str]:
     agent = Agent(model_name, deps_type=AgentDeps)
 
     @agent.tool
@@ -130,9 +130,10 @@ def build_bank_account_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return list_bank_accounts_service(
+        accounts = list_bank_accounts_service(
             ctx.deps.session, current_user, limit=limit, offset=offset
         )
+        return [BankAccountRead.model_validate(account) for account in accounts]
 
     @agent.tool
     def get_bank_account(
@@ -141,7 +142,10 @@ def build_bank_account_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return get_bank_account_service(ctx.deps.session, current_user, bank_account_id)
+        account = get_bank_account_service(
+            ctx.deps.session, current_user, bank_account_id
+        )
+        return BankAccountRead.model_validate(account)
 
     @agent.tool
     def create_bank_account(
@@ -150,7 +154,8 @@ def build_bank_account_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return create_bank_account_service(ctx.deps.session, current_user, data)
+        account = create_bank_account_service(ctx.deps.session, current_user, data)
+        return BankAccountRead.model_validate(account)
 
     @agent.tool
     def update_bank_account(
@@ -161,9 +166,10 @@ def build_bank_account_agent(model_name: str) -> Agent:
         current_user = ctx.deps.current_user
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
-        return update_bank_account_service(
+        account = update_bank_account_service(
             ctx.deps.session, current_user, bank_account_id, data
         )
+        return BankAccountRead.model_validate(account)
 
     @agent.tool
     def delete_bank_account(

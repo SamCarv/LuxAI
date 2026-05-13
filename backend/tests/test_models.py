@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, SQLModel, create_engine, select
 
 from app.ai.providers.ollama import OLLAMA_API_URL, get_embedding
-from app.enums import AccountType, Currency
+from app.enums import AccountType, Currency, RecurrenceFrequency
 from app.enums.transaction_type import TransactionType
 from app.models.bank_account import BankAccount
 from app.models.category import Category
@@ -186,6 +186,8 @@ def test_transaction_defaults_and_relationships(session: Session) -> None:
 
     assert transaction.id is not None
     assert transaction.type == TransactionType.EXPENSE
+    assert transaction.recurrence_frequency == RecurrenceFrequency.NONE
+    assert transaction.recurrence_day is None
     # SQLite drops timezone info when reading datetime columns back.
     assert transaction.date.tzinfo in (None, timezone.utc)
     assert transaction.metadata_info == {}
@@ -199,6 +201,42 @@ def test_transaction_defaults_and_relationships(session: Session) -> None:
     assert db_account.transactions[0].description == "Lunch"
     assert len(db_category.transactions) == 1
     assert db_category.transactions[0].amount == Decimal("29.90")
+
+
+def test_transaction_allows_null_category(session: Session) -> None:
+    user = User(
+        full_name="Null Category Owner",
+        email="null-category@example.com",
+        hashed_password="hashed-null",
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    assert user.id is not None
+
+    account = BankAccount(name="Null Wallet", user_id=user.id)
+    session.add(account)
+    session.commit()
+    session.refresh(account)
+    assert account.id is not None
+
+    transaction = Transaction(
+        description="No category",
+        amount=Decimal("12.50"),
+        account_id=account.id,
+        category_id=None,
+    )
+    session.add(transaction)
+    session.commit()
+    session.refresh(transaction)
+
+    assert transaction.category_id is None
+
+    db_account = session.exec(
+        select(BankAccount).where(BankAccount.id == account.id)
+    ).one()
+    assert len(db_account.transactions) == 1
+    assert db_account.transactions[0].description == "No category"
 
 
 def test_transaction_metadata_and_embedding_vector_persistence(

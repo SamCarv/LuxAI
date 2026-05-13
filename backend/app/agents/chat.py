@@ -54,7 +54,9 @@ GEMINI_MODEL = "gemini-3-flash-preview"
 def build_chat_agent(api_key: str) -> Agent[AgentDeps, str]:
     provider = GoogleProvider(api_key=api_key)
     model = GoogleModel(GEMINI_MODEL, provider=provider)
-    settings = GoogleModelSettings(google_thinking_config={"thinking_level": "low"})
+    settings = GoogleModelSettings(
+        google_thinking_config={"thinking_level": "low"}  # type: ignore[arg-type]
+    )
     agent: Agent[AgentDeps, str] = Agent(
         model,
         deps_type=AgentDeps,

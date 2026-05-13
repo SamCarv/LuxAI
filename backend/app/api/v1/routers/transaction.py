@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -7,6 +7,7 @@ from sqlmodel import Session
 from app.agents.transaction import (
     create_transaction_service,
     delete_transaction_service,
+    list_transactions_service,
     search_transactions_service,
     update_transaction_service,
 )
@@ -24,6 +25,25 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 SessionDep = Annotated[Session, Depends(get_session)]
+
+
+@router.get("/", response_model=List[TransactionRead])
+async def list_transactions(
+    session: SessionDep,
+    current_user: CurrentUser,
+    limit: int = 50,
+    offset: int = 0,
+    account_id: Optional[UUID] = None,
+    category_id: Optional[UUID] = None,
+):
+    return await list_transactions_service(
+        session,
+        current_user,
+        limit=limit,
+        offset=offset,
+        account_id=account_id,
+        category_id=category_id,
+    )
 
 
 @router.get("/search", response_model=List[TransactionRead])
