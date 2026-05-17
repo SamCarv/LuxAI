@@ -14,6 +14,11 @@
 
     "section.bank.desc": "Última movimentação foi há {{time}}",
 
+
+    "profile": "Perfil",
+    "system": "Sistema",
+    "ai": "IA",
+
     "today": "Hoje",
     "yesterday": "Ontem"
 

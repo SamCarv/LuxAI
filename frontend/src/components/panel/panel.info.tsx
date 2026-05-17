@@ -1,26 +1,27 @@
 import React, { type FC } from 'react'
+import { cn } from '../../lib/utils'
 
 interface PanelItemInfoProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-const PanelItemInfo: FC<PanelItemInfoProps> = ({ children, ...props }) => {
+const PanelItemInfo: FC<PanelItemInfoProps> = ({ children, className, ...props }) => {
   return (
-    <div className='flex flex-col justify-center' {...props}>
+    <div className={cn('flex flex-col justify-center', className)} {...props}>
         {children}
     </div>
   )
 }
 
-const PanelItemInfoTitle: FC<PanelItemInfoProps> = ({ children, ...props }) => {
+const PanelItemInfoTitle: FC<PanelItemInfoProps> = ({ children, className, ...props }) => {
     return (
-        <h3 className='heading-xs group-hover:text-candy-corn-600 group-hover:text-lg' {...props}>
+        <h3 className={cn('heading-xs group-hover:text-candy-corn-600 group-hover:text-lg dark:group-hover:text-candy-corn-400', className)} {...props}>
             {children}
         </h3>
     )
 }
 
-const PanelItemInfoDetail: FC<PanelItemInfoProps> = ({ children, ...props }) => {
+const PanelItemInfoDetail: FC<PanelItemInfoProps> = ({ children, className, ...props }) => {
     return (
-        <p className='body-xs text-smoke-400' {...props}>
+        <p className={cn('body-xs text-smoke-400', className)} {...props}>
             {children}
         </p>
     )

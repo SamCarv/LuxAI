@@ -8,6 +8,8 @@ import Bank from './pages/bank'
 import Files from './pages/files'
 import Chat from './pages/chat'
 import CategoryDetails from './pages/planning/category-details'
+import Wallets from './pages/bank/wallets'
+import Transactions from './pages/bank/transactions'
 
 function App() {
 
@@ -20,6 +22,8 @@ function App() {
           <Route path='/planning/:id' element={<CategoryDetails />} />
           <Route path='/investment' element={<Investment />} />
           <Route path='/bank' element={<Bank />} />
+          <Route path='/bank/wallets' element={<Wallets />} />
+          <Route path='/bank/transactions' element={<Transactions />} />
           <Route path='/files' element={<Files />} />
           <Route path='/chat' element={<Chat />} />
         </Route>

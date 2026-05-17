@@ -4,12 +4,12 @@ import './lib/i18next.ts'
 import './main.css'
 import './fonts/inter.css'
 import App from './App.tsx'
-import { ThemeProvider } from './context/theme-provider.tsx'
+import { ShortcutProvider } from './context/shortcut-provider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-    <App />
-    </ThemeProvider>
+    <ShortcutProvider>
+      <App />
+    </ShortcutProvider>
   </StrictMode>,
 )

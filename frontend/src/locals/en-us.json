@@ -13,6 +13,10 @@
 
     "section.bank.desc": "The last movement was {{time}} ago",
 
+    "profile": "Profile",
+    "system": "System",
+    "ai": "AI",
+
     "today": "Today",
     "yesterday": "Yesterday"
 }
