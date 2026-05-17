@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowRightLeft, BanknoteArrowDown, BanknoteArrowUp, Circle, CreditCard, FileInput, FileText, Plus } from 'lucide-react'
+import { ArrowRight, ArrowRightLeft, BanknoteArrowDown, BanknoteArrowUp, CreditCard, FileInput, FileText, Monitor, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Panel from '../../components/panel'
 import PanelLabel from '../../components/panel/panel.label'
@@ -10,110 +10,155 @@ import Amount from '../../components/amount'
 import { AmountCurrency, AmountValue } from '../../components/amount/price'
 import { walletItems } from '../../components/panel/constants'
 import { groupTransaction } from '../../utils/sort'
-import { transactions } from '../../utils/constants.example'
+import { transactions } from '../bank/constants'
 import { dateToHour } from '../../utils/date'
+import { useNavigate } from 'react-router-dom'
+
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { ChartContainer, type ChartConfig } from "@/components/ui/chart"
+import { ChartTooltip, ChartTooltipContent } from '../../components/ui/chart'
+import Button from '../../components/button'
+import { useState } from 'react'
+import TransactionModal from './transaction-modal'
+import type { Transaction } from '../../types/transaction'
+import { categories } from '../../utils/constants.planning'
+
+const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+]
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    icon: Monitor,
+    color: "#ECC900",
+  },
+  mobile: {
+    label: "Mobile",
+    icon: Monitor,
+    color: "#FFDF25",
+  },
+} satisfies ChartConfig
 
 const Bank = () => {
-  const { t } = useTranslation()
-  const transactionsGrouped = groupTransaction(transactions)
-  const chartData = [
-    {key: 'SumUp', data: 3700.26},
-    {key: 'Master', data: 5500.81},
-    {key: 'Nubank', data: 1200.48}
-  ]
+  const { t } = useTranslation();
+  const nav = useNavigate();
+  const transactionsGrouped = groupTransaction(transactions);
+  const [isTranscationModalOpen, setIsTransactionOpen] = useState(false);
 
   return (
-    <section className="flex flex-col w-full h-full gap-y-5 px-30 max-w-300">
-        <h1 className="heading-lg self-baseline">{t('bank')}</h1>
-
-        <div className="flex w-full h-full space-x-15 max-h-90 ">
-          <Panel>
-            <PanelLabel>{t('bank.accounts')}</PanelLabel>
-            <PanelGroup className='gap-y-1'>
-              <p className='body-lg'>Saldo atual</p>
-              <Amount>
-                <AmountCurrency>R$</AmountCurrency>
-                <AmountValue>12000.12</AmountValue>
-              </Amount>
-            </PanelGroup>
-            
-          </Panel>
-          <Panel>
-            <div className='flex w-full justify-between'>
-              <PanelLabel className='self-end'>{t('bank.wallets')}</PanelLabel>
-              <button className='bg-smoke-50 w-9 h-9 flex justify-center cursor-pointer items-center border-2 border-smoke-300 rounded-lg hover:bg-slate-200'>
-                <Plus size={32} strokeWidth={2} absoluteStrokeWidth={false}/>
-              </button>
-            </div>
-            <PanelGroup>
-              {walletItems.map(wallet => (
-                <PanelItem>
-                  <PanelItemIcon>
-                    <CreditCard size={32} strokeWidth={2.1} absoluteStrokeWidth={false}/>
-                  </PanelItemIcon>
-                  <PanelItemInfo>
-                    <PanelItemInfoTitle>{wallet.name}</PanelItemInfoTitle>
-                    <PanelItemInfoDetail>{t('section.bank.desc', {time: wallet.lastTransaction})}</PanelItemInfoDetail>
-                  </PanelItemInfo>
-                  <Amount className='flex-1 justify-end mr-2 py-2.5'>
-                    <AmountCurrency>{wallet.amountCurrency}</AmountCurrency>
-                    <AmountValue>{wallet.amountValue}</AmountValue>
-                  </Amount>
-                </PanelItem>
-              ))}
-            </PanelGroup>
-          </Panel>
-        </div>
-        <div className="flex w-full h-full justify-between max-h-100">
-          <div className='flex w-full max-w-112.5 justify-between'>
-              <div className='flex flex-col items-center min gap-y-2'>
-                <button className='bg-smoke-50  rounded-4xl p-4 cursor-pointer hover:bg-slate-300/40 hover:shadow-2xl group shadow-md' >
-                  <BanknoteArrowUp size={30} className='group-hover:text-candy-corn-500'/>
-                </button>
-                <p className='body-md'>Transação</p>
-              </div>
-              <div className='flex flex-col items-center gap-y-2'>
-                <button className='bg-smoke-50  rounded-4xl p-4 cursor-pointer hover:bg-slate-300/40 hover:shadow-2xl group shadow-md' >
-                  <ArrowRightLeft size={30} className='group-hover:text-candy-corn-500'/>
-                </button>
-                <p className='body-md'>Repasse</p>
-              </div>
-              <div className='flex flex-col items-center gap-y-2'>
-                <button className='bg-smoke-50  rounded-4xl p-4 cursor-pointer hover:bg-slate-300/40 hover:shadow-2xl group shadow-md' >
-                  <FileInput size={30} className='group-hover:text-candy-corn-500'/>
-                </button>
-                <p className='body-md'>CSV</p>
-              </div>
-              <div className='flex flex-col items-center gap-y-2'>
-                <button className='bg-smoke-50  rounded-4xl p-4 cursor-pointer hover:bg-slate-300/40 hover:shadow-2xl group shadow-md' >
-                  <FileText size={30} className='group-hover:text-candy-corn-500'/>
-                </button>
-                <p className='body-md'>Extrato</p>
-              </div>
-              
+    <section className="flex flex-col w-full h-full gap-y-6 px-4 md:px-10 mx-auto max-w-7xl dark:text-slate-100">
+      <h1 className="heading-lg mb-2">{t('bank')}</h1>
+      
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
+        <Panel>
+          <PanelLabel className="dark:text-zinc-400">{t('bank.accounts')}</PanelLabel>
+          
+          <PanelGroup className='gap-y-1'>
+            <p className='text-sm text-zinc-500 dark:text-zinc-400'>Saldo atual</p>
+            <Amount>
+              <AmountCurrency className="dark:text-white">R$</AmountCurrency>
+              <AmountValue className="dark:text-white font-bold">12000.12</AmountValue>
+            </Amount>
+          </PanelGroup>
+          
+          <div className="mt-4 h-64 w-full">
+            <ChartContainer config={chartConfig} className="h-full w-full">
+              <BarChart accessibilityLayer data={chartData}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                  className="fill-zinc-500"
+                />
+                <ChartTooltip content={<ChartTooltipContent className="dark:bg-zinc-950" />} />
+                <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+                <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+              </BarChart>
+            </ChartContainer>
           </div>
-          <Panel className='max-w-96'>
-            <div className='flex w-full justify-between'>
-              <PanelLabel>{t('bank.transactions')}</PanelLabel>
-              <button className='bg-smoke-50 w-9 h-9 flex justify-center cursor-pointer items-center border-2 border-smoke-300 rounded-lg hover:bg-slate-200'>
-                <ArrowRight size={30} strokeWidth={2} absoluteStrokeWidth={false}/>
+        </Panel>
+
+        <Panel>
+          <div className='flex w-full justify-between items-center mb-4'>
+            <PanelLabel className='dark:text-zinc-400'>{t('bank.wallets')}</PanelLabel>
+            <div className='flex gap-2'>
+              <button className='bg-zinc-50 dark:bg-zinc-800 w-9 h-9 flex justify-center items-center border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors'>
+                <Plus size={20} className="dark:text-zinc-300" />
+              </button>
+              <button type='button' onClick={() => nav('wallets')} className='bg-zinc-50 dark:bg-zinc-800 w-9 h-9 flex justify-center items-center border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors'>
+                <ArrowRight size={20} className="dark:text-zinc-300" />
               </button>
             </div>
+          </div>
+          
+          <PanelGroup className="space-y-2">
+            {walletItems.map((wallet, index) => (
+              <PanelItem key={index} className="dark:hover:bg-zinc-800/50 rounded-xl transition-colors">
+                <PanelItemIcon className="dark:bg-zinc-800">
+                  <CreditCard size={24} className="dark:text-zinc-400"/>
+                </PanelItemIcon>
+                <PanelItemInfo>
+                  <PanelItemInfoTitle className="dark:text-zinc-100">{wallet.name}</PanelItemInfoTitle>
+                  <PanelItemInfoDetail className="dark:text-zinc-500">
+                    {t('section.bank.desc', {time: wallet.lastTransaction})}
+                  </PanelItemInfoDetail>
+                </PanelItemInfo>
+                <Amount className='flex-1 justify-end dark:text-white'>
+                  <AmountCurrency>{wallet.amountCurrency}</AmountCurrency>
+                  <AmountValue>{wallet.amountValue}</AmountValue>
+                </Amount>
+              </PanelItem>
+            ))}
+          </PanelGroup>
+        </Panel>
+
+        <div className='grid grid-cols-2 sm:grid-cols-4 row-start-2 col-start-1 gap-4 w-full'>
+            {[
+              { icon: BanknoteArrowUp, label: 'Transação' },
+              { icon: ArrowRightLeft, label: 'Repasse' },
+              { icon: FileInput, label: 'CSV' },
+              { icon: FileText, label: 'Extrato' }
+            ].map(item => (
+              <Button icon={<item.icon size={28} />} label={item.label} className='p-5' onClick={() => {setIsTransactionOpen(true); console.log(isTranscationModalOpen)}}/>
+            ))}
+        </div>
+
+        <Panel>
+          <div className='flex w-full justify-between items-center mb-4'>
+            <PanelLabel className="dark:text-zinc-400">{t('bank.transactions')}</PanelLabel>
+            <button onClick={() => nav('transactions')} className='bg-zinc-50 dark:bg-zinc-800 w-9 h-9 flex justify-center items-center border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors'>
+              <ArrowRight size={20} className="dark:text-zinc-300" />
+            </button>
+          </div>
+
+          <div className="space-y-6">
             {Object.entries(transactionsGrouped).map(([group, items]) => (
-              <PanelGroup key={group}>
-                <PanelLabel className='pb-2 heading-sm'>{t(group)}</PanelLabel>
-                {items.map((item) => (
-                  <PanelItem>
-                    <PanelItemIcon>
-                      {item.type === 'income' && (<BanknoteArrowUp size={32} strokeWidth={1.8} absoluteStrokeWidth={false}/>)
-                        || (<BanknoteArrowDown size={32} strokeWidth={1.8} absoluteStrokeWidth={false}/>)   
-                      }
-                    </PanelItemIcon>
+              <PanelGroup key={group} className='space-y-2'>
+                <h3 className='text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2'>{t(group)}</h3>
+                {items.map((item, idx) => (
+                  <PanelItem key={idx} className="group dark:hover:bg-zinc-800/30 rounded-lg">
+                    {item.type === 'income' ? (
+                      <PanelItemIcon className='bg-emerald-50 dark:bg-emerald-500/10'>
+                        <BanknoteArrowUp size={24} className='text-emerald-500'/>
+                      </PanelItemIcon>
+                    ) : (
+                      <PanelItemIcon className='bg-rose-50 dark:bg-rose-500/10'>
+                        <BanknoteArrowDown size={24} className='text-rose-500'/> 
+                      </PanelItemIcon>
+                    )}
                     <PanelItemInfo>
-                      <PanelItemInfoTitle>Nexflix inc.</PanelItemInfoTitle>
-                      <PanelItemInfoDetail>{dateToHour(item.date)} - {t(String(item.type))}</PanelItemInfoDetail>
+                      <PanelItemInfoTitle className="dark:text-zinc-200">Netflix inc.</PanelItemInfoTitle>
+                      <PanelItemInfoDetail className="dark:text-zinc-500">{dateToHour(item.date)} - {t(String(item.type))}</PanelItemInfoDetail>
                     </PanelItemInfo>
-                    <Amount transactionType={item.type} className='flex-1 justify-end mr-2 py-2.5'>
+                    <Amount transactionType={item.type} className='flex-1 py-2.5 justify-end font-medium'>
                       <AmountCurrency>R$</AmountCurrency>
                       <AmountValue>{item.amount}</AmountValue>
                     </Amount>
@@ -121,8 +166,13 @@ const Bank = () => {
                 ))}
               </PanelGroup>
             ))}
-          </Panel>
-        </div>
+          </div>
+        </Panel>
+      </div>
+
+      {isTranscationModalOpen && <TransactionModal onClose={() => setIsTransactionOpen(false)} onSave={function (transaction: Omit<Transaction, 'id'>): void {
+        throw new Error('Function not implemented.')
+      } } categories={categories} wallets={walletItems}/>}
     </section>
   )
 }

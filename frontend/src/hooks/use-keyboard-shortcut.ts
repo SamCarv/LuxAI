@@ -1,26 +1,43 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { useShortcutContext } from "./use-shortcut-context";
 
-export const useKeyboardShortcut = (shortcutKeys: string[], callback: ()=>void) => {
-    if (!Array.isArray(shortcutKeys))    
-    throw new Error(      
-        "The first parameter to `useKeyboardShortcut` must be an ordered array of `KeyboardEvent.key` strings."    
-    )
+export type Shortcut = {
+  key: string,
+  ctrl?: boolean,
+  shift?: boolean,
+  alt?: boolean,
+  meta?: boolean,
+}
 
-    if (!shortcutKeys.length)  
-    throw new Error(    
+
+export const useKeyboardShortcut = (shortcut: Shortcut, callback: () => void, scope: string = 'main') => {
+    const { activeShortcutContext } = useShortcutContext()
+    
+    if (!shortcut.key)  
+      throw new Error(    
         "The first parameter to `useKeyboardShortcut` must contain at least one `KeyboardEvent.key` string."  
     )
 
     if (!callback || typeof callback !== "function")  
-    throw new Error(    
+      throw new Error(    
         "The second parameter to `useKeyboardShortcut` must be a function that will be invoked when the keys are pressed."  
     )
 
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
-        const key = event.key.toLowerCase()
+        const target = event.target as HTMLElement;
 
-        if (shortcutKeys.map(k => k.toLowerCase()).includes(key)) {
+        if ( target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return
+
+        const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
+        const ctrlMatch = shortcut.ctrl ? event.ctrlKey : !event.ctrlKey;
+        const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey;
+        const altMatch = shortcut.alt ? event.altKey : !event.altKey;
+        const metaMatch = shortcut.meta ? event.metaKey : !event.metaKey;
+        const isActiveContext = activeShortcutContext === scope
+
+        if (keyMatch && ctrlMatch && shiftMatch && altMatch && metaMatch && isActiveContext) {
+          event.preventDefault()
           callback()
         }
       }
@@ -29,8 +46,8 @@ export const useKeyboardShortcut = (shortcutKeys: string[], callback: ()=>void) 
 
       return () => {
         window.removeEventListener("keydown", handleKeyDown)
-      }
-  }, [shortcutKeys, callback])
+      };
+  }, [shortcut, callback])
 }
 
 

@@ -13,7 +13,7 @@ const Layout = () => {
             <header className="flex justify-end items-center">
                 <NavBar />
             </header>
-            <main className="flex flex-1 p-12 justify-center">
+            <main className="flex flex-1 px-12 py-10 justify-center">
                 <Outlet />
             </main>
         </div>
