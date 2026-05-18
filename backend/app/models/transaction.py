@@ -48,6 +48,13 @@ class Transaction(TransactionBase, table=True):
     )
     account_id: UUID = Field(foreign_key="bank_account.id")
 
+    recurrence_parent_id: Optional[UUID] = Field(
+        default=None,
+        foreign_key="transaction.id",
+        nullable=True,
+        index=True,
+    )
+
     description_vector: Optional[List[float]] = Field(
         default=None,
         sa_column=Column(Vector(768), nullable=True),

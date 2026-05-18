@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -35,17 +36,21 @@ from app.api.v1.schemas.bank_account import (
     BankAccountUpdate,
 )
 from app.api.v1.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
+from app.api.v1.schemas.document import DocumentChunkResult, DocumentRead
 from app.api.v1.schemas.transaction import (
     TransactionCreate,
     TransactionRead,
     TransactionUpdate,
 )
 from app.api.v1.schemas.user import UserPublic, UserUpdate
+from app.services.document_service import list_documents_service, search_document_chunks
 
 SYSTEM_INSTRUCTION = (
     "Você é um assistente financeiro para um aplicativo de finanças pessoais. "
     "Seja claro, objetivo e útil. "
-    "Use as tools quando precisar buscar ou alterar dados do usuário."
+    "Use as tools quando precisar buscar ou alterar dados do usuário. "
+    "Quando a pergunta envolver documentos enviados pelo usuário (contas, PDFs, imagens), "
+    "use a ferramenta search_documents e responda com base no conteúdo retornado."
 )
 
 GEMINI_MODEL = "gemini-3-flash-preview"
@@ -200,6 +205,49 @@ def build_chat_agent(api_key: str) -> Agent[AgentDeps, str]:
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
         return delete_category_service(ctx.deps.session, current_user, category_id)
+
+    @agent.tool
+    def list_documents(
+        ctx: RunContext[AgentDeps], limit: int = 5, offset: int = 0
+    ) -> list[DocumentRead]:
+        """Lista documentos enviados pelo usuário."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        documents = list_documents_service(
+            ctx.deps.session, current_user, limit=limit, offset=offset
+        )
+        return [DocumentRead.model_validate(doc) for doc in documents]
+
+    @agent.tool
+    async def search_documents(
+        ctx: RunContext[AgentDeps],
+        query: str,
+        limit: int = 5,
+        document_id: Optional[UUID] = None,
+    ) -> list[DocumentChunkResult]:
+        """Busca trechos relevantes nos documentos do usuário."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        matches = await search_document_chunks(
+            ctx.deps.session,
+            current_user,
+            query,
+            limit=limit,
+            document_id=document_id,
+        )
+        return [
+            DocumentChunkResult(
+                chunk_id=chunk.id,
+                document_id=doc.id,
+                document_title=doc.title,
+                document_filename=doc.filename,
+                chunk_index=chunk.chunk_index,
+                content=chunk.content,
+            )
+            for chunk, doc in matches
+        ]
 
     @agent.tool
     async def search_transactions(
