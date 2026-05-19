@@ -1,33 +1,19 @@
 import { Github, MessageSquare, Moon, Sun } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { supportedLanguages, languagesMap} from './constants'
 import Button from '../button'
+import { useThemeContext } from '../../hooks/use-theme-context'
 
 const NavBar = () => {
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light")
+    const {theme, switchTheme} = useThemeContext()
     const { i18n } = useTranslation()
-
-    useEffect(() => {
-        if (theme === "dark") {
-            document.documentElement.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-        }
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
-    };
 
     return (
         <nav className='flex w-full h-14 justify-end px-16 mt-4'>
             <ul className='flex items-center justify-center gap-x-10'>
                 <li>
-                    <Button variants='outline' colors='secondary' className='p-2 transition-none' onClick={() => toggleTheme()}>
+                    <Button variants='outline' colors='secondary' className='p-2 transition-none' onClick={() => switchTheme()}>
                         {theme === "light" ? <Sun /> : <Moon />}
                     </Button>
                 </li>

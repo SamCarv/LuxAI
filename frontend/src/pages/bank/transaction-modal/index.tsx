@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { PeriodicityType, StatusTransactionType, Transaction, TransactionType } from "../../../types/transaction";
 import Button from "../../../components/button";
 import Input from "../../../components/input";
+import Label from "../../../components/label";
 
 interface TransactionModalProps {
   onClose: () => void;
@@ -87,18 +88,18 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
+            <Label>Descrição</Label>
             <Input type="text" required placeholder="Ex: Salário, Gasolina..." value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
 
           <div className="flex gap-3">
             <div className="flex flex-col gap-1.5 w-1/2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Valor</label>
+              <Label>Valor</Label>
               <Input type="number" step="0.01" required placeholder="R$ 0,00" value={amount || ""} onChange={(e) => setAmount(parseFloat(e.target.value))}/>
             </div>
 
             <div className="flex flex-col gap-1.5 w-1/2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Data</label>
+              <Label>Data</Label>
               <Input type="date" required value={date} onChange={(e) => setDate(e.target.value)}
               />
             </div>
@@ -106,7 +107,7 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
 
           <div className="flex gap-3">
             <div className="flex flex-col gap-1.5 w-1/2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Conta</label>
+              <Label>Conta</Label>
               <select 
                 className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
                 value={accountId}
@@ -119,7 +120,7 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
             </div>
 
             <div className="flex flex-col gap-1.5 w-1/2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label>
+              <Label>Categoria</Label>
               <select 
                 className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
                 value={categoryId}
@@ -134,7 +135,7 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
 
           <div className="flex gap-3">
             <div className="flex flex-col gap-1.5 w-1/2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Frequência</label>
+              <Label>Frequência</Label>
               <select 
                 className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
                 value={periodicity}

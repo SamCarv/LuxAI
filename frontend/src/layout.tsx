@@ -1,4 +1,3 @@
-// layout.tsx
 import { Outlet } from 'react-router-dom'
 import Sidebar from './components/sidebar'
 import NavBar from './components/navbar'
@@ -6,7 +5,7 @@ import NavBar from './components/navbar'
 const Layout = () => {
   return (
     <div className="flex w-full h-full">
-        <aside className="bg-gray-100">
+        <aside>
             <Sidebar />
         </aside>
         <div className="flex flex-col flex-1">
