@@ -5,7 +5,7 @@ interface ThemeProps {
   switchTheme: ()=>void,
 }
 
-export const ThemeContext = createContext<ThemeProps|undefined>(undefined)
+export const ThemeContext = createContext<ThemeProps | undefined>(undefined)
 
 export const useThemeContext = () => {
   const theme = useContext(ThemeContext)

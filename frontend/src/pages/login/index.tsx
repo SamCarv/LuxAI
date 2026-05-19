@@ -1,16 +1,18 @@
-import { Sun, Github, AlertTriangle, TrendingUp, BarChart3, PersonStanding } from 'lucide-react';
+import { Sun, Github, AlertTriangle, TrendingUp, BarChart3, PersonStanding, Moon } from 'lucide-react';
 import Button from '../../components/button';
 import InsightCard from '../../components/insight-card';
 import { useState } from 'react';
 import LoginForm from './login';
 import RegisterForm from './register';
 import logo from '../../assets/logo.svg'
+import { useThemeContext } from '../../hooks/use-theme-context';
 
 const Login = () => {
+    const {theme, switchTheme} = useThemeContext()
     const [isLoginFormOpen, setIsLoginFormOpen] = useState(true);
 
     return (
-        <div className="min-h-screen w-full bg-slate-50 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 transition-colors duration-200">
+        <div className="min-h-screen w-full bg-smoke-100 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors duration-200">
             <header className="container mx-auto px-6 py-4 flex items-center justify-between border-b border-slate-100 dark:border-zinc-800">
                 <div className="flex items-center gap-2">
                     <img src={logo} className='size-8 rounded-md' />
@@ -33,7 +35,7 @@ const Login = () => {
                 <div className="space-y-12">
                 <div className="space-y-4 max-w-2xl">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tighter">
-                        Gerencie suas finanças com <span className="text-yellow-500 dark:bg-yellow-400">clareza inteligente.</span>
+                        Gerencie suas finanças com <span className="text-yellow-500 dark:text-yellow-400">clareza inteligente.</span>
                     </h1>
                     <p className="text-lg text-slate-600 dark:text-zinc-400">
                         Acesso o LuxAI e visualize seus ativos através de insights inteligentes e automação financeira.
@@ -73,8 +75,8 @@ const Login = () => {
             <footer className="container mx-auto px-6 py-8 border-t border-slate-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 text-sm">
                 <p>&copy; 2026 LuxAI. Todos os direitos reservados.</p>
                 <div className="flex items-center gap-6">
-                    <Button variants='outline' colors='secondary' className="body-sm flex items-center p-2 gap-2">
-                        <Sun size={24} /> Tema
+                    <Button variants='outline' colors='secondary' className="body-sm flex items-center p-2 gap-2" onClick={() => switchTheme()}>
+                        {theme === "light" ? <Sun size={24} /> : <Moon size={24}/>} Tema
                     </Button>
                     <Button variants='outline' colors='secondary' className="body-sm flex items-center p-2 gap-1.5">
                         <PersonStanding />PT-BR

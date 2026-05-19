@@ -1,5 +1,6 @@
 import Button from "../../../components/button"
 import Input from "../../../components/input"
+import Label from "../../../components/label"
 import type { Transaction } from "../../../types/transaction"
 
 interface TransactionCategoryModalProps {
@@ -17,34 +18,25 @@ const TransactionCategoryModal = ({ selectedTransaction, onClose }: TransactionC
                 
                 <div className="space-y-4">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Descrição
-                        </label>
+                        <Label>Descrição</Label>
                         <Input type="text" placeholder="Ex: Aluguel, Supermercado..." defaultValue={selectedTransaction?.description} 
                         />
                     </div>
 
                     <div className="flex gap-3">
                         <div className="flex flex-col gap-1.5 w-1/2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Valor
-                            </label>
+                            <Label>Valor</Label>
                             <Input type="number" step="0.01" placeholder="R$ 0,00" defaultValue={selectedTransaction?.amount} />
-                            </div>
-
-                            <div className="flex flex-col gap-1.5 w-1/2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Data
-                            </label>
+                        </div>
+                        <div className="flex flex-col gap-1.5 w-1/2">
+                            <Label>Data</Label>
                             <Input type="date" defaultValue={selectedTransaction?.date}
                             />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Frequência
-                        </label>
+                        <Label>Frequência</Label>
                         <select className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer">
                             <option value="once">Uma vez</option>
                             <option value="weekly">Semanal</option>

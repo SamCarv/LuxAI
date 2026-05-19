@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ShortcutContext } from '../hooks/use-shortcut-context';
 
-export const ShortcutProvider = ({children} :{ children: React.ReactNode}) => {
+export const ShortcutProvider = ({children} :{ children: ReactNode}) => {
   const [stack, setStack] = useState(['main']);
 
   const pushShortcutContext = (name : string) => setStack(prev => [...prev, name]);
