@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowRightLeft, BanknoteArrowDown, BanknoteArrowUp, CreditCard, FileInput, FileText, Monitor, Plus } from 'lucide-react'
+import { ArrowRight, BanknoteArrowDown, BanknoteArrowUp, CreditCard, Monitor, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Panel from '../../components/panel'
 import PanelLabel from '../../components/panel/panel.label'
@@ -22,6 +22,9 @@ import { useState } from 'react'
 import TransactionModal from './transaction-modal'
 import type { Transaction } from '../../types/transaction'
 import { categories } from '../../utils/constants.planning'
+import { bankOptions } from '../bank/constants'
+import ButtonIcon from '../../components/button/icon'
+import ButtonLabel from '../../components/button/text'
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -121,13 +124,11 @@ const Bank = () => {
         </Panel>
 
         <div className='grid grid-cols-2 sm:grid-cols-4 row-start-2 col-start-1 gap-4 w-full'>
-            {[
-              { icon: BanknoteArrowUp, label: 'Transação' },
-              { icon: ArrowRightLeft, label: 'Repasse' },
-              { icon: FileInput, label: 'CSV' },
-              { icon: FileText, label: 'Extrato' }
-            ].map(item => (
-              <Button icon={<item.icon size={28} />} label={item.label} className='p-5' onClick={() => {setIsTransactionOpen(true); console.log(isTranscationModalOpen)}}/>
+            {bankOptions.map(options => (
+              <Button variants='ghost' colors='no_color' onClick={() => setIsTransactionOpen(true)}> 
+                <ButtonIcon className='p-4'><options.icon size={32}/></ButtonIcon>
+                <ButtonLabel>{options.label}</ButtonLabel>
+              </Button>  
             ))}
         </div>
 

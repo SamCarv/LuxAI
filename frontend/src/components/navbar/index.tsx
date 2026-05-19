@@ -1,8 +1,9 @@
-import { LucideGithub, MessageSquare, Moon, Sun } from 'lucide-react'
+import { Github, MessageSquare, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { supportedLanguages, languagesMap} from './nav.constants'
+import { supportedLanguages, languagesMap} from './constants'
+import Button from '../button'
 
 const NavBar = () => {
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light")
@@ -23,11 +24,12 @@ const NavBar = () => {
     };
 
     return (
-        <nav className='flex w-full h-14 justify-between px-16 mt-4'>
-            <ul className='bg-amber-100'></ul>
+        <nav className='flex w-full h-14 justify-end px-16 mt-4'>
             <ul className='flex items-center justify-center gap-x-10'>
-                <li className='cursor-pointer hover:bg-slate-300 rounded-md p-2' onClick={()=>toggleTheme()}>
-                    {theme === "light" ? <Sun /> : <Moon />}
+                <li>
+                    <Button variants='outline' colors='secondary' className='p-2 transition-none' onClick={() => toggleTheme()}>
+                        {theme === "light" ? <Sun /> : <Moon />}
+                    </Button>
                 </li>
                 <li>
                     <DropdownMenu>
@@ -49,13 +51,15 @@ const NavBar = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </li>
-                <li className='cursor-pointer hover:bg-slate-300 rounded-md p-2'>
+                <li>
                     <a href="https://github.com/SamCarv/LuxAI/tree/main" target='./blank'>
-                        <LucideGithub />
+                        <Button variants='outline' colors='secondary' className='p-2'><Github /></Button>
                     </a>
                 </li>
                 <li>
-                    <MessageSquare />
+                    <Button variants='outline' colors='secondary' className='p-2'>
+                        <MessageSquare />
+                    </Button>
                 </li>
             </ul>
         </nav>

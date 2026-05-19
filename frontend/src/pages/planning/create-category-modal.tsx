@@ -8,6 +8,8 @@ import { preColorsSelection, preIconsSelection } from '../../utils/constants.pla
 import { shuffleColor } from './functions/random-color'
 import { DynamicIcon, type IconName } from './dynamic-icon'
 import { createCategory } from './functions/create-category'
+import Button from '../../components/button'
+import Input from '../../components/input'
 
 interface CreateCategoryModalProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose: () => void
@@ -33,7 +35,7 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
         <div className='flex flex-col gap-4 md:gap-0'>
           <div className='flex flex-col gap-1 w-full md:w-90'>
             <label htmlFor="name" className='heading-sm dark:text-zinc-300'>Nome</label>
-            <input type="text" id='name' name='name' value={categoryName} onChange={(event) => setCategoryName(event.target.value)} className='bg-smoke-50 dark:bg-zinc-800 dark:text-white rounded-md h-8 px-2 outline-none focus:ring-1 focus:ring-candy-corn-400' />
+            <Input type="text" id='name' name='name' value={categoryName} onChange={(event) => setCategoryName(event.target.value)} className='bg-smoke-50 dark:bg-zinc-800 dark:text-white rounded-md h-8 px-2 outline-none' />
             <p className='text-end body-sm text-smoke-500 dark:text-zinc-500 font-light'>Caracteres {categoryName.length}/25</p>
           </div>
           <div className='flex flex-col gap-1 w-full md:w-90 md:mt-4'>
@@ -99,8 +101,8 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
         </div>
 
         <div className='flex flex-row md:items-end gap-x-3 mt-auto pb-4 md:pb-0'>
-          <button className='flex-1 md:w-32 md:h-15 h-12 bg-white dark:bg-zinc-800 dark:text-white rounded-4xl shadow-2xl border dark:border-zinc-700 heading-md cursor-pointer hover:bg-slate-50 dark:hover:bg-zinc-700' type='button' onClick={() => onClose()}>Cancelar</button>
-          <button className='flex-1 md:w-32 md:h-15 h-12 bg-candy-corn-400 text-zinc-900 rounded-4xl shadow-2xl heading-md cursor-pointer hover:bg-candy-corn-500 transition-colors' type='submit'>Salvar</button>
+          <Button variants='standard' colors='secondary' className='flex-1 md:w-32 md:h-15 h-12 shadow-2xl heading-md' type='button' onClick={() => onClose()}>Cancelar</Button>
+          <Button variants='standard' colors='primary' className='flex-1 md:w-32 md:h-15 h-12 shadow-2xl heading-md' type='submit'>Salvar</Button>
         </div>
       </div>
 

@@ -1,22 +1,54 @@
 import type { FC } from "react"
 import { cn } from "../../lib/utils"
 
-interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement>  {
-  icon: React.ReactNode,
-  label?: string,
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variants: "standard" | "ghost" | "outline" | "circle"
+  colors: "primary" | "secondary" | "no_color"
 }
 
-const Button: FC<ButtonProps> = ({icon, label, onClick, className}) => {
+const Button: FC<ButtonProps> = ({variants, colors, className, children, ...props}) => {
+  let variant = selectVariant(variants)
+  let color = selectColor(colors)
+  
   return (
-    <button className="flex flex-col items-center gap-2 group cursor-pointer" onClick={onClick}>
-      <div className={cn(`p-3 bg-white dark:bg-zinc-800 rounded-full shadow-sm group-hover:text-paris-daisy-600 dark:group-hover:text-paris-daisy-400  transition-all border-2 border-gray-100 group-hover:border-yellow-400 dark:border-zinc-700 dark:group-hover:border-paris-daisy-400`, className)}>
-        {icon}
-      </div>
-      {label && 
-        <span className="text-xs font-medium text-gray-500 dark:text-zinc-400">{label}</span>
-      }
+    <button className={cn(`transition-colors cursor-pointer`, variant, color, className)} {...props}>
+      {children}
     </button>
   )
 }
 
-export default Button
+function selectVariant(variant: "standard" | "ghost" | "outline" | "circle"){
+  if (variant === "standard") {
+    return "px-6 py-3 font-bold rounded-xl";
+  };
+
+  if (variant === "ghost") {
+    return "flex flex-col items-center gap-2 group";
+  };
+
+  if (variant === "outline") {
+    return "flex justify-center items-center rounded-sm"
+  }
+
+  if (variant === "circle") {
+    return "p-2 rounded-full";
+  };
+};
+
+function selectColor(color: "primary" | "secondary" |  "no_color") {
+  if (color === "primary") {
+    return "bg-yellow-400 hover:bg-yellow-500 text-black"
+  }
+
+  if (color === "secondary") {
+    return "text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800"
+  }
+
+  if (color)
+
+  if (color === "no_color") {
+    return
+  }
+}
+
+export default Button;

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { PeriodicityType, StatusTransactionType, Transaction, TransactionType } from "../../../types/transaction";
+import Button from "../../../components/button";
+import Input from "../../../components/input";
 
 interface TransactionModalProps {
   onClose: () => void;
@@ -12,7 +14,7 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
   const [type, setType] = useState<TransactionType>("expense");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState<number>(0);
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]); // Data de hoje por padrão
+  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState<StatusTransactionType>("pending");
   const [periodicity, setPeriodicity] = useState<PeriodicityType>("once");
   const [accountId, setAccountId] = useState<number>(wallets[0]?.id || 0);
@@ -86,38 +88,18 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
-            <input 
-              type="text" 
-              required
-              placeholder="Ex: Salário, Gasolina..." 
-              className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white outline-none" 
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+            <Input type="text" required placeholder="Ex: Salário, Gasolina..." value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
 
           <div className="flex gap-3">
             <div className="flex flex-col gap-1.5 w-1/2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Valor</label>
-              <input 
-                type="number" 
-                step="0.01"
-                required
-                placeholder="R$ 0,00" 
-                className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white outline-none" 
-                value={amount || ""}
-                onChange={(e) => setAmount(parseFloat(e.target.value))}
-              />
+              <Input type="number" step="0.01" required placeholder="R$ 0,00" value={amount || ""} onChange={(e) => setAmount(parseFloat(e.target.value))}/>
             </div>
 
             <div className="flex flex-col gap-1.5 w-1/2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Data</label>
-              <input 
-                type="date" 
-                required
-                className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white outline-none text-sm cursor-pointer" 
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+              <Input type="date" required value={date} onChange={(e) => setDate(e.target.value)}
               />
             </div>
           </div>
@@ -168,19 +150,12 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
           </div>
 
           <div className="flex gap-2 pt-4">
-            <button 
-              type="button"
-              onClick={handleClose} 
-              className="flex-1 py-3 text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-xl transition-colors cursor-pointer"
-            >
+            <Button variants="standard" colors="secondary" type="button" onClick={handleClose} className="flex-1">
               Cancelar
-            </button>
-            <button 
-              type="submit"
-              className="flex-1 py-3 bg-yellow-400 text-black font-bold rounded-xl hover:bg-yellow-500 transition-colors cursor-pointer"
-            >
+            </Button>
+            <Button variants="standard" colors="primary" type="submit" className="flex-1">
               Salvar
-            </button>
+            </Button>
           </div>
         </form>
       </div>

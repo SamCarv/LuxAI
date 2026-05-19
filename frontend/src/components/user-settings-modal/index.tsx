@@ -1,7 +1,7 @@
 import { X } from "lucide-react"
 import Modal from "../modal"
 import { userSettingsSections } from "./constants"
-import SectionSideBar from "../sidebar/sidebar.section"
+import SectionSideBar from "../sidebar/section"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import ProfileSection from "./sections/profile"
@@ -10,6 +10,7 @@ import SystemSection from "./sections/system"
 import Section from "../section"
 import { useShortcutContext } from "../../hooks/use-shortcut-context"
 import { useKeyboardShortcut } from "../../hooks/use-keyboard-shortcut"
+import Button from "../button"
 
 interface UserSettingsModal {
     onClose: () => void
@@ -79,12 +80,12 @@ const UserSettingsModal = ({ onClose } : UserSettingsModal) => {
             </div>
 
             <div className="flex justify-end gap-3 mt-44 pt-4 h border-t border-slate-100 dark:border-zinc-600">
-                <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-md transition-colors cursor-pointer">
+                <Button variants="standard" colors="secondary" onClick={onClose} className="text-sm font-medium">
                     Cancelar
-                </button>
-                <button className="px-4 py-2 text-sm font-medium bg-candy-corn-400 text-white dark:text-black rounded-md hover:bg-candy-corn-500 transition-colors cursor-pointer">
+                </Button>
+                <Button variants="standard" colors="primary" className="text-sm font-medium">
                     Salvar alterações
-                </button>
+                </Button>
             </div>
         </Modal>
     )

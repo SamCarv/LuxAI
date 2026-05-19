@@ -1,6 +1,8 @@
+import type { ForwardRefExoticComponent, ReactNode, RefAttributes } from "react";
 import { type ChartConfig } from "../../components/ui/chart";
 import { categories } from "../../utils/constants.planning";
 import { type MockPeriodData } from "./types";
+import { BarChart2, Edit3, GitCompare, type LucideProps } from "lucide-react";
 
 export const chartConfig = {
   current: { label: "Período Atual", color: "hsl(var(--primary))" },
@@ -23,6 +25,12 @@ export const PERIODS = [
   { id: 'year', label: 'Ano' },
   { id: 'custom', label: 'Personalizado' },
 ] as const;
+
+export const DetailCategoryOptions =  [
+  { icon: BarChart2, label: "Gráfico" },
+  { icon: GitCompare, label: "Comparação" },
+  { icon: Edit3, label: "Editar" },
+]
 
 export const mockPeriodData: MockPeriodData = {
   expense: {

@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Wallets = () => {
   return (
     <div className='flex w-full h-full '>

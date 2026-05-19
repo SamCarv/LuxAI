@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { 
   ChevronLeft, BarChart2, GitCompare, Edit3, Trash2, Plus, 
   Calendar, CheckCircle2, Clock, Search, Filter, 
-  Home
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { categories } from '../../utils/constants.planning';
@@ -10,6 +9,9 @@ import type { Transaction } from '../../types/transaction';
 import Button from '../../components/button';
 import TransactionCategoryModal from './category-details-modal';
 import { DynamicIcon, type IconName } from './dynamic-icon';
+import ButtonIcon from '../../components/button/icon';
+import ButtonLabel from '../../components/button/text';
+import { DetailCategoryOptions } from './constants';
 
 const CategoryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,13 +30,10 @@ const CategoryDetail: React.FC = () => {
     );
   }, [category, searchTerm]);
 
-  if (!category) return <div className="p-10 text-center">Categoria não encontrada.</div>;
+  const totalMonthly = category?.transactions.reduce((acc, tr) => acc + tr.amount, 0);
 
-  const CategoryIcon = Home;
-  const totalMonthly = category.transactions.reduce((acc, tr) => acc + tr.amount, 0);
-
-  const handleOpenEdit = (t: Transaction) => {
-    setSelectedTransaction(t);
+  const handleOpenEdit = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
     setIsModalOpen(true);
   };
 
@@ -53,27 +52,30 @@ const CategoryDetail: React.FC = () => {
 
         <div className="flex items-center gap-4 mt-4">
           <div className="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
-            <DynamicIcon style={{ color: `#${category.color}` }} name={category.icon as IconName} />
+            <DynamicIcon style={{ color: `#${category?.color}` }} name={category?.icon as IconName} />
           </div>
           <div>
             <h2 className="text-sm text-gray-500 uppercase tracking-wider">Categoria</h2>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{category.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{category?.name}</h1>
           </div>
           <div className="ml-auto text-right">
             <p className="text-sm text-gray-500 font-medium">Total</p>
-            <p className="text-xl font-bold text-yellow-500">R$ {totalMonthly.toFixed(2)}/mês</p>
+            <p className="text-xl font-bold text-yellow-500">R$ {totalMonthly?.toFixed(2)}/mês</p>
           </div>
         </div>
 
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-zinc-800 min-h-37.5">
           <h3 className="text-gray-400 text-sm mb-2 uppercase font-semibold">Descrição</h3>
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{category.description}</p>
+          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{category?.description}</p>
         </div>
 
         <div className="flex justify-around items-center pt-4">
-          <Button icon={<BarChart2 size={20}/>} label="Gráfico" />
-          <Button icon={<GitCompare size={20}/>} label="Comparação" />
-          <Button icon={<Edit3 size={20}/>} label="Editar" />
+          {DetailCategoryOptions.map( options => (
+            <Button variants='ghost' colors='no_color'> 
+              <ButtonIcon><options.icon size={20}/></ButtonIcon>
+              <ButtonLabel>{options.label}</ButtonLabel>
+            </Button>
+          ))}
         </div>
       </div>
 
@@ -87,13 +89,10 @@ const CategoryDetail: React.FC = () => {
                <h3 className="font-bold text-lg text-gray-800 dark:text-zinc-100">Pagamentos</h3>
             </div>
             <div className="flex items-center gap-2">
-              <button 
-                onClick={handleOpenCreate}
-                className="p-2 bg-yellow-400 hover:bg-yellow-500 text-black transition-colors rounded-full"
-              >
+              <Button variants='circle' colors='primary' onClick={handleOpenCreate}>
                 <Plus size={20} strokeWidth={3} />
-              </button>
-              <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors rounded-full">
+              </Button>
+              <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors rounded-full cursor-pointer">
                 <Trash2 size={20} />
               </button>
             </div>
