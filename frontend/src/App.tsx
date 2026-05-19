@@ -10,6 +10,7 @@ import Chat from './pages/chat'
 import CategoryDetails from './pages/planning/category-details'
 import Wallets from './pages/bank/wallets'
 import Transactions from './pages/bank/transactions'
+import Login from './pages/login'
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
           <Route path='/files' element={<Files />} />
           <Route path='/chat' element={<Chat />} />
         </Route>
+        <Route path='/login' element={<Login />} />
       </Routes>
     </BrowserRouter>
   )

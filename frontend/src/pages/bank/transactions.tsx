@@ -1,5 +1,4 @@
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpDown } from 'lucide-react'
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const Transactions = () => {

@@ -1,3 +1,5 @@
+import Button from "../../../components/button"
+import Input from "../../../components/input"
 import type { Transaction } from "../../../types/transaction"
 
 interface TransactionCategoryModalProps {
@@ -18,11 +20,7 @@ const TransactionCategoryModal = ({ selectedTransaction, onClose }: TransactionC
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Descrição
                         </label>
-                        <input 
-                            type="text" 
-                            placeholder="Ex: Aluguel, Supermercado..." 
-                            className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white outline-none " 
-                            defaultValue={selectedTransaction?.description} 
+                        <Input type="text" placeholder="Ex: Aluguel, Supermercado..." defaultValue={selectedTransaction?.description} 
                         />
                     </div>
 
@@ -31,23 +29,14 @@ const TransactionCategoryModal = ({ selectedTransaction, onClose }: TransactionC
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Valor
                             </label>
-                            <input 
-                                type="number" 
-                                step="0.01"
-                                placeholder="R$ 0,00" 
-                                className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white outline-none cursor-pointer" 
-                                defaultValue={selectedTransaction?.amount} 
-                            />
+                            <Input type="number" step="0.01" placeholder="R$ 0,00" defaultValue={selectedTransaction?.amount} />
                             </div>
 
                             <div className="flex flex-col gap-1.5 w-1/2">
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Data
                             </label>
-                            <input 
-                                type="date" 
-                                className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white outline-none text-sm cursor-pointer" 
-                                defaultValue={selectedTransaction?.date}
+                            <Input type="date" defaultValue={selectedTransaction?.date}
                             />
                         </div>
                     </div>
@@ -65,15 +54,12 @@ const TransactionCategoryModal = ({ selectedTransaction, onClose }: TransactionC
                     </div>
 
                     <div className="flex gap-2 pt-2">
-                        <button 
-                            onClick={() => onClose()} 
-                            className="flex-1 py-3 text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-xl transition-colors cursor-pointer"
-                        >
+                        <Button variants="standard" colors="secondary" onClick={() => onClose()} className="flex-1">
                             Cancelar
-                        </button>
-                        <button className="flex-1 py-3 bg-yellow-400 text-black font-bold rounded-xl hover:bg-yellow-500 transition-colors cursor-pointer">
+                        </Button>
+                        <Button variants="standard" colors="primary" className="flex-1">
                             Salvar
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

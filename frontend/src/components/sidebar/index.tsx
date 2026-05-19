@@ -1,13 +1,14 @@
 import { Bolt, Menu, Sidebar, X } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import SectionSideBar from './sidebar.section';
+import SectionSideBar from './section';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
-import { sections } from './sidebar.constants'
+import { sections } from './constants'
 import logo from '../../assets/logo.svg'
 import { useState } from 'react';
 import UserSettingsModal from '../user-settings-modal';
 import { useKeyboardShortcut } from '../../hooks/use-keyboard-shortcut';
+import Button from '../button';
 
 const SideBar = () => {
     const location = useLocation();
@@ -22,7 +23,6 @@ const SideBar = () => {
 
     return (
         <>
-            {/* MOBILE NAV */}
             <nav className="md:hidden fixed top-0 left-0 w-full h-16 bg-smoke-100 dark:bg-zinc-950 border-b border-slate-200 dark:border-zinc-800 px-4 flex items-center justify-between z-50">
                 <a className='flex gap-2 items-center' href='/'>
                     <img className='size-8 rounded-md' src={logo} alt="logo" />
@@ -52,13 +52,17 @@ const SideBar = () => {
                             ))}
                         </ul>
                         <div className="mt-8 pt-4 border-t border-slate-200 dark:border-zinc-800">
-                             <button onClick={() => {setIsOpenModal(true); setIsOpenMenu(false)}} className="flex items-center gap-3 w-full p-3">
+                            <Button
+                                variants='outline'
+                                colors='secondary'
+                                onClick={() => {setIsOpenModal(true); setIsOpenMenu(false)}} className="gap-3 p-3"
+                            >
                                 <Avatar className='h-9 w-9'>
                                     <AvatarImage src="https://github.com/fernando-cruz-cavina.png" />
                                     <AvatarFallback>N</AvatarFallback>
                                 </Avatar>
                                 <span className="font-medium text-slate-700 dark:text-zinc-300">Configurações</span>
-                             </button>
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -71,12 +75,9 @@ const SideBar = () => {
                             <img className='size-8 rounded-md' src={logo} alt="logo" />  
                             {!isHideSidebar && <h1 className='heading-md dark:text-white'>LuxAI</h1>}
                         </a>
-                        <button 
-                            onClick={() => setIsHideSidebar(!isHideSidebar)} 
-                            className='size-8 flex justify-center items-center hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-sm cursor-pointer group transition-colors'
-                        >
-                            <Sidebar className='size-5 text-slate-500 dark:text-zinc-500 group-hover:text-slate-900 dark:group-hover:text-zinc-200 transition-colors'/>
-                        </button>
+                        <Button variants='outline' colors='secondary' onClick={() => setIsHideSidebar(!isHideSidebar)} className='size-8'>
+                            <Sidebar size={20}/>
+                        </Button>
                     </div>
                 </section>
 
@@ -97,9 +98,11 @@ const SideBar = () => {
                 </section>
 
                 <section className='mt-auto border-t border-slate-200 dark:border-zinc-800'>
-                    <button 
+                    <Button
+                        variants='outline'
+                        colors='secondary' 
                         onClick={() => setIsOpenModal(true)}  
-                        className={`flex items-center bg-slate-200/40 dark:bg-zinc-900/20 w-full h-16 px-4 hover:bg-slate-200/60 dark:hover:bg-zinc-900/60 transition-colors cursor-pointer ${isHideSidebar ? 'justify-center' : 'justify-between'}`}
+                        className={`w-full h-16 px-4 rounded-none  ${isHideSidebar ? 'justify-center' : 'justify-between'}`}
                     >
                         <div className='flex items-center gap-3'>
                             <Avatar className='h-9 w-9 border border-zinc-200 dark:border-zinc-700'>
@@ -109,7 +112,7 @@ const SideBar = () => {
                             {!isHideSidebar && <p className='font-medium text-sm text-slate-700 dark:text-zinc-300'>Nome</p>}
                         </div>  
                         {!isHideSidebar && <Bolt className='text-slate-400 dark:text-zinc-500 hover:text-yellow-500 transition-colors' size={18}/>}
-                    </button>
+                    </Button>
                 </section>
             </nav>
 
