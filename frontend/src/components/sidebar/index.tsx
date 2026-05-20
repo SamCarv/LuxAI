@@ -9,6 +9,7 @@ import { useState } from 'react';
 import UserSettingsModal from '../user-settings-modal';
 import { useKeyboardShortcut } from '../../hooks/use-keyboard-shortcut';
 import Button from '../button';
+import { useUserContext } from '../../hooks/use-user-context';
 
 const SideBar = () => {
     const location = useLocation();
@@ -18,6 +19,7 @@ const SideBar = () => {
     const [isOpenSettingsModal, setIsOpenModal] = useState(false);
     const currentSection = sections.find(s => location.pathname.startsWith(`/${s.id}`));
     const sectionTitle = currentSection ? t(currentSection.id) : 'No Section Selected';
+    const { user } = useUserContext(); user
     useKeyboardShortcut({key: "s"}, () => setIsOpenModal(!isOpenSettingsModal))
     useKeyboardShortcut({key: "h"}, () => setIsHideSidebar(!isHideSidebar))
 
@@ -107,9 +109,9 @@ const SideBar = () => {
                         <div className='flex items-center gap-3'>
                             <Avatar className='h-9 w-9 border border-zinc-200 dark:border-zinc-700'>
                                 <AvatarImage src="https://github.com/fernando-cruz-cavina.png" />
-                                <AvatarFallback className="dark:bg-zinc-800 dark:text-zinc-200">N</AvatarFallback>
+                                <AvatarFallback className="dark:bg-zinc-800 dark:text-zinc-200">{user?.full_name?.charAt(0) || "N"}</AvatarFallback>
                             </Avatar>
-                            {!isHideSidebar && <p className='font-medium text-sm text-slate-700 dark:text-zinc-300'>Nome</p>}
+                            {!isHideSidebar && <p className='font-medium text-sm text-slate-700 dark:text-zinc-300'>{user?.full_name || "Nome"}</p>}
                         </div>  
                         {!isHideSidebar && <Bolt className='text-slate-400 dark:text-zinc-500 hover:text-yellow-500 transition-colors' size={18}/>}
                     </Button>

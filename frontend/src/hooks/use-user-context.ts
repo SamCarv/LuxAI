@@ -11,5 +11,9 @@ export const UserContext = createContext<UserProps | null>(null)
 export const useUserContext = () => {
     const user = useContext(UserContext)
 
+    if (!user) {
+        throw new Error("userContext is null or undefined");
+    }
+
     return user
 }

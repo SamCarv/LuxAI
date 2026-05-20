@@ -4,19 +4,20 @@ import Input from "../../components/input"
 import Label from "../../components/label"
 import Panel from "../../components/panel"
 import type { UserLogin } from "../../types/authDTO/userLogin"
-import { useUserContext } from "../../hooks/use-user-context"
 import { login_for_access_token } from "../../services/auth"
+import { useNavigate } from "react-router-dom"
 
 interface LoginFormProps {
     onClose: () => void
 }
 
 const LoginForm = ({ onClose }: LoginFormProps) => {
-    const userContext = useUserContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const nav = useNavigate()
 
     async function login(event: FormEvent) {
         event.preventDefault();
@@ -29,23 +30,17 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
         };
 
         try {
-            const response = await login_for_access_token(userLogin);
-            const data = response.data;
+            const loginResponse = await login_for_access_token(userLogin);
+            const tokenData = loginResponse.data;
 
-            if (!(response.status === 200)) {
-                throw new Error(data.message || "Email ou senha incorretos.");
+            if (!(loginResponse.status === 200)) {
+                throw new Error(tokenData.message);
             }
 
-            if (userContext) {
-                userContext.setUser({
-                    full_name: data.full_name,
-                    email: data.email,
-                    is_active: data.is_active ?? true,
-                    ai_provider: data.ai_provider || "ollama"
-                });
-            }
+            const token = loginResponse.data.access_token;
+            localStorage.setItem("token", token);
 
-            onClose();
+            nav("/")
         } catch (err: any) {
             setError(err.message);
             console.error(err);
