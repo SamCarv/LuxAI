@@ -1,13 +1,15 @@
 import { Outlet } from 'react-router-dom'
-import Sidebar from './components/sidebar'
+import Sidebar from './components/side-bar'
 import NavBar from './components/navbar'
 import { useUserContext } from './hooks/use-user-context'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { get_user_by_id } from './services/user'
 import { jwtDecode } from 'jwt-decode'
+import SideChat from './components/side-chat'
 
 const Layout = () => {
     const { setUser } = useUserContext()
+    const [isAssistentAIOpen, setIsAssistentAIOpen] = useState(false)
 
     useEffect(() => {
         const init = async() => {
@@ -46,12 +48,15 @@ const Layout = () => {
             </aside>
             <div className="flex flex-col flex-1">
                 <header className="flex justify-end items-center">
-                    <NavBar />
+                    <NavBar toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>
                 </header>
                 <main className="flex flex-1 px-12 py-10 justify-center">
                     <Outlet />
                 </main>
             </div>
+            <aside>
+                {isAssistentAIOpen && <SideChat toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>}
+            </aside>
         </div>
     )
 }

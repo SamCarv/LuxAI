@@ -5,7 +5,11 @@ import { supportedLanguages, languagesMap} from './constants'
 import Button from '../button'
 import { useThemeContext } from '../../hooks/use-theme-context'
 
-const NavBar = () => {
+interface NavBarProps {
+    toggleSideChat: () => void
+}
+
+const NavBar = ({toggleSideChat}: NavBarProps) => {
     const {theme, switchTheme} = useThemeContext()
     const { i18n } = useTranslation()
 
@@ -43,7 +47,7 @@ const NavBar = () => {
                     </a>
                 </li>
                 <li>
-                    <Button variants='outline' colors='secondary' className='p-2'>
+                    <Button variants='outline' colors='secondary' className='p-2' onClick={toggleSideChat}>
                         <MessageSquare />
                     </Button>
                 </li>

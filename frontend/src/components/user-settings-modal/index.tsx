@@ -1,7 +1,7 @@
 import { X } from "lucide-react"
 import Modal from "../modal"
 import { userSettingsSections } from "./constants"
-import SectionSideBar from "../sidebar/section"
+import SectionSideBar from "../side-bar/section"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import ProfileSection from "./sections/profile"

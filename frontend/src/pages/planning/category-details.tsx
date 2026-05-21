@@ -66,7 +66,7 @@ const CategoryDetail: React.FC = () => {
 
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-zinc-800 min-h-37.5">
           <h3 className="text-gray-400 text-sm mb-2 uppercase font-semibold">Descrição</h3>
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{category?.description}</p>
+          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{category?.description || `Nenhuma descrição definida para esta categoria. Toque em editar para adicionar informações sobre seus gastos em ${category?.name}`}</p>
         </div>
 
         <div className="flex justify-around items-center pt-4">
@@ -139,7 +139,7 @@ const CategoryDetail: React.FC = () => {
               <div className="flex items-center gap-6">
                 <div className="text-right">
                   <p className="font-bold text-gray-900 dark:text-white">R$ {t.amount.toFixed(2)}</p>
-                  <span className="text-[10px] uppercase font-bold text-gray-400">Status: {t.status}</span>
+                  <span className={`text-[10px] uppercase font-bold text-gray-400 ${t.status === 'successful' ? 'text-green-500' : ' text-yellow-500'}`}>Status: {t.status}</span>
                 </div>
                 <div className="w-2 h-10 bg-gray-100 dark:bg-zinc-700 rounded-full overflow-hidden flex flex-col justify-end">
                     <div className="w-full h-1/2 bg-yellow-500" />
