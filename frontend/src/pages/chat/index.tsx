@@ -1,19 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import type { FC } from "react";
 import { Paperclip, Bot, Mic, SendHorizontal, Sparkles } from "lucide-react";
 import Button from "../../components/button/index";
 import ChatMessageText from "../../components/chat-message/index";
 import { cn } from "../../lib/utils";
-import type {
-  ChatAttachment,
-  ChatMessage,
-  ChatRequest,
-} from "../../types/chatDTO/chatRequest";
+import type { ChatAttachment, ChatMessage, ChatRequest } from "../../types/chatDTO/chatRequest";
 import { chat } from "../../services/chat";
 
 const models = ["ollama", "Gemini"];
 
-const Chat: FC = () => {
+const Chat = () => {
   const [message, setMessage] = useState("");
   const [modelIndex, setModelIndex] = useState(0);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -24,7 +19,6 @@ const Chat: FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-ajuste da altura do textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -32,7 +26,6 @@ const Chat: FC = () => {
     }
   }, [message]);
 
-  // Scroll suave para a última mensagem
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory, isGenerating]);
@@ -98,9 +91,8 @@ const Chat: FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-56px)] bg-slate-50 dark:bg-zinc-950 duration-300 overflow-hidden">
-      {/* Top Header - Estilo ChatGPT */}
-      <header className="w-full h-14 border-b border-slate-200/80 dark:border-zinc-800/60 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between px-6 z-10 sticky top-0">
+    <div className="flex flex-col w-full h-full items-center duration-300 overflow-hidden">
+      <header className="w-full max-w-3xl h-14 border-b border-slate-200/80 dark:border-zinc-800/60 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between px-6 z-10 sticky top-0">
         <div className="flex items-center gap-2">
           <Button
             type="button"
@@ -121,11 +113,10 @@ const Chat: FC = () => {
         </div>
       </header>
 
-      {/* Message Area */}
-      <div className="flex-1 overflow-y-auto scrollbar">
-        <div className="max-w-3xl mx-auto w-full px-4 py-8 space-y-6 flex flex-col min-h-[calc(100vh-180px)]">
+      <div className="flex-1 w-full overflow-y-auto scrollbar">
+        <div className="max-w-3xl mx-auto w-full py-8 space-y-6 flex flex-col h-full justify-center">
           {chatHistory.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 my-auto select-none animate-fade-in">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 mb-20 select-none animate-fade-in">
               <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center mb-4 shadow-sm border border-yellow-400/20">
                 <Sparkles
                   size={26}
@@ -152,7 +143,6 @@ const Chat: FC = () => {
             ))
           )}
 
-          {/* Indicador de carregamento / Digitação da IA */}
           {isGenerating && (
             <div className="flex flex-col items-start w-full animate-fade-in">
               <span className="text-xs text-slate-400 dark:text-zinc-500 mb-1 px-1">
@@ -170,8 +160,7 @@ const Chat: FC = () => {
         </div>
       </div>
 
-      {/* Floating Bottom Input Area */}
-      <div className="w-full sticky bottom-0 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent dark:from-zinc-950 dark:via-zinc-950/95 pt-6 pb-6 px-4 z-10">
+      <div className="w-full fixed self-center bottom-0 bg-linear-to-t from-slate-50 via-slate-50/95 to-transparent dark:from-zinc-950 dark:via-zinc-950/95 pt-6 pb-6 px-4 z-0">
         <div className="max-w-3xl mx-auto w-full">
           <form
             onSubmit={handleSendMessage}
@@ -244,7 +233,7 @@ const Chat: FC = () => {
               </Button>
             </div>
           </form>
-          <div className="text-[11px] text-center text-slate-400 dark:text-zinc-600 mt-2">
+          <div className="text-sm text-center text-slate-400 dark:text-zinc-600 mt-2">
             O Lux AI pode cometer erros. Considere verificar informações
             importantes.
           </div>

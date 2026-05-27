@@ -1,4 +1,5 @@
 import type { UserCreate } from "../types/userDTO/userCreate";
+import type { UserUpdate } from "../types/userDTO/userUpdate";
 import { api } from "./api";
 
 const ROUTE = "user";
@@ -11,4 +12,11 @@ const create_user = async (userCreate: UserCreate) => {
   return api.post(`${ROUTE}/`, userCreate);
 };
 
-export { get_user_by_id, create_user };
+const update_user = async (id: string, userUpdate: UserUpdate) => {
+  const token = localStorage.getItem("token");
+  return api.patch(`${ROUTE}/${id}`, userUpdate, {headers: {
+      Authorization: `Bearer ${token}`
+  }});
+};
+
+export { get_user_by_id, create_user, update_user };

@@ -10,6 +10,11 @@ import Section from "../section"
 import { useShortcutContext } from "../../hooks/use-shortcut-context"
 import { useKeyboardShortcut } from "../../hooks/use-keyboard-shortcut"
 import Button from "../button"
+import { useUserContext } from "../../hooks/use-user-context"
+import type { UserView } from "../../context/user-provider"
+import type { UserUpdate } from "../../types/userDTO/userUpdate"
+import { update_user } from "../../services/user"
+import { jwtDecode } from "jwt-decode"
 
 interface UserSettingsModal {
     onClose: () => void
@@ -18,7 +23,15 @@ interface UserSettingsModal {
 const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('profile');
-
+    const {user} = useUserContext();
+    const [settings, setSettings] = useState<UserUpdate>({
+        full_name: user!.full_name,
+        email: user!.email,
+        password: "",
+        ai_provider: user?.ai_provider || "gemini",
+        is_active: user!.is_active,
+        google_api_key: "",
+    });
     const { pushShortcutContext, popShortcutContext } = useShortcutContext();
 
     useEffect(() => {
@@ -28,10 +41,32 @@ const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
 
     useKeyboardShortcut({ key: "Escape" }, () => onClose(), "user_settings_modal");
 
+    const sendSettings = () => {
+        try {
+            const token = localStorage.getItem("token")
+                        
+            if(!token) {
+                console.log("Not get token")
+                return
+            }
+
+            const decodedJwt = jwtDecode(token)
+            const id = decodedJwt.sub
+            if(!id) {
+                console.log("Not get user_id")
+                return
+            }
+
+            update_user(id, settings)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const renderContent = () => {
         switch (activeTab) {
             case 'profile':
-                return <ProfileSection />;
+                return <ProfileSection settings={settings} setSettings={setSettings}/>;
             case 'ai':
                 return <AISection />;
             case 'system':
@@ -82,7 +117,7 @@ const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
                 <Button variants="standard" colors="secondary" onClick={onClose} className="text-sm font-medium">
                     Cancelar
                 </Button>
-                <Button variants="standard" colors="primary" className="text-sm font-medium">
+                <Button variants="standard" colors="primary" className="text-sm font-medium" onClick={sendSettings}>
                     Salvar alterações
                 </Button>
             </div>
