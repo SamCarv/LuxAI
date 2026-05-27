@@ -1,7 +1,7 @@
-import type { FC } from "react"
+import type { ButtonHTMLAttributes, FC } from "react"
 import { cn } from "../../lib/utils"
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variants: "standard" | "ghost" | "outline" | "circle"
   colors: "primary" | "secondary" | "no_color"
 }
