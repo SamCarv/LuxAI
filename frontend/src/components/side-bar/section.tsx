@@ -54,13 +54,13 @@ const SectionSideBar = ({ icon, title, shortcut, to, isActive, isCollapsed }: Se
 
         {!isCollapsed && (
           <>
-            <kbd className={`hidden md:flex items-center justify-center border-slate-400 dark:border-zinc-700 text-slate-500 dark:text-zinc-500 border-2 rounded px-1.5 min-w-6 h-6 mr-4 text-[12px] font-bold transition
+            <kbd className={`hidden lg:flex items-center justify-center border-slate-400 dark:border-zinc-700 text-slate-500 dark:text-zinc-500 border-2 rounded px-1.5 min-w-6 h-6 mr-4 text-[12px] font-bold transition
                 ${!isActive && 'group-hover:-translate-x-2'}
               `}
             >
               {shortcut.key.toLocaleLowerCase()}
             </kbd>
-            <ArrowRight className={`flex md:hidden text-slate-400 dark:text-zinc-600 px-1.5 mr-4
+            <ArrowRight className={`flex lg:hidden text-slate-400 dark:text-zinc-600 px-1.5 mr-4
                 ${!isActive && 'group-hover:-translate-x-2'}
               `} 
               size={36} />

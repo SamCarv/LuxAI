@@ -5,12 +5,12 @@ import Dashboard from './pages/dashboard'
 import Planning from './pages/planning'
 import Investment from './pages/investment'
 import Bank from './pages/bank'
-import Files from './pages/files'
 import Chat from './pages/chat'
 import CategoryDetails from './pages/planning/category-details'
 import Wallets from './pages/bank/wallets'
-import Transactions from './pages/bank/transactions'
+import Transactions from './pages/bank/transactions/index'
 import Login from './pages/login'
+import { Files } from './pages/document'
 
 function App() {
 

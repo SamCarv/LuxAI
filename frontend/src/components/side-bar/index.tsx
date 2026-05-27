@@ -25,7 +25,7 @@ const SideBar = () => {
 
     return (
         <>
-            <nav className="md:hidden fixed top-0 left-0 w-full h-16 bg-smoke-100 dark:bg-zinc-950 border-b border-slate-200 dark:border-zinc-800 px-4 flex items-center justify-between z-50">
+            <nav className="lg:hidden fixed top-0 left-0 w-full h-16 bg-smoke-100 dark:bg-zinc-950 border-b border-slate-200 dark:border-zinc-800 px-4 flex items-center justify-between z-50">
                 <a className='flex gap-2 items-center' href='/'>
                     <img className='size-8 rounded-md' src={logo} alt="logo" />
                 </a>
@@ -70,7 +70,7 @@ const SideBar = () => {
                 )}
             </nav>
 
-            <nav className={`hidden sticky top-0 md:flex flex-col bg-smoke-100 dark:bg-zinc-950 h-screen border-r border-slate-200 dark:border-zinc-800 transition-all duration-300 ${isHideSidebar ? 'w-24' : 'w-66'}`}>
+            <nav className={`hidden sticky top-0 lg:flex flex-col bg-smoke-100 dark:bg-zinc-950 h-screen border-r border-slate-200 dark:border-zinc-800 transition-all duration-300 ${isHideSidebar ? 'w-24' : 'w-66'}`}>
                 <section>
                     <div className={`flex items-center justify-between bg-slate-200/40 dark:bg-zinc-900/40 w-full h-13 px-4 ${isHideSidebar && 'flex-col py-4 gap-4 h-fit'}`}>
                         <a className='flex gap-2 items-center' href='/'>
