@@ -3,6 +3,7 @@ import type { PeriodicityType, StatusTransactionType, Transaction, TransactionTy
 import Button from "../../../components/button";
 import Input from "../../../components/input";
 import Label from "../../../components/label";
+import Modal from "../../../components/modal";
 
 interface TransactionModalProps {
   onClose: () => void;
@@ -55,13 +56,12 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-3xl p-6 shadow-xl animate-in fade-in zoom-in-95 my-auto">
+    <Modal>
         <h2 className="text-xl font-bold dark:text-white mb-4">
           Nova Transação
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
 
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-2 p-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl">
             <button
               type="button"
@@ -159,9 +159,8 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
-}
+};
 
 export default TransactionModal;

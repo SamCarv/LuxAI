@@ -5,7 +5,7 @@ interface PanelItemInfoProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const PanelItemInfo: FC<PanelItemInfoProps> = ({ children, className, ...props }) => {
   return (
-    <div className={cn('flex flex-col justify-center', className)} {...props}>
+    <div className={cn('flex flex-col justify-center items-start', className)} {...props}>
         {children}
     </div>
   )

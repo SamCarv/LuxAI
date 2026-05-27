@@ -1,7 +1,6 @@
 import { X } from "lucide-react"
 import Modal from "../modal"
 import { userSettingsSections } from "./constants"
-import SectionSideBar from "../side-bar/section"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import ProfileSection from "./sections/profile"
@@ -14,20 +13,20 @@ import Button from "../button"
 
 interface UserSettingsModal {
     onClose: () => void
-} 
+}
 
-const UserSettingsModal = ({ onClose } : UserSettingsModal) => {
+const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('profile');
 
     const { pushShortcutContext, popShortcutContext } = useShortcutContext();
-    
+
     useEffect(() => {
         pushShortcutContext("user_settings_modal");
         return () => popShortcutContext();
     }, []);
 
-    useKeyboardShortcut({key: "Escape"}, () => onClose(), "user_settings_modal");
+    useKeyboardShortcut({ key: "Escape" }, () => onClose(), "user_settings_modal");
 
     const renderContent = () => {
         switch (activeTab) {
@@ -35,7 +34,7 @@ const UserSettingsModal = ({ onClose } : UserSettingsModal) => {
                 return <ProfileSection />;
             case 'ai':
                 return <AISection />;
-            case 'system': 
+            case 'system':
                 return <SystemSection />;
             case 'notification':
                 return (
@@ -51,7 +50,7 @@ const UserSettingsModal = ({ onClose } : UserSettingsModal) => {
     }
 
     return (
-        <Modal>
+        <Modal className="lg:max-w-4xl">
             <div className="flex justify-between items-center mb-6">
                 <h1 className='heading-lg'>Configurações</h1>
                 <button onClick={onClose} className="hover:bg-slate-200 rounded-full p-2 cursor-pointer transition ease-in text-slate-500">
@@ -59,14 +58,14 @@ const UserSettingsModal = ({ onClose } : UserSettingsModal) => {
                 </button>
             </div>
 
-            <div className="flex gap-8 min-h-100">
-                <ul className="flex flex-col w-56 border-r border-slate-100 dark:border-zinc-600 pr-4">
+            <div className="flex flex-col lg:flex-row gap-8 min-h-100">
+                <ul className="flex flex-row lg:flex-col w-full lg:w-56 border-r border-slate-100 dark:border-zinc-600 pr-4">
                     {userSettingsSections.map((section) => (
-                        <Section 
+                        <Section
                             key={section.id}
                             icon={<section.icon size={20} />}
                             title={t(section.id)}
-                            shortcut={{key: t(section.id.charAt(0))}}
+                            shortcut={{ key: t(section.id.charAt(0)) }}
                             isActive={activeTab === section.id}
                             scope="user_settings_modal"
                             onClick={() => setActiveTab(section.id)}

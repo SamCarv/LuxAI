@@ -1,8 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  ChevronLeft, BarChart2, GitCompare, Edit3, Trash2, Plus, 
-  Calendar, CheckCircle2, Clock, Search, Filter, 
-} from 'lucide-react';
+import { ChevronLeft, Trash2, Plus, Calendar, CheckCircle2, Clock, Search, Filter } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { categories } from '../../utils/constants.planning';
 import type { Transaction } from '../../types/transaction';

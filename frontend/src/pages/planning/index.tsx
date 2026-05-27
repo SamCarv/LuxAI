@@ -111,11 +111,11 @@ const Planning = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {categories.map((category) => (
             <PanelItem key={category.id} className="w-full ">
-              <NavLink className="flex w-full items-center" to={category.id.toString()}>
+              <NavLink className="flex w-full items-center min-w-0" to={category.id.toString()}>
                 <PanelItemIcon style={{ backgroundColor: `#${category.color}`}} className="group-hover:brightness-110 transition shadow-md shrink-0">
                   {category ? <DynamicIcon name={category.icon as IconName} /> : <Home />}
                 </PanelItemIcon>
-                <PanelItemInfo className="flex-1 ml-3 truncate">
+                <PanelItemInfo className="flex-1 lg:ml-3 truncate">
                   <PanelItemInfoTitle className="font-semibold text-slate-800 dark:text-slate-200 truncate">{category.name}</PanelItemInfoTitle>
                   <PanelItemInfoDetail className="text-slate-500 dark:text-slate-400 font-medium">R$ 1900.00</PanelItemInfoDetail>
                 </PanelItemInfo>
