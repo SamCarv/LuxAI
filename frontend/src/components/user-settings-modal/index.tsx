@@ -15,6 +15,7 @@ import type { UserView } from "../../context/user-provider"
 import type { UserUpdate } from "../../types/userDTO/userUpdate"
 import { update_user } from "../../services/user"
 import { jwtDecode } from "jwt-decode"
+import { toast } from "sonner"
 
 interface UserSettingsModal {
     onClose: () => void
@@ -41,7 +42,7 @@ const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
 
     useKeyboardShortcut({ key: "Escape" }, () => onClose(), "user_settings_modal");
 
-    const sendSettings = () => {
+    const sendSettings = async() => {
         try {
             const token = localStorage.getItem("token")
                         
@@ -57,9 +58,11 @@ const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
                 return
             }
 
-            update_user(id, settings)
+            await update_user(id, settings)
+            toast.success("Alteração com sucesso!")
         } catch (error) {
             console.log(error);
+            toast.error("Erro ao atualizar os dados!")
         }
     }
 

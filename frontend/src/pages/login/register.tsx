@@ -6,6 +6,7 @@ import Panel from "../../components/panel";
 import { useUserContext } from "../../hooks/use-user-context";
 import { create_user } from "../../services/user";
 import type { UserCreate } from "../../types/userDTO/userCreate";
+import { toast } from "sonner";
 
 interface RegisterFormProps {
     onClose: () => void
@@ -55,10 +56,12 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
                     ai_provider: data.ai_provider || "ollama"
                 })
             }
+            toast.success("Conta criada com sucesso! Faça login para continuar.")
             onClose();
         } catch (err: any) {
             setError(err.message);
             console.log(err)
+            toast.error("Erro ao criar conta. Tente novamente.");
         } finally {
             setIsLoading(false);
         }
