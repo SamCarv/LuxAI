@@ -15,5 +15,6 @@ export default defineConfig({
     host: true,
     port: 5173,
     strictPort: true,
+    allowedHosts: ["luxai-74qvb.ondigitalocean.app"],
   },
 });
