@@ -46,8 +46,8 @@ const Section = ({ icon, title, shortcut, isActive, isCollapsed, scope, onClick 
                         {icon}
                     </div>
 
-                    <h2 className={`font-medium transition-all text-sm lg:body-md
-                        ${isCollapsed ? 'leading-tight text-center body-sm' : ''}
+                    <h2 className={`transition-all
+                        ${isCollapsed ? 'leading-tight text-center' : ''}
                         ${isActive
                             ? 'text-candy-corn-700 dark:text-candy-corn-400'
                             : 'text-slate-600 dark:text-zinc-400 group-hover:dark:text-zinc-200'}

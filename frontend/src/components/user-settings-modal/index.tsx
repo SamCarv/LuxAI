@@ -68,7 +68,7 @@ const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
             case 'profile':
                 return <ProfileSection settings={settings} setSettings={setSettings}/>;
             case 'ai':
-                return <AISection />;
+                return <AISection settings={settings} setSettings={setSettings}/>;
             case 'system':
                 return <SystemSection />;
             case 'notification':
