@@ -3,6 +3,8 @@ import binascii
 import io
 import os
 from datetime import datetime, timezone
+from typing import Optional
+from uuid import UUID
 
 from fastapi import HTTPException, UploadFile
 from pydantic_ai.messages import (
@@ -19,6 +21,11 @@ from app.agents.deps import AgentDeps
 from app.api.v1.schemas.chat import ChatAttachment
 from app.core.security import decrypt_string
 from app.models.user import User
+from app.services.chat_session_service import (
+    get_or_create_session,
+    get_session_history,
+    save_message,
+)
 from app.services.document_service import create_document_service
 
 
@@ -82,7 +89,7 @@ async def _process_attachments(
     for attachment in attachments:
         try:
             data = base64.b64decode(attachment.base64_data, validate=True)
-        except (binascii.Error, ValueError):
+        except binascii.Error, ValueError:
             raise HTTPException(status_code=400, detail="Invalid base64 attachment")
 
         upload = _InMemoryUpload(
@@ -125,13 +132,22 @@ async def run_chat(
     message: str,
     session: Session,
     current_user: User,
+    session_id: Optional[UUID] = None,
     history: list[dict[str, str]] | None = None,
     attachments: list[ChatAttachment] | None = None,
     files: list[UploadFile] | None = None,
-) -> str:
+) -> dict:
     api_key = _resolve_api_key(current_user)
     agent = build_chat_agent(api_key)
     deps = AgentDeps(session=session, current_user=current_user)
+
+    chat_session = await get_or_create_session(
+        session, current_user, session_id, first_message=message
+    )
+
+    if not history:
+        history = await get_session_history(session, chat_session.id)
+
     message_history = _build_message_history(history)
 
     added_titles: list[str] = []
@@ -148,6 +164,8 @@ async def run_chat(
             f"{', '.join(added_titles)}.\n\n{message}"
         )
 
+    await save_message(session, chat_session.id, role="user", content=message)
+
     async with agent:
         result = await agent.run(
             message,
@@ -155,4 +173,8 @@ async def run_chat(
             message_history=message_history,
         )
 
-    return result.output
+    await save_message(
+        session, chat_session.id, role="assistant", content=result.output
+    )
+
+    return {"response": result.output, "session_id": chat_session.id}
