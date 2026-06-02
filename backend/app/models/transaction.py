@@ -7,6 +7,7 @@ from pgvector.sqlalchemy import Vector
 from sqlmodel import Field, Relationship
 
 from app.api.v1.schemas.transaction import TransactionBase
+from app.enums.transaction_status import TransactionStatus
 
 if TYPE_CHECKING:
     from .bank_account import BankAccount
@@ -16,6 +17,7 @@ from sqlmodel import (
     Column,
     DateTime,
     Numeric,
+    String,
     text,
 )
 
@@ -59,6 +61,16 @@ class Transaction(TransactionBase, table=True):
         default=None,
         sa_column=Column(Vector(768), nullable=True),
     )
+
+    status: TransactionStatus = Field(
+        default=TransactionStatus.SUCCESS,
+        sa_column=Column(
+            String(20),
+            nullable=False,
+            default=TransactionStatus.SUCCESS.value,
+        ),
+    )
+    failure_reason: Optional[str] = Field(default=None, nullable=True)
 
     category: Optional["Category"] = Relationship(back_populates="transactions")
     account: Optional["BankAccount"] = Relationship(back_populates="transactions")

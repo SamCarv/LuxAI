@@ -12,6 +12,7 @@ from sqlmodel import Session, select
 
 from app.db.database import engine
 from app.enums.recurrence_frequency import RecurrenceFrequency
+from app.enums.transaction_status import TransactionStatus
 from app.enums.transaction_type import TransactionType
 from app.models.bank_account import BankAccount
 from app.models.transaction import Transaction
@@ -137,6 +138,7 @@ def generate_recurring_transactions(
                 description_vector=template.description_vector,
                 recurrence_parent_id=template.id,
                 date=occurrence_datetime,
+                status=TransactionStatus.SUCCESS,
             )
 
             account.balance += _signed_amount(template.amount, template.type)
