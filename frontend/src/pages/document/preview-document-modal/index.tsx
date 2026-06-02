@@ -1,6 +1,6 @@
 import Button from "../../../components/button"
 import Modal from "../../../components/modal"
-import type { Document } from "../../../types/documen"
+import type { Document } from "../../../types/document"
 
 interface PreviewDocumentModalProps {
     previewFile: Document

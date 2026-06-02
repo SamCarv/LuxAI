@@ -1,5 +1,6 @@
 import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
-import { type UserView } from "../context/user-provider";
+import type { UserView } from "../types/user";
+
 
 interface UserProps {
     user: UserView | null,

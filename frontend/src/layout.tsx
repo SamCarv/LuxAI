@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 import Sidebar from './components/side-bar'
 import NavBar from './components/navbar'
 import { useUserContext } from './hooks/use-user-context'
@@ -11,10 +11,9 @@ import { Toaster } from 'sonner'
 const Layout = () => {
     const { setUser } = useUserContext()
     const [isAssistentAIOpen, setIsAssistentAIOpen] = useState(false)
-
+    const token = localStorage.getItem("token")
     useEffect(() => {
         const init = async() => {
-            const token = localStorage.getItem("token")
             
             if(!token) {
                 console.log("Not get token")
@@ -42,7 +41,7 @@ const Layout = () => {
         init()
     }, [])
 
-    return (
+    return token? (
         <div className="flex w-full h-full">
             <aside>
                 <Sidebar />
@@ -60,7 +59,7 @@ const Layout = () => {
             </aside>
             <Toaster richColors position='top-center'/>
         </div>
-    )
+    ): <Navigate to={'/login'} replace />
 }
 
 export default Layout

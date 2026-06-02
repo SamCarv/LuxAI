@@ -1,8 +1,10 @@
 import type { FC } from "react";
 import { cn } from "../../lib/utils";
+import ReactMarkdown from 'react-markdown';
 
 interface ChatMessageProps extends React.HTMLAttributes<HTMLDivElement> {
   role: "user" | "assistant";
+  children: string
 }
 
 const ChatMessageText: FC<ChatMessageProps> = ({ role, className, children, ...props }) => {
@@ -15,7 +17,7 @@ const ChatMessageText: FC<ChatMessageProps> = ({ role, className, children, ...p
         {role === "user" ? "Você" : "Lux - AI"}
       </span>
       <div className={cn("max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap wrap-break-words shadow-sm", bubbleStyle)}>
-        {children}
+        <ReactMarkdown>{children}</ReactMarkdown>
       </div>
     </div>
   );

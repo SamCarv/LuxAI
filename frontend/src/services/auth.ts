@@ -1,4 +1,4 @@
-import type { UserLogin } from "../types/authDTO/userLogin"
+import type { UserLogin } from "../types/auth"
 import { api } from "./api"
 
 const login_for_access_token = (userLogin: UserLogin) => {

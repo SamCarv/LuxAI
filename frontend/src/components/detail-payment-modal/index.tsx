@@ -1,12 +1,12 @@
 import { X, Calendar, Repeat, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
-import type { Transaction } from '../../types/transaction'
+import type { Transaction, TransactionView } from '../../types/transaction'
 import Modal from '../modal'
 import Button from '../button'
 import { DynamicIcon, type IconName } from '../../pages/planning/dynamic-icon'
 import { categories } from '../../utils/constants.planning'
 
 interface TransactionDetailsModalProps {
-    transaction: Transaction | null
+    transaction: TransactionView | null
     onClose: () => void
 }
 
@@ -60,7 +60,7 @@ export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDet
                     <span className="text-gray-400">Periodicidade</span>
                     <span className="flex items-center gap-1.5 text-gray-800 dark:text-gray-200 font-semibold capitalize">
                         <Repeat size={14} className="text-gray-400" />
-                        {transaction.periodicity}
+                        {transaction.recurrence_frequency}
                     </span>
                 </div>
 

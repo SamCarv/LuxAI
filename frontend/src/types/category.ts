@@ -1,6 +1,6 @@
 import type { Transaction } from "./transaction"
 
-export type Category = {
+type Category = {
     id: number,
     name: string,
     icon: string,
@@ -9,3 +9,5 @@ export type Category = {
     transactions: Transaction[]
     user_id: number,
 }
+
+export type { Category }

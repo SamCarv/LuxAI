@@ -3,7 +3,7 @@ import { Paperclip, Bot, Mic, SendHorizontal, Sparkles } from "lucide-react";
 import Button from "../../components/button/index";
 import ChatMessageText from "../../components/chat-message/index";
 import { cn } from "../../lib/utils";
-import type { ChatAttachment, ChatMessage, ChatRequest } from "../../types/chatDTO/chatRequest";
+import type { ChatAttachment, ChatMessage, ChatRequest } from "../../types/chat";
 import { chat } from "../../services/chat";
 
 const models = ["ollama", "Gemini"];
@@ -114,7 +114,7 @@ const Chat = () => {
       </header>
 
       <div className="flex-1 w-full overflow-y-auto scrollbar">
-        <div className="max-w-3xl mx-auto w-full py-8 space-y-6 flex flex-col h-full justify-center">
+        <div className="max-w-3xl mx-auto w-full pt-8 pb-36 space-y-6 flex flex-col h-full justify-center">
           {chatHistory.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 mb-20 select-none animate-fade-in">
               <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center mb-4 shadow-sm border border-yellow-400/20">
@@ -127,8 +127,8 @@ const Chat = () => {
                 Como posso ajudar você hoje?
               </h3>
               <p className="text-sm text-slate-400 dark:text-zinc-500 mt-2 max-w-sm leading-relaxed">
-                Estou aqui para facilitar sua vida financeira e tirar qualquer
-                dúvida que você tiver.
+                Estou aqui para organizar sua vida financeira e orientar suas escolhas
+                de gastos e metas.
               </p>
             </div>
           ) : (

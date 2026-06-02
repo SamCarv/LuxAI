@@ -10,7 +10,7 @@ export const sections = [
         icon: ChartNoAxesCombined,
     },
     {
-        id: "investment",
+        id: "goals",
         icon: Flag,
     },
     {

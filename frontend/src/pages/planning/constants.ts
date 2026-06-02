@@ -15,7 +15,7 @@ export const chartConfig = {
 export const VIEWS = [
   { id: 'expense', label: 'Despesas', color: 'bg-red-500' },
   { id: 'income', label: 'Receitas', color: 'bg-green-500' },
-  { id: 'profit', label: 'Lucro', color: 'bg-blue-500' },
+  { id: 'profit', label: 'Saldo', color: 'bg-blue-500' },
 ] as const;
 
 export const PERIODS = [

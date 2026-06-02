@@ -1,4 +1,4 @@
-import type { Document } from "../../types/documen";
+import type { Document } from "../../types/document";
 
 export const documentsData: Document[] = [
   { id: '1', user_id: 'u1', title: 'Extrato Março', filename: 'extrato_marco_2026.csv', content_type: 'text/csv', storage_path: '', text: 'Data,Descrição,Valor\n26/03,Almoço,-R$45.00', created_at: '10-04-2026' },

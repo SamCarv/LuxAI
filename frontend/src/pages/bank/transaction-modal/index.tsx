@@ -18,7 +18,7 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
   const [amount, setAmount] = useState<number>(0);
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState<StatusTransactionType>("pending");
-  const [periodicity, setPeriodicity] = useState<PeriodicityType>("once");
+  const [periodicity, setPeriodicity] = useState<PeriodicityType>("none");
   const [accountId, setAccountId] = useState<number>(wallets[0]?.id || 0);
   const [categoryId, setCategoryId] = useState<number>(categories[0]?.id || 0);
 
@@ -28,7 +28,7 @@ const TransactionModal = ({ onClose, onSave, categories, wallets }: TransactionM
     setAmount(0);
     setDate(new Date().toISOString().split('T')[0]);
     setStatus("pending");
-    setPeriodicity("once");
+    setPeriodicity("none");
     setAccountId(wallets[0]?.id || 0);
     setCategoryId(categories[0]?.id || 0);
   };

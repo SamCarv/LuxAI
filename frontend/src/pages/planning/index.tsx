@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeftRight, Home, Plus, X, Calendar } from "lucide-react";
+import { ArrowLeftRight, Home, Plus, X, Calendar, HelpCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import PanelItem from "../../components/panel/panel.item";
@@ -18,6 +18,8 @@ import { chartConfig, PERIODS, VIEWS } from "./constants";
 import { type ActiveView, type TimePeriod } from "./types";
 import { usePlanningCharts } from "./use-planning-charts";
 import { PlanningChartRender } from "./planning-chart-render";
+import Button from "../../components/button";
+import InfoPlanningSectionModal from "./info-section-modal";
 
 const Planning = () => {
   const { t } = useTranslation();
@@ -25,13 +27,17 @@ const Planning = () => {
   const [isComparing, setIsComparing] = useState(false);
   const [period, setPeriod] = useState<TimePeriod>('month');
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [isInfoPlanningModalOpen, setInfoPlanningModalOpen] = useState(false);
 
   const chartDataBundled = usePlanningCharts(activeView, isComparing);
 
   return (
     <section className="flex flex-col w-full h-full gap-y-6 max-w-7xl mx-auto p-4 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('planning')}</h1>
+        <Button onClick={() => setInfoPlanningModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
+          <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Planejamento</h1>
+          <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in'/>
+        </Button>
 
         <div className="flex items-center gap-2 bg-smoke-100 dark:bg-zinc-800 p-1 rounded-xl border border-slate-200 dark:border-zinc-700 w-full sm:w-auto overflow-x-auto no-scrollbar shadow-inner">
           {PERIODS.map((p) => (
@@ -131,14 +137,16 @@ const Planning = () => {
           
           <button 
             onClick={() => setCategoryModalOpen(true)}
-            className="flex items-center justify-center h-18 rounded-md border-2 border-slate-300 dark:border-slate-700 hover:border-candy-corn-600 hover:text-candy-corn-600 dark:hover:border-candy-corn-300 dark:hover:text-candy-corn-300 bg-slate-50/50 dark:bg-slate-900/20 text-slate-400 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 h-18 rounded-md border-2 border-slate-300 dark:border-slate-700 hover:border-candy-corn-600 hover:text-candy-corn-600 dark:hover:border-candy-corn-300 dark:hover:text-candy-corn-300 bg-slate-50/50 dark:bg-slate-900/20 text-slate-400 transition-all cursor-pointer"
           >
             <Plus size={20} />
+            Criar Despesa
           </button>
         </div>
       </div>
 
       {isCategoryModalOpen && <CreateCategoryModal onClose={() => setCategoryModalOpen(false)}/>}
+      {isInfoPlanningModalOpen && <InfoPlanningSectionModal onClose={() => setInfoPlanningModalOpen(false)} />}
     </section>
   );
 };

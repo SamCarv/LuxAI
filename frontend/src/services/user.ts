@@ -1,11 +1,11 @@
-import type { UserCreate } from "../types/userDTO/userCreate";
-import type { UserUpdate } from "../types/userDTO/userUpdate";
+import type { UserCreate, UserUpdate } from "../types/user";
 import { api } from "./api";
 
 const ROUTE = "user";
 
 const get_user_by_id = async (id: string) => {
-  return api.get(`/${ROUTE}/${id}`);
+  const token = localStorage.getItem("token");
+  return api.get(`/${ROUTE}/${id}`, {headers: {Authorization: `Bearer ${token}`}});
 };
 
 const create_user = async (userCreate: UserCreate) => {
