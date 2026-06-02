@@ -23,6 +23,13 @@ from app.agents.category import (
     update_category_service,
 )
 from app.agents.deps import AgentDeps
+from app.agents.goal import (
+    create_goal_service,
+    delete_goal_service,
+    get_goal_service,
+    list_goals_service,
+    update_goal_service,
+)
 from app.agents.transaction import (
     create_transaction_service,
     delete_transaction_service,
@@ -37,6 +44,7 @@ from app.api.v1.schemas.bank_account import (
 )
 from app.api.v1.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
 from app.api.v1.schemas.document import DocumentChunkResult, DocumentRead
+from app.api.v1.schemas.goal import GoalCreate, GoalRead, GoalUpdate
 from app.api.v1.schemas.transaction import (
     TransactionCreate,
     TransactionRead,
@@ -205,6 +213,56 @@ def build_chat_agent(api_key: str) -> Agent[AgentDeps, str]:
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
         return delete_category_service(ctx.deps.session, current_user, category_id)
+
+    @agent.tool
+    def list_goals(
+        ctx: RunContext[AgentDeps], limit: int = 5, offset: int = 0
+    ) -> list[GoalRead]:
+        """Lista metas financeiras do usuário."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        goals = list_goals_service(
+            ctx.deps.session, current_user, limit=limit, offset=offset
+        )
+        return [GoalRead.model_validate(goal) for goal in goals]
+
+    @agent.tool
+    def get_goal(ctx: RunContext[AgentDeps], goal_id: UUID) -> GoalRead:
+        """Busca uma meta financeira por ID."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        goal = get_goal_service(ctx.deps.session, current_user, goal_id)
+        return GoalRead.model_validate(goal)
+
+    @agent.tool
+    def create_goal(ctx: RunContext[AgentDeps], data: GoalCreate) -> GoalRead:
+        """Cria uma meta financeira."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        goal = create_goal_service(ctx.deps.session, current_user, data)
+        return GoalRead.model_validate(goal)
+
+    @agent.tool
+    def update_goal(
+        ctx: RunContext[AgentDeps], goal_id: UUID, data: GoalUpdate
+    ) -> GoalRead:
+        """Atualiza uma meta financeira."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        goal = update_goal_service(ctx.deps.session, current_user, goal_id, data)
+        return GoalRead.model_validate(goal)
+
+    @agent.tool
+    def delete_goal(ctx: RunContext[AgentDeps], goal_id: UUID) -> dict[str, str]:
+        """Remove uma meta financeira."""
+        current_user = ctx.deps.current_user
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        return delete_goal_service(ctx.deps.session, current_user, goal_id)
 
     @agent.tool
     def list_documents(

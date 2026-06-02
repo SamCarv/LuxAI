@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { get_user_by_id } from './services/user'
 import { jwtDecode } from 'jwt-decode'
 import SideChat from './components/side-chat'
+import { Toaster } from 'sonner'
 
 const Layout = () => {
     const { setUser } = useUserContext()
@@ -57,6 +58,7 @@ const Layout = () => {
             <aside>
                 {isAssistentAIOpen && <SideChat toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>}
             </aside>
+            <Toaster richColors position='top-center'/>
         </div>
     )
 }

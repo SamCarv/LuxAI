@@ -165,6 +165,8 @@ async def create_transaction_service(
         recurrence_day=data.recurrence_day,
         metadata_info=data.metadata_info,
         description_vector=vector,
+        status=data.status,
+        failure_reason=data.failure_reason,
     )
 
     signed_amount = _signed_amount(data.amount, data.type)
