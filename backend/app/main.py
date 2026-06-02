@@ -10,6 +10,7 @@ from app.api.v1.routers import (
     bank_account,
     category,
     chat,
+    dashboard,
     document,
     goal,
     transaction,
@@ -68,6 +69,7 @@ app.include_router(category.router)
 app.include_router(goal.router)
 app.include_router(auth.router)
 app.include_router(chat.router)
+app.include_router(dashboard.router)
 app.include_router(document.router)
 
 
