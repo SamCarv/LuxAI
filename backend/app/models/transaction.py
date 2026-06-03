@@ -17,7 +17,6 @@ from sqlmodel import (
     Column,
     DateTime,
     Numeric,
-    String,
     text,
 )
 
@@ -64,11 +63,7 @@ class Transaction(TransactionBase, table=True):
 
     status: TransactionStatus = Field(
         default=TransactionStatus.SUCCESS,
-        sa_column=Column(
-            String(20),
-            nullable=False,
-            default=TransactionStatus.SUCCESS.value,
-        ),
+        nullable=False,
     )
     failure_reason: Optional[str] = Field(default=None, nullable=True)
 
