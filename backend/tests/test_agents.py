@@ -11,6 +11,8 @@ def test_chat_agent_registers_tools() -> None:
     assert "update_current_user" in tools
     assert "create_category" in tools
     assert "create_transaction" in tools
+    assert "list_goals" in tools
+    assert "create_goal" in tools
     assert "list_bank_accounts" in tools
     assert "list_documents" in tools
     assert "search_documents" in tools

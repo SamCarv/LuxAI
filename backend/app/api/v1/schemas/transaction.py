@@ -25,13 +25,13 @@ class TransactionBase(SQLModel):
         default_factory=dict,
         sa_type=JSON,
     )
-    status: TransactionStatus = Field(default=TransactionStatus.SUCCESS)
-    failure_reason: Optional[str] = None
 
 
 class TransactionRead(TransactionBase):
     id: UUID
     date: datetime
+    status: TransactionStatus
+    failure_reason: Optional[str] = None
 
 
 class TransactionCreate(BaseModel):

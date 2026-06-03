@@ -4,11 +4,13 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.api.v1.schemas.transaction import TransactionRead
+from app.enums.category_icon import CategoryIcon
 
 
 class CategoryBase(BaseModel):
     name: str
-    icon: Optional[str] = None
+    description: Optional[str] = None
+    icon: Optional[CategoryIcon] = None
     color: Optional[str] = None
 
 
@@ -24,5 +26,6 @@ class CategoryRead(CategoryBase):
 
 class CategoryUpdate(BaseModel):
     name: Optional[str] = None
-    icon: Optional[str] = None
+    description: Optional[str] = None
+    icon: Optional[CategoryIcon] = None
     color: Optional[str] = None
