@@ -5,6 +5,7 @@ import ChatMessageText from "../../components/chat-message/index";
 import { cn } from "../../lib/utils";
 import type { ChatAttachment, ChatMessage, ChatRequest } from "../../types/chat";
 import { chat } from "../../services/chat";
+import { useLocation } from "react-router-dom";
 
 const models = ["ollama", "Gemini"];
 
@@ -18,6 +19,16 @@ const Chat = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const autoMessage = location.state?.autoSendMessage;
+    
+    if (autoMessage && chatHistory.length === 0 && !isGenerating) {
+      sendMessageFlow(autoMessage);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, chatHistory]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -30,7 +41,54 @@ const Chat = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory, isGenerating]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const sendMessageFlow = async (textToSend: string) => {
+    const currentAttachments = [...attachments];
+
+    const newUserMessage: ChatMessage = {
+      role: "user",
+      content: textToSend,
+    };
+
+    setChatHistory((prev) => [...prev, newUserMessage]);
+    setIsGenerating(true);
+
+    try {
+      const formattedHistory: ChatMessage[] = chatHistory.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      const requestPayload: ChatRequest = {
+        message: textToSend,
+        history: formattedHistory,
+        attachments: currentAttachments,
+      };
+
+      const response = await chat(requestPayload);
+      const assistantContent = response.data?.response || "Não consigo responder";
+
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: assistantContent,
+        },
+      ]);
+    } catch (error) {
+      console.error("Erro na requisição do chat AI:", error);
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Oops! Tive um problema para me conectar ao servidor. Pode tentar de novo?",
+        },
+      ]);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || isGenerating) return;
 
@@ -163,7 +221,7 @@ const Chat = () => {
       <div className="w-full fixed self-center bottom-0 bg-linear-to-t from-slate-50 via-slate-50/95 to-transparent dark:from-zinc-950 dark:via-zinc-950/95 pt-6 pb-6 px-4 z-0">
         <div className="max-w-3xl mx-auto w-full">
           <form
-            onSubmit={handleSendMessage}
+            onSubmit={sendMessage}
             className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 rounded-2xl p-3 shadow-md focus-within:ring-2 focus-within:ring-yellow-400/40 focus-within:border-yellow-400/60 duration-200 flex flex-col gap-2"
           >
             <textarea
@@ -174,7 +232,7 @@ const Chat = () => {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  handleSendMessage(e);
+                  sendMessage(e);
                 }
               }}
               placeholder="Envie uma mensagem para o Lux..."

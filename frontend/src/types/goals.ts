@@ -1,21 +1,24 @@
-type Goal = {
+type GoalView = {
     id: string,
     name: string,
-    targetAmount: number,
-    currentAmount: number,
+    target_amount: number,
+    current_amount: number,
     deadline: string,
+    user_id: string
 }
 
 type CreateGoal = {
     name: string,
-    targetAmount: number,
-    initialAmount: number,
+    target_amount: number,
+    initial_amount: number,
     deadline: string,
 }
 
 type UpdateGoal = {
-    amount: number,
-    accountId: string
+    name: string,
+    target_amount: number,
+    current_amount: number,
+    deadline: string,
 }
 
-export type { Goal, CreateGoal, UpdateGoal }
+export type { GoalView, CreateGoal, UpdateGoal }

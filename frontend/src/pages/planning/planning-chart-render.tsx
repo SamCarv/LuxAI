@@ -1,5 +1,5 @@
 import { Bar, BarChart, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
-import { ChartTooltip, ChartTooltipContent } from "../../components/ui/chart";
+import { ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../../components/ui/chart";
 import { type ActiveView } from "./types";
 
 interface PlanningChartRenderProps {
@@ -47,6 +47,11 @@ export const PlanningChartRender = ({
           nameKey="name" 
           innerRadius={60}
           strokeWidth={5}
+        />
+
+        <ChartLegend
+          content={<ChartLegendContent nameKey="name"  />}
+          className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
         />
       </PieChart>
     );

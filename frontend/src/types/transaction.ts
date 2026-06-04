@@ -1,5 +1,5 @@
 export type TransactionType = "income" | "expense" | undefined;
-export type StatusTransactionType = "failed" | "pending" | "successful";
+export type StatusTransactionType = "failed" | "pending" | "success";
 export type PeriodicityType = "none" | "daily" | "weekly" | "monthly";
 
 type Transaction = {
@@ -23,8 +23,32 @@ type TransactionView = {
     status: StatusTransactionType,
     recurrence_frequency: PeriodicityType,
     recurrence_day: number
-    category_id: number,
-    account_id: number
+    category_id: string,
+    account_id: string,
 }
 
-export type { Transaction, TransactionView }
+type CreateTransaction = {
+    description: string,
+    amount: number,
+    type: TransactionType,
+    category_id: string,
+    account_id: string,
+    recurrence_frequency: PeriodicityType,
+    recurrence_day: number | null,
+    status: StatusTransactionType,
+    failure_reason: string | null
+}
+
+type UpdateTransaction = {
+    description: string,
+    amount: number,
+    type: TransactionType,
+    category_id: string,
+    account_id: string,
+    recurrence_frequency: PeriodicityType,
+    recurrence_day: number | null,
+    status: StatusTransactionType,
+    failure_reason: string | null
+}
+
+export type { Transaction, TransactionView, CreateTransaction, UpdateTransaction }

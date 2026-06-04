@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { File } from "lucide-react";
 import Button from "../../../components/button";
 import Modal from "../../../components/modal";
 
@@ -11,7 +11,7 @@ const InfoDocumentSectionModal = ({ onClose }: InfoDocumentSectionModalProps ) =
         <Modal>
             <div className="flex items-center gap-3 mb-4 text-primary">
                 <div className="p-2 bg-amber-100 dark:bg-amber-950 rounded-xl text-amber-600 dark:text-amber-400">
-                    <HelpCircle size={24} />
+                    <File size={24} />
                 </div>
                 <h3 className="text-xl font-bold text-zinc-950 dark:text-zinc-50">O que é a seção Arquivos ?</h3>
             </div>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { X, ArrowDownRight } from 'lucide-react';
-import type { Goal } from '../../../types/goals';
-import type { AccountView } from '../../../types/account';
+import type { GoalView, UpdateGoal } from '../../../types/goals';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { useQuery } from '@tanstack/react-query';
@@ -9,9 +8,9 @@ import { get_bank_accounts } from '../../../services/account';
 import Modal from '../../../components/modal';
 
 interface GoalDetailsModalProps {
-  goal: Goal;
+  goal: GoalView;
   onClose: () => void;
-  onWithdraw: (amount: number, accountId: string) => void;
+  onWithdraw: (updateGoal: UpdateGoal) => void;
 }
 
 const GoalDetailsModal = ({ goal, onClose, onWithdraw }: GoalDetailsModalProps) => {
@@ -29,14 +28,11 @@ const GoalDetailsModal = ({ goal, onClose, onWithdraw }: GoalDetailsModalProps) 
         const amount = Number(withdrawAmount);
 
         if (!amount || amount <= 0 || !selectedAccount) return;
-        if (amount > goal.currentAmount) {
+        if (amount > goal.current_amount) {
             alert("O valor informado para retirada é maior do que o saldo atual da meta.");
             return;
         }
 
-        if (confirm(`Tem certeza de que deseja retirar ${formatCurrency(amount)} desta meta?`)) {
-            onWithdraw(amount, selectedAccount);
-        }
     };
 
     return (
@@ -56,11 +52,11 @@ const GoalDetailsModal = ({ goal, onClose, onWithdraw }: GoalDetailsModalProps) 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <span className="text-xs text-zinc-400 block mb-0.5">Saldo Acumulado</span>
-                            <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(goal.currentAmount)}</span>
+                            <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(goal.current_amount)}</span>
                         </div>
                         <div>
                             <span className="text-xs text-zinc-400 block mb-0.5">Objetivo Final</span>
-                            <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">{formatCurrency(goal.targetAmount)}</span>
+                            <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">{formatCurrency(goal.target_amount)}</span>
                         </div>
                     </div>
 
@@ -73,7 +69,7 @@ const GoalDetailsModal = ({ goal, onClose, onWithdraw }: GoalDetailsModalProps) 
                         <Button onClick={onClose} variants="standard" colors="secondary">Fechar</Button>
                         <Button onClick={() => setIsWithdrawing(true)} variants="standard" colors="primary"
                             className="bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1.5"
-                            disabled={goal.currentAmount <= 0}
+                            disabled={goal.current_amount <= 0}
                         >
                             <ArrowDownRight size={16}/>
                             Retirar Valor
@@ -87,8 +83,8 @@ const GoalDetailsModal = ({ goal, onClose, onWithdraw }: GoalDetailsModalProps) 
                     </div>
 
                     <div>
-                        <label className="text-xs font-semibold mb-1 block">Quanto deseja retirar? (Máx: {formatCurrency(goal.currentAmount)})</label>
-                        <Input required type="number" step="0.01" max={goal.currentAmount}placeholder="0,00" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)}/>
+                        <label className="text-xs font-semibold mb-1 block">Quanto deseja retirar? (Máx: {formatCurrency(goal.current_amount)})</label>
+                        <Input required type="number" step="0.01" max={goal.current_amount}placeholder="0,00" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)}/>
                     </div>
 
                     <div>

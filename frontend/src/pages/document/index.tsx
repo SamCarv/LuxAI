@@ -59,7 +59,7 @@ export const Files = () => {
   );
 
   return (
-    <div className="p-6 w-full max-w-7xl mx-auto min-h-screen">
+    <div className="p-6 w-full max-w-7xl mx-auto h-full">
       <Button onClick={() => setIsInfoModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
         <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Arquivos</h1>
         <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in'/>
@@ -125,12 +125,12 @@ export const Files = () => {
 
         {!documentsLoading && !documentsError && documents.length === 0 && (
           <Panel className='col-span-full items-center justify-center text-center py-16 px-4 mx-auto'>
-            <div className="p-4 bg-white dark:bg-zinc-800 shadow-sm rounded-2xl text-zinc-400 dark:text-zinc-500 mb-4">
+            <div className="p-4 bg-white dark:bg-zinc-700 shadow-sm rounded-2xl text-zinc-400 dark:text-zinc-400 mb-4">
               <FileText className='size-10' strokeWidth={1.5} />
             </div>
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Adicione seu primeiro documento</h3>
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Adicione seu primeiro documento</h3>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm">
-              No momento, você não adicionou nenhum arquivo. Envie extratos bancários em PDF ou imagens de comprovantes para reforçar a assertividade e o contexto do seu assistente pessoal.
+              Envie extratos bancários em PDF ou imagens de comprovantes para reforçar a assertividade e o contexto do seu assistente pessoal.
             </p>
             <Button 
               onClick={() => setIsUploadOpen(true)}
@@ -143,19 +143,19 @@ export const Files = () => {
             </Button>
           </Panel>
         )}
-        {!documentsLoading && !documentsError && filteredDocs.length === 0 ? (
-          <p className="col-span-full text-center text-sm text-zinc-500 py-12">Nenhum arquivo encontrado para a sua busca</p>
-        ) : (
-          filteredDocs.map((doc) => (
-            <FileCard 
-              key={doc.id} 
-              file={doc} 
-              isSelectionMode={isSelectionMode}
-              isSelected={selectedIds.includes(doc.id)}
-              onToggleSelect={openSelectedFile}
-              onPreview={(file) => setPreviewFile(file)}
-            />
-          ))
+        {!documentsLoading && !documentsError && documents.length > 0 && (
+          filteredDocs.length === 0 ? (<p className="col-span-full text-center text-sm text-zinc-500 py-12">Nenhum arquivo encontrado para a sua busca</p>
+          ) : (
+            filteredDocs.map((doc) => (
+              <FileCard 
+                key={doc.id} 
+                file={doc} 
+                isSelectionMode={isSelectionMode}
+                isSelected={selectedIds.includes(doc.id)}
+                onToggleSelect={openSelectedFile}
+                onPreview={(file) => setPreviewFile(file)}
+              />
+          )))
         )}
       </div>
 

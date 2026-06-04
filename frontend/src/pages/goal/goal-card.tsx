@@ -1,8 +1,8 @@
 import { Target, Calendar } from 'lucide-react';
-import type { Goal } from '../../types/goals';
+import type { GoalView } from '../../types/goals';
 
 interface GoalCardProps {
-  goal: Goal;
+  goal: GoalView;
   isSelectionMode: boolean;
   isSelected: boolean;
   onToggleSelect: (id: string) => void;
@@ -10,7 +10,7 @@ interface GoalCardProps {
 }
 
 const GoalCard = ({ goal, isSelectionMode, isSelected, onToggleSelect, onClick }: GoalCardProps) => {
-    const percent = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
+    const percent = Math.min((goal.current_amount / goal.target_amount) * 100, 100);
 
     const formatCurrency = (value: number) => {
         return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -43,15 +43,15 @@ const GoalCard = ({ goal, isSelectionMode, isSelected, onToggleSelect, onClick }
                 <div>
                     <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-45">{goal.name}</h4>
                     <span className="text-xs text-zinc-400 flex items-center gap-1 mt-0.5">
-                        <Calendar size={12} /> Alvo: {new Date(goal.deadline).toLocaleDateString('pt-BR')}
+                        <Calendar size={12} /> Meta: {new Date(goal.deadline).toLocaleDateString('pt-BR')}
                     </span>
                 </div>
             </div>
 
             <div className="space-y-2">
                 <div className="flex justify-between text-xs font-medium text-zinc-500">
-                    <span>{formatCurrency(goal.currentAmount)}</span>
-                    <span>{percent.toFixed(0)}% de {formatCurrency(goal.targetAmount)}</span>
+                    <span>{formatCurrency(goal.current_amount)}</span>
+                    <span>{percent.toFixed(0)}% de {formatCurrency(goal.target_amount)}</span>
                 </div>
                 
                 <div className="w-full bg-zinc-100 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">

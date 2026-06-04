@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Transaction } from '../../../types/transaction'
+import type { TransactionView } from '../../../types/transaction'
 import { transactions, transactionsDetails } from '../constants'
 
 export const useTransactions = () => {
     const nav = useNavigate()
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+    const [selectedTransaction, setSelectedTransaction] = useState<TransactionView | null>(null)
     const [search, setSearch] = useState('')
     const [advancedFilters, setAdvancedFilters] = useState({
         startDate: '',

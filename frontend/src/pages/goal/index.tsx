@@ -5,7 +5,7 @@ import Button from '../../components/button';
 import Input from '../../components/input';
 import Panel from '../../components/panel';
 import { list_goals, create_goal, update_goal_balance, delete_goals } from '../../services/goal';
-import type { CreateGoal, Goal } from '../../types/goals';
+import type { CreateGoal, GoalView, UpdateGoal } from '../../types/goals';
 import GoalCard from './goal-card';
 import CreateGoalModal from './create-goal-modal';
 import GoalDetailsModal from './goal-details-modal';
@@ -15,14 +15,17 @@ export const Goals = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+  const [selectedGoal, setSelectedGoal] = useState<GoalView | null>(null);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false)
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
-  const { data: goals = [], isLoading, error } = useQuery({ queryKey: ['goals'], queryFn: list_goals });
+  const { data: goals = [], isLoading, error } = useQuery({ 
+    queryKey: ['goals'], 
+    queryFn: list_goals 
+  });
 
-  const createMutation = useMutation({
+  const createGoalMutation = useMutation({
     mutationFn: (newGoal: CreateGoal) => create_goal(newGoal),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
@@ -30,7 +33,7 @@ export const Goals = () => {
     }
   });
 
-  const deleteMutation = useMutation({
+  const deleteGoalMutation = useMutation({
     mutationFn: (ids: string[]) => delete_goals(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
@@ -39,9 +42,9 @@ export const Goals = () => {
     }
   });
 
-  const withdrawMutation = useMutation({
-    mutationFn: ({ id, amount, accountId }: { id: string, amount: number, accountId: string }) => 
-      update_goal_balance(id, {amount, accountId}),
+  const updateGoalMutation = useMutation({
+    mutationFn: ({ id, updateGoal }: { id: string; updateGoal: UpdateGoal }) => 
+      update_goal_balance(id, updateGoal),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       setSelectedGoal(null);
@@ -54,9 +57,9 @@ export const Goals = () => {
     );
   };
 
-  const handleDeleteSelected = () => {
+  const deleteSelectedGoal = () => {
     if (confirm(`Deseja realmente deletar as ${selectedIds.length} metas selecionadas?`)) {
-      deleteMutation.mutate(selectedIds);
+      deleteGoalMutation.mutate(selectedIds);
     }
   };
 
@@ -65,10 +68,16 @@ export const Goals = () => {
   );
 
   return (
-    <div className="p-6 w-full max-w-7xl mx-auto min-h-screen">
-      <Button onClick={() => setIsGoalModalOpen(true)}  variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
+    <div className="p-6 w-full max-w-7xl mx-auto h-full">
+      <Button 
+        onClick={() => setIsGoalModalOpen(true)}  
+        variants='ghost' 
+        colors='no_color' 
+        className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" 
+        title='Saber mais sobre essa seção'
+      >
         <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Metas</h1>
-        <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in'/>
+        <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 duration-100 ease-in'/>
       </Button>
 
       <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6 bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800">
@@ -83,7 +92,10 @@ export const Goals = () => {
         </div>
         
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          <Button onClick={() => setIsCreateOpen(true)} variants="standard" colors="primary"
+          <Button 
+            onClick={() => setIsCreateOpen(true)} 
+            variants="standard" 
+            colors="primary"
             className="text-sm py-3 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 min-w-35"
           >
             <Plus size={18} strokeWidth={2.4}/> 
@@ -106,7 +118,7 @@ export const Goals = () => {
 
           {isSelectionMode && selectedIds.length > 0 && (
             <button 
-              onClick={handleDeleteSelected}
+              onClick={deleteSelectedGoal}
               className="px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors animate-in fade-in w-full sm:w-auto cursor-pointer"
             >
               Deletar ({selectedIds.length})
@@ -133,34 +145,41 @@ export const Goals = () => {
         )}
 
         {!isLoading && !error && goals.length === 0 && (
-          <Panel className="col-span-full flex flex-col items-center py-16 text-center">
-            <PiggyBank size={48} className="text-zinc-300 mb-4" />
+          <Panel className="col-span-full items-center justify-center text-center py-16 px-4 mx-auto">
+            <div className="p-4 bg-white dark:bg-zinc-700 shadow-sm rounded-2xl text-zinc-400 dark:text-zinc-400 mb-4">
+              <PiggyBank className='size-10' strokeWidth={1.5} />
+            </div>
             <h3 className="font-semibold text-lg">Nenhuma meta definida</h3>
-            <p className="text-zinc-500 text-sm mb-6">Comece a poupar para seus sonhos hoje mesmo.</p>
-            <Button onClick={() => setIsCreateOpen(true)} variants="standard" colors="primary">Criar Meta</Button>
+            <p className="text-zinc-500 text-sm mb-6 max-w-sm">Estabeleça seus motivos de guardar dinheiro numa meta. Seja para fazer uma viagem ou comprar algo especial.</p>
+            <Button onClick={() => setIsCreateOpen(true)} variants="standard" colors="primary" className='text-sm flex items-center gap-2 px-5'>
+              <Plus size={16} />
+              Criar Meta
+            </Button>
           </Panel>
         )}
 
-        {!isLoading && !error && goals.length > 0 && filteredGoals.length === 0 ? (
-          <p className="col-span-full text-center text-sm text-zinc-500 py-12">Nenhuma meta encontrada para a sua busca</p>
-        ) : (
-          filteredGoals.map((goal) => (
-            <GoalCard 
-              key={goal.id} 
-              goal={goal} 
-              isSelectionMode={isSelectionMode}
-              isSelected={selectedIds.includes(goal.id)}
-              onToggleSelect={toggleSelectGoal}
-              onClick={() => !isSelectionMode && setSelectedGoal(goal)} 
-            />
-          ))
+        {!isLoading && !error && goals.length > 0 && (
+          filteredGoals.length === 0 ? (
+            <p className="col-span-full text-center text-sm text-zinc-500 py-12">Nenhuma meta encontrada para a sua busca</p>
+          ) : (
+            filteredGoals.map((goal) => (
+              <GoalCard 
+                key={goal.id} 
+                goal={goal} 
+                isSelectionMode={isSelectionMode}
+                isSelected={selectedIds.includes(goal.id)}
+                onToggleSelect={toggleSelectGoal}
+                onClick={() => !isSelectionMode && setSelectedGoal(goal)} 
+              />
+            ))
+          )
         )}
       </div>
 
       {isCreateOpen && (
         <CreateGoalModal 
           onClose={() => setIsCreateOpen(false)} 
-          onSave={(data) => createMutation.mutate(data)}
+          onSave={(data) => createGoalMutation.mutate(data)}
         />
       )}
 
@@ -168,9 +187,12 @@ export const Goals = () => {
         <GoalDetailsModal 
           goal={selectedGoal} 
           onClose={() => setSelectedGoal(null)}
-          onWithdraw={(amount, accountId) => withdrawMutation.mutate({ id: selectedGoal.id, amount, accountId })}
+          onWithdraw={(updatedData: UpdateGoal) => 
+            updateGoalMutation.mutate({ id: selectedGoal.id, updateGoal: updatedData })
+          }
         />
       )}
+
       {isGoalModalOpen && <InfoGoalsSectionModal onClose={() => setIsGoalModalOpen(false)} /> }
     </div>
   );

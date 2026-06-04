@@ -1,11 +1,11 @@
-import type { CreateGoal, Goal, UpdateGoal } from "../types/goals"
+import type { CreateGoal, GoalView, UpdateGoal } from "../types/goals"
 import { api } from "./api"
 
 const ROUTE = 'goal'
 
-const list_goals = (): Promise<Goal[]> => {
+const list_goals = (): Promise<GoalView[]> => {
     const token = localStorage.getItem("token");
-    return api.get(`/${ROUTE}/`, {headers:{Authorization: `Bearer ${token}`}})
+    return api.get(`/${ROUTE}/`, {headers:{Authorization: `Bearer ${token}`}}).then((response) => response.data);
 }
 
 const create_goal = (newGoal: CreateGoal) => {

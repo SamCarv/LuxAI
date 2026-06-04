@@ -20,11 +20,10 @@ const CreateGoalModal = ({ onClose, onSave }: CreateGoalModalProps) => {
         if (!title || !targetAmount || !deadline) return;
 
         onSave({
-            name:'',
-
-        targetAmount: Number(targetAmount),
-        initialAmount: Number(initialAmount || 0),
-        deadline,
+            name: title,
+            target_amount: Number(targetAmount),
+            initial_amount: Number(initialAmount || 0),
+            deadline,
         });
     };
 
@@ -38,7 +37,7 @@ const CreateGoalModal = ({ onClose, onSave }: CreateGoalModalProps) => {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="text-xs font-semibold mb-1 block">Nome do Tema / Meta</label>
+                        <label className="text-xs font-semibold mb-1 block">Nome da Meta / Objetivo</label>
                         <Input required type="text" placeholder="Viagem de Férias, Carro Novo..." value={title} onChange={e => setTitle(e.target.value)}/>
                     </div>
 
