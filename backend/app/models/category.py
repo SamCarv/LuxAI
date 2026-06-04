@@ -1,7 +1,10 @@
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid7
-from sqlmodel import SQLModel, Field, Relationship
+
 from sqlalchemy import UniqueConstraint
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.enums.category_icon import CategoryIcon
 
 if TYPE_CHECKING:
     from .transaction import Transaction
@@ -21,7 +24,8 @@ class Category(SQLModel, table=True):
         nullable=False,
     )
     name: str = Field(index=True)
-    icon: str | None = Field(default=None)
+    description: str | None = Field(default=None)
+    icon: CategoryIcon | None = Field(default=None)
     color: str | None = Field(default=None)
 
     user_id: UUID = Field(foreign_key="user.id", nullable=False)

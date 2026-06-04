@@ -1,4 +1,4 @@
-export interface Document {
+type Document = {
     id: string;
     user_id: string;
     title: string;
@@ -9,3 +9,10 @@ export interface Document {
     metadata_info?: Record<string, any>;
     created_at: string;
 }
+
+type CreateDocument = {
+    title: string,
+    file: File
+}
+
+export type { Document, CreateDocument }

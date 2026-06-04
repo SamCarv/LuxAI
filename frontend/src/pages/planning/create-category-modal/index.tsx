@@ -3,22 +3,52 @@ import Modal from '../../../components/modal'
 import PanelItem from '../../../components/panel/panel.item'
 import PanelItemIcon from '../../../components/panel/panel.icon'
 import { PanelItemInfo, PanelItemInfoDetail, PanelItemInfoTitle } from '../../../components/panel/panel.info'
-import { useState, type FC } from 'react' 
+import { useState, type FC, type FormEvent } from 'react' 
 import { preColorsSelection, preIconsSelection } from '../../../utils/constants.planning'
 import { shuffleColor } from '../functions/random-color'
 import { DynamicIcon, type IconName } from '../dynamic-icon'
-import { createCategory } from '../functions/create-category'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
+import type { CategoryView, CreateCategory, UpdateCategory } from '../../../types/category'
 
 interface CreateCategoryModalProps extends React.HTMLAttributes<HTMLDivElement> {
+  createCategory?: (createCategory: CreateCategory) => void,
+  updateCategory?: ({id, updateCategory}: {id: string, updateCategory: UpdateCategory}) => void
+  category?: CategoryView
   onClose: () => void
 }
 
-const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
-  const [color, setColor] = useState('ebebeb');
-  const [iconName, setIconName] = useState('');
-  const [categoryName, setCategoryName] = useState('Moradia');
+const CreateCategoryModal: FC<CreateCategoryModalProps> = ({ onClose, createCategory, updateCategory, category}) => {
+  const [color, setColor] = useState(category?.color || 'ebebeb');
+  const [iconName, setIconName] = useState(category?.icon || '');
+  const [categoryName, setCategoryName] = useState(category?.name || 'Moradia');
+  const [description, setDescription] = useState(category?.description || '')
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    
+    if (createCategory) {
+      createCategory({
+        name: categoryName,
+        color: color,
+        description: description,
+        icon: iconName
+      });
+    }
+
+    if (updateCategory && category) {
+      updateCategory(
+        {id: category.id, updateCategory: {
+          name: categoryName,
+          color: color,
+          description: description,
+          icon: iconName
+        }}
+      )
+    }
+
+    onClose()
+  };
 
   return (
     <Modal className='lg:max-w-4xl'> 
@@ -27,7 +57,7 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
         <div className='w-40 md:w-56 h-3 bg-candy-corn-400'></div>
       </div>
 
-      <form onSubmit={createCategory} className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
+      <form onSubmit={submit} className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
         <div className='lg:col-span-7 flex flex-col gap-5'>
           <div className='flex flex-col gap-1 w-full'>
             <label htmlFor="name" className='heading-sm dark:text-zinc-300'>Nome</label>
@@ -37,8 +67,8 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({onClose}) => {
 
           <div className='flex flex-col gap-1 w-full'>
             <label htmlFor="description" className='heading-sm dark:text-zinc-300'>Descrição</label>
-            <textarea id='description' name='description' className='bg-smoke-50 dark:bg-zinc-800 dark:text-white rounded-md h-16 px-2 py-1 outline-none focus:ring-1 focus:ring-candy-corn-400 resize-none' />
-            <p className='text-end body-sm text-smoke-500 dark:text-zinc-500 font-light'>Caracteres 0/250</p>
+            <textarea id='description' name='description' value={description} onChange={(event) => setDescription(event.target.value)} className='w-full bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl placeholder:text-zinc-400 dark:text-white outline-none text-sm focus:ring-2 focus:ring-candy-corn-400' />
+            <p className='text-end body-sm text-smoke-500 dark:text-zinc-500 font-light'>Caracteres {description.length}/250</p>
           </div>
 
           <div className='flex flex-col gap-y-1'>

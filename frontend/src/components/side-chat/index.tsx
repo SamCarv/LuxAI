@@ -4,7 +4,7 @@ import { X, Paperclip, Bot, Mic, SendHorizontal, Sparkles } from "lucide-react";
 import Button from "../../components/button/index";
 import ChatMessageText from "../chat-message/index";
 import { cn } from "../../lib/utils";
-import type { ChatAttachment, ChatMessage, ChatRequest } from "../../types/chatDTO/chatRequest";
+import type { ChatAttachment, ChatMessage, ChatRequest } from "../../types/chat";
 import { chat } from "../../services/chat";
 
 interface SideChatProps extends HTMLAttributes<HTMLDivElement> {

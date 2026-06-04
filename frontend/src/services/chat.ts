@@ -1,13 +1,11 @@
-import type { ChatRequest } from "../types/chatDTO/chatRequest";
+import type { ChatRequest } from "../types/chat";
 import { api } from "./api";
 
 const ROUTER = "/chat"
 
 const chat = (chatRequest :ChatRequest) => {
     const token = localStorage.getItem("token");
-    return api.post(`${ROUTER}/`, chatRequest, {headers: {
-        Authorization: token ? `Bearer ${token}` : ""
-    }})
+    return api.post(`${ROUTER}/`, chatRequest, {headers: {Authorization: token ? `Bearer ${token}` : ""}})
 }
 
 export { chat }

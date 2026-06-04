@@ -1,11 +1,12 @@
-import { useState, type FC, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FC, type FormEvent } from "react";
 import Modal from "../../../components/modal";
 import Input from "../../../components/input";
 import Button from "../../../components/button";
+import type { CreateDocument } from "../../../types/document";
 
 interface UploadModalProps {
   onClose: () => void;
-  onUpload: (title: string, file: File) => void;
+  onUpload: (createDocument: CreateDocument) => void;
 }
 
 export const UploadModal: FC<UploadModalProps> = ({ onClose, onUpload }) => {
@@ -15,7 +16,8 @@ export const UploadModal: FC<UploadModalProps> = ({ onClose, onUpload }) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (selectedFile) {
-      onUpload(title, selectedFile);
+      console.log(selectedFile)
+      onUpload({title, file: selectedFile});
       setTitle('');
       setSelectedFile(null);
       onClose();
@@ -33,9 +35,9 @@ export const UploadModal: FC<UploadModalProps> = ({ onClose, onUpload }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">Selecionar Arquivo</label>
-          <input type="file" required onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-            className="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">Selecionar Arquivo (pdf, jpg, png)</label>
+          <input type="file" accept="image/*, application/pdf" required onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+            className="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-100 file:text-yellow-600 hover:file:bg-yellow-100"
           />
         </div>
 

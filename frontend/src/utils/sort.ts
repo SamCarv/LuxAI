@@ -1,8 +1,8 @@
 import {isToday, isYesterday, format} from 'date-fns'
-import type { Transaction } from '../types/transaction'
+import type { TransactionView } from '../types/transaction'
 
-export const groupTransaction = (transactions: Transaction[]) => {
-    const groups: Record<string, Transaction[]> = {}
+export const groupTransaction = (transactions: TransactionView[]) => {
+    const groups: Record<string, TransactionView[]> = {}
 
   transactions.forEach((transaction) => {
     const date = new Date(transaction.date)

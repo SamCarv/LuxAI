@@ -49,6 +49,7 @@ def create_category_service(
 ) -> Category:
     new_category = Category(
         name=data.name,
+        description=data.description,
         color=data.color,
         icon=data.icon,
         user_id=current_user.id,

@@ -16,7 +16,7 @@ def mock_embedding(monkeypatch: pytest.MonkeyPatch):
 
 @pytest.mark.asyncio()
 async def test_category_routes_crud(client: AsyncClient):
-    create_payload = {"name": "Food", "icon": "🍔", "color": "#ffcc00"}
+    create_payload = {"name": "Food", "icon": "Apple", "color": "#ffcc00"}
     create_response = await client.post("/category/", json=create_payload)
     assert create_response.status_code == 200
     created = create_response.json()

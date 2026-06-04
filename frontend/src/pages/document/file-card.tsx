@@ -1,6 +1,8 @@
 import { type FC } from 'react';
-import type { Document } from '../../types/documen';
+import type { Document } from '../../types/document';
 import { FileText, FileSpreadsheet, FileJson, File } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface FileCardProps {
   file: Document;
@@ -42,6 +44,9 @@ export const FileCard: FC<FileCardProps> = ({ file, isSelectionMode, isSelected,
       onPreview(file);
     }
   };
+  const formatFileDate = (date: string) => {
+      return format(date, "dd MMM. yyyy", { locale: ptBR });
+  };
 
   return (
     <div 
@@ -76,7 +81,7 @@ export const FileCard: FC<FileCardProps> = ({ file, isSelectionMode, isSelected,
         {file.title}
       </p>
       <p className="text-xs text-gray-500">
-        {file.created_at}
+        {formatFileDate(file.created_at)}
       </p>
     </div>
   );

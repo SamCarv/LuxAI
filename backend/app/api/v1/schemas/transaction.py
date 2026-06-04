@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlmodel import JSON, Field, SQLModel
 
 from app.enums.recurrence_frequency import RecurrenceFrequency
+from app.enums.transaction_status import TransactionStatus
 from app.enums.transaction_type import TransactionType
 
 
@@ -29,6 +30,8 @@ class TransactionBase(SQLModel):
 class TransactionRead(TransactionBase):
     id: UUID
     date: datetime
+    status: TransactionStatus
+    failure_reason: Optional[str] = None
 
 
 class TransactionCreate(BaseModel):
@@ -40,6 +43,8 @@ class TransactionCreate(BaseModel):
     recurrence_frequency: RecurrenceFrequency = RecurrenceFrequency.NONE
     recurrence_day: Optional[int] = None
     metadata_info: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    status: TransactionStatus = TransactionStatus.SUCCESS
+    failure_reason: Optional[str] = None
 
 
 class TransactionUpdate(SQLModel):
@@ -51,3 +56,5 @@ class TransactionUpdate(SQLModel):
     recurrence_frequency: Optional[RecurrenceFrequency] = None
     recurrence_day: Optional[int] = None
     metadata_info: Optional[Dict[str, Any]] = None
+    status: Optional[TransactionStatus] = None
+    failure_reason: Optional[str] = None

@@ -1,11 +1,209 @@
-import React from 'react'
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { PlusCircle, TrendingUp, Sparkles, FileText, DollarSign, Target, Calendar, AlertCircle, KeyRound, Eye, MessageSquare, ChevronRight } from 'lucide-react';
+import Button from '../../components/button';
+import { get_analyze } from '../../services/dashboar';
+import ReactMarkdown from 'react-markdown';
+import CreateGoalModal from '../goal/create-goal-modal';
+import CreateCategoryModal from '../planning/create-category-modal';
+import type { CreateGoal } from '../../types/goals';
+import { create_goal } from '../../services/goal';
+import type { CreateCategory } from '../../types/category';
+import { create_category } from '../../services/category';
+import { UploadModal } from '../document/upload-documet-modal';
+import type { CreateDocument } from '../../types/document';
+import { upload_document } from '../../services/document';
 
 const Dashboard = () => {
-  return (
-    <>
-        <div> Dashboard</div>
-    </>
-  )
-}
+  const [hasApiKey, setHasApiKey] = useState(() => {return localStorage.getItem('luxai_api_key_configured') === 'true';}); 
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
-export default Dashboard
+  const { data: report, isLoading, isError, refetch } = useQuery({
+    queryKey: ['financialReports', hasApiKey],
+    queryFn: () => get_analyze(),
+    enabled: hasApiKey 
+  });
+
+  const configureKeySetup = () => {
+    localStorage.setItem('luxai_api_key_configured', 'true');
+    setHasApiKey(true);
+  };
+
+  const goToChat = () => {
+    const promptMessage = `Olá! Acabei de ver o relatório de IA de ${report?.month}/${report?.year} no meu Dashboard. Com base na análise que diz "${report?.analysis}", quais são as melhores sugestões e planos de ação práticos que posso tomar?`;
+
+    navigate('/chat', { 
+      state: { 
+        autoSendMessage: promptMessage 
+      } 
+    });
+  };
+
+  const createGoalMutation = useMutation({
+    mutationFn: (newGoal: CreateGoal) => create_goal(newGoal),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      setIsGoalModalOpen(false)
+    }
+  });
+
+  const createCategoryMutation = useMutation({
+    mutationFn: (newCategory: CreateCategory) => create_category(newCategory),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      setIsCategoryModalOpen(false);
+    },
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: (createDocument: CreateDocument) => upload_document(createDocument),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+    }
+  });
+
+  return (
+    <section className="max-w-7xl p-4 md:p-6 w-full mx-auto min-h-screen">
+      <div className="text-zinc-800 dark:text-zinc-100 space-y-6">
+        <div className="flex justify-between items-end">
+          <h1 className="heading-lg">Dashboard</h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
+            <h2 className="text-sm font-bold tracking-wider text-zinc-400 mb-4 flex items-center gap-2">
+              <PlusCircle className=' size-6 text-yellow-500 dark:text-yellow-400' />
+              Ações Rápidas
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <button onClick={() => setIsCategoryModalOpen(true)} className="flex flex-col items-center justify-center p-4 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-yellow-400/10 dark:hover:bg-yellow-400/10 border border-zinc-200 dark:border-zinc-800 hover:border-yellow-400 rounded-xl transition-all group cursor-pointer">
+                  <DollarSign className="text-zinc-600 dark:text-zinc-400 mb-2 group-hover:scale-110 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-all" size={24} />
+                  <span className="font-medium text-sm">Criar Categoria</span>
+                </button>
+
+                <button onClick={() => navigate('/planning')} className="flex flex-col items-center justify-center p-4 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-yellow-400/10 dark:hover:bg-yellow-400/10  border border-zinc-200 dark:border-zinc-800 hover:border-yellow-400 rounded-xl transition-all group cursor-pointer">
+                  <Calendar className="text-zinc-600 dark:text-zinc-400 mb-2 group-hover:scale-110 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-all" size={24} />
+                  <span className="font-medium text-sm">Criar Transação</span>
+                </button>
+
+                <button onClick={() => setIsGoalModalOpen(true)} className="flex flex-col items-center justify-center p-4 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-yellow-400/10 dark:hover:bg-yellow-400/10  border border-zinc-200 dark:border-zinc-800 hover:border-yellow-400 rounded-xl transition-all group sm:col-span-2 md:col-span-1 cursor-pointer">
+                  <Target className="text-zinc-600 dark:text-zinc-400 mb-2 group-hover:scale-110 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-all" size={24} />
+                  <span className="font-medium text-sm">Definir Meta</span>
+                </button>
+              </div>
+          </section>
+
+          <section className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
+            <h2 className="text-sm font-bold tracking-wider text-zinc-400 mb-4 flex items-center gap-2">
+              <TrendingUp className=' size-6 text-yellow-500 dark:text-yellow-400' />
+              Dados de Entrada
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+              Envie extrato financeiro para reforçar a assertividade do seu assistente pessoal.
+            </p>
+            <button onClick={() => setIsDocumentModalOpen(true)} className="w-full border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl p-4 flex items-center justify-center bg-zinc-100 dark:bg-zinc-700 cursor-pointer hover:bg-yellow-400/5 dark:hover:bg-yellow-400/10 group transition-colors">
+               <div className="flex items-center gap-3">
+                  <FileText size={20} className="text-zinc-400 group-hover:text-yellow-400" />
+                  <span className="text-xs font-medium">Suporta PDF e Imagens</span>
+               </div>
+            </button>
+          </section>
+        </div>
+
+        <section className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col">
+          <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-800/20">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-yellow-400 rounded-lg text-white">
+                <Eye size={20} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold">Perspectiva de Melhoria</h2>
+                <p className="text-xs text-zinc-500 font-medium">Análise gerada pela LuxAI baseada no seu comportamento</p>
+              </div>
+            </div>
+            
+            {report && (
+              <span className="text-xs font-bold px-3 py-1 bg-zinc-200 dark:bg-zinc-800 rounded-full">
+                {report.month}/{report.year}
+              </span>
+            )}
+          </div>
+
+          <div className="p-8 flex-1">
+            {!hasApiKey ? (
+              <div className="max-w-md mx-auto py-12 text-center space-y-6">
+                <KeyRound size={40} className="mx-auto text-zinc-300" />
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold">Módulo de IA Desativado</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed">
+                    Conecte sua chave Gemini nas configurações de perfil para que o algoritmo possa processar seus dados e sugerir melhorias estratégicas.
+                  </p>
+                </div>
+                <Button variants='standard' colors='primary' onClick={configureKeySetup} className="w-full">
+                  Configurar Chave API
+                </Button>
+              </div>
+            ) : isLoading ? (
+              <div className="py-20 text-center space-y-4">
+                <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="text-sm text-zinc-500 animate-pulse font-medium">A LuxAI está processando seus números...</p>
+              </div>
+            ) : isError ? (
+              <div className="py-12 text-center text-red-500 space-y-3">
+                <AlertCircle size={32} className="mx-auto" />
+                <p className="text-sm font-medium">Houve um erro na comunicação com a API.</p>
+                <button onClick={() => refetch()} className="text-xs underline">Tentar novamente</button>
+              </div>
+            ) : (
+              <div className="max-w-4xl animate-fade-in space-y-8">
+                <div className="prose dark:prose-invert prose-zinc max-w-none">
+                   <div className="flex items-start gap-4">
+                      <Sparkles className="text-yellow-500 shrink-0 mt-1" size={20} />
+                      <div className="space-y-4">
+                        <div className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap font-medium">
+                          <ReactMarkdown>
+                            {report?.analysis}
+                          </ReactMarkdown>  
+                        </div>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="bg-linear-to-r from-zinc-50 to-white dark:from-zinc-800/50 dark:to-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white dark:bg-zinc-800 rounded-full shadow-sm">
+                      <MessageSquare size={20} className="text-yellow-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold">Deseja agir sobre essa análise?</p>
+                      <p className="text-xs text-zinc-500">Inicie um chat para traçar planos de ação específicos.</p>
+                    </div>
+                  </div>
+                  <Button 
+                    variants='standard' 
+                    colors='primary'
+                    onClick={goToChat}
+                    className="flex items-center gap-2 px-6 py-2.5 group shadow-lg shadow-yellow-500/10"
+                  >
+                    <span>Abrir Consultoria</span>
+                    <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+      {isCategoryModalOpen && <CreateCategoryModal createCategory={createCategoryMutation.mutate} onClose={() => setIsCategoryModalOpen(false)}/>}
+      {isGoalModalOpen && <CreateGoalModal onSave={createGoalMutation.mutate} onClose={() => setIsGoalModalOpen(false)}/>}
+      {isDocumentModalOpen && <UploadModal onUpload={uploadMutation.mutate} onClose={() => setIsDocumentModalOpen(false)} />}
+    </section>
+  );
+};
+
+export default Dashboard;

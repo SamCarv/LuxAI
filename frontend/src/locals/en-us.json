@@ -1,10 +1,10 @@
 {
     "dashboard": "Dashboard",
     "planning": "Planning",
-    "investment": "Investment",
+    "goals": "Goals",
     "bank": "Bank",
     "files": "Files",
-    "chat": "Chat",
+    "chat": "Personal Assistant",
 
     "bank.accounts": "Accounts",
     "bank.wallets": "Wallets",

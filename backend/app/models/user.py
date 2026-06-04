@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .bank_account import BankAccount
     from .category import Category
     from .document import Document
+    from .goal import Goal
 
 
 class User(UserBase, table=True):
@@ -28,3 +29,4 @@ class User(UserBase, table=True):
     accounts: List["BankAccount"] = Relationship(back_populates="user")
     categories: List["Category"] = Relationship(back_populates="user")
     documents: List["Document"] = Relationship(back_populates="user")
+    goals: List["Goal"] = Relationship(back_populates="user")

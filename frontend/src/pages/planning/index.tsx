@@ -1,144 +1,165 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { ArrowLeftRight, Home, Plus, X, Calendar } from "lucide-react";
+import { Home, Plus, HelpCircle, Loader2, FileText, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
+import Panel from "../../components/panel";
 import PanelItem from "../../components/panel/panel.item";
 import PanelItemIcon from "../../components/panel/panel.icon";
 import { PanelItemInfo, PanelItemInfoDetail, PanelItemInfoTitle } from "../../components/panel/panel.info";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { ChartContainer } from "../../components/ui/chart";
-import { categories } from "../../utils/constants.planning";
-
 import CreateCategoryModal from "./create-category-modal";
 import { DynamicIcon, type IconName } from "./dynamic-icon";
-import { deleteCategory } from "./functions/delete-category";
-
-import { chartConfig, PERIODS, VIEWS } from "./constants";
-import { type ActiveView, type TimePeriod } from "./types";
-import { usePlanningCharts } from "./use-planning-charts";
-import { PlanningChartRender } from "./planning-chart-render";
+import Button from "../../components/button";
+import Input from "../../components/input";
+import InfoPlanningSectionModal from "./info-section-modal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { create_category, delete_category, list_categories } from "../../services/category";
+import type { CreateCategory } from "../../types/category";
+import { sumBalanceCategory } from "./functions/sum_category";
 
 const Planning = () => {
-  const { t } = useTranslation();
-  const [activeView, setActiveView] = useState<ActiveView>('expense');
-  const [isComparing, setIsComparing] = useState(false);
-  const [period, setPeriod] = useState<TimePeriod>('month');
+  const queryClient = useQueryClient()
+  const [search, setSearch] = useState('');
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [isInfoPlanningModalOpen, setInfoPlanningModalOpen] = useState(false);
+  
+  const { error: categoriesError, isLoading: isCategoriesLoading, data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: list_categories });
 
-  const chartDataBundled = usePlanningCharts(activeView, isComparing);
+  const createCategoryMutation = useMutation({
+    mutationFn: (newCategory: CreateCategory) => create_category(newCategory),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      setCategoryModalOpen(false);
+    },
+    onError: (error) => {
+      console.error("Erro ao criar categoria:", error);
+
+    }
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: (id: string) => delete_category(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error) => {
+      console.error("Erro ao deletar categoria:", error);
+      alert("Não foi possível deletar a categoria. Verifique se ela possui transações vinculadas.");
+    }
+  });
+
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <section className="flex flex-col w-full h-full gap-y-6 max-w-7xl mx-auto p-4 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('planning')}</h1>
-
-        <div className="flex items-center gap-2 bg-smoke-100 dark:bg-zinc-800 p-1 rounded-xl border border-slate-200 dark:border-zinc-700 w-full sm:w-auto overflow-x-auto no-scrollbar shadow-inner">
-          {PERIODS.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setPeriod(p.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
-                period === p.id 
-                  ? "bg-white dark:bg-slate-700 text-primary dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-600" 
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-              }`}
-            >
-              {p.id === 'custom' && <Calendar size={13}/>}
-              {p.label}
-            </button>
-          ))}
-        </div>
+        <Button onClick={() => setInfoPlanningModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
+          <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Planejamento de Despesas e Receitas</h1>
+          <HelpCircle className='fill-white size-10 sm:size-min group-hover:fill-slate-200 stroke-gray-600 duration-100 ease-in'/>
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 bg-smoke-100 dark:bg-zinc-800 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-
-        <div className="grid grid-cols-3 lg:flex lg:flex-col gap-2.5 w-full">
-          {VIEWS.map((view) => (
-            <button
-              key={view.id}
-              onClick={() => setActiveView(view.id)}
-              className={`flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 p-3 sm:p-4 rounded-xl transition-all ring-2 cursor-pointer text-center sm:text-left ${
-                activeView === view.id 
-                  ? " bg-white dark:bg-zinc-800 shadow-sm text-candy-corn-600 dark:text-candy-corn-300 ring-candy-corn-400 dark:ring-candy-corn-300" 
-                  : "ring-smoke-300 dark:ring-zinc-700 hover:ring-smoke-400 dark:hover:ring-zinc-500 bg-transparent hover:bg-white/60 dark:hover:bg-slate-800/40"
-              }`}
-            >
-              <div className={`w-2.5 h-2.5 shrink-0 rounded-full ${view.color} shadow-sm`} />
-              <span className="text-xs sm:text-sm font-semibold truncate w-full">{view.label}</span>
-            </button>
-          ))}
-          
-          <hr className="hidden lg:block my-1.5 border-slate-200 dark:border-slate-800" />
-
-          <button 
-            onClick={() => setIsComparing(!isComparing)}
-            className={`col-span-3 lg:col-span-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all cursor-pointer ${
-              isComparing 
-                ? "bg-candy-corn-400  text-black border-black shadow-sm shadow-primary/20" 
-                : "border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary dark:hover:border-primary hover:text-primary"
-            }`}
-          >
-            <ArrowLeftRight size={16} />
-            <span className="text-xs sm:text-sm font-bold">{isComparing ? "Modo Comparação" : "Comparar Períodos"}</span>
-          </button>
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+        <div className="w-full md:max-w-xs">
+          <Input 
+            type="text" 
+            placeholder="Pesquisar categorias" 
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)} 
+            className='w-full'
+          />
         </div>
-
-        <Card className="lg:col-span-3 bg-white dark:bg-zinc-700/40 border border-slate-200 dark:border-slate-800/80 shadow-sm backdrop-blur-sm">
-          <CardHeader className="pb-0 items-center lg:items-start text-center lg:text-left px-4 pt-4 sm:px-6 sm:pt-6">
-            <CardTitle className="text-lg sm:text-xl font-bold">
-              {activeView === 'profit' ? 'Análise de Lucro' : `Distribuição de ${VIEWS.find(v => v.id === activeView)?.label}`}
-            </CardTitle>
-            <CardDescription className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-              {isComparing ? "Comparando com o período de tempo anterior" : "Visualização do período selecionado"}
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent className="flex items-center justify-center p-4 sm:p-6 max-h-70 sm:min-h-80">
-            <ChartContainer config={chartConfig} className="mx-auto aspect-square w-full max-w-70 sm:max-w-80">
-              <PlanningChartRender activeView={activeView} isComparing={isComparing} {...chartDataBundled} />
-            </ChartContainer>
-          </CardContent>
-        </Card>
+        
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <Button 
+            onClick={() => setCategoryModalOpen(true)}
+            variants="standard"
+            colors="primary"
+            className="text-sm py-3 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 min-w-35"
+          >
+            <Plus size={18} strokeWidth={2.4}/> 
+            <span>Nova Categoria</span>
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-y-4 mt-2">
-        <div className="flex justify-between items-center px-1">
-          <h2 className="text-lg font-bold tracking-tight opacity-85">{t('Minhas Despesas')}</h2>
-          <span className="text-sm font-bold text-red-500 bg-red-50 dark:bg-red-950/30 px-2.5 py-1 rounded-lg">Total: R$ 7.600,00</span>
-        </div>
+        {categories.length > 0 && <p className="text-lg font-bold  py-1 rounded-lg">Total de saldo planejado para o próximo mês: <span className="text-red-500">R$ 7.600,00</span></p>}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-          {categories.map((category) => (
-            <PanelItem key={category.id} className="w-full ">
-              <NavLink className="flex w-full items-center min-w-0" to={category.id.toString()}>
-                <PanelItemIcon style={{ backgroundColor: `#${category.color}`}} className="group-hover:brightness-110 transition shadow-md shrink-0">
-                  {category ? <DynamicIcon name={category.icon as IconName} /> : <Home />}
-                </PanelItemIcon>
-                <PanelItemInfo className="flex-1 lg:ml-3 truncate">
-                  <PanelItemInfoTitle className="font-semibold text-slate-800 dark:text-slate-200 truncate">{category.name}</PanelItemInfoTitle>
-                  <PanelItemInfoDetail className="text-slate-500 dark:text-slate-400 font-medium">R$ 1900.00</PanelItemInfoDetail>
-                </PanelItemInfo>
-              </NavLink>
-              <button 
-                onClick={() => deleteCategory(category)} 
-                className="p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors shrink-0 ml-2 cursor-pointer"
+          {isCategoriesLoading && (
+            <div className="col-span-full flex flex-col items-center justify-center py-24 text-zinc-500">
+              <Loader2 className="animate-spin h-10 w-10 text-zinc-400 mb-4" />
+              <p className="text-sm font-medium">Carregando categorias...</p>
+            </div>
+          )}
+
+          {!isCategoriesLoading && categoriesError && (
+            <Panel className='col-span-full items-center justify-center text-center py-16 px-4 mx-auto'>
+              <p className="text-base font-semibold text-rose-500 mb-1">Não foi possível carregar as categorias</p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Tente atualizar a página mais tarde.
+              </p>
+            </Panel>
+          )}
+
+          {!isCategoriesLoading && !categoriesError && categories.length === 0 && (
+            <Panel className='col-span-full items-center justify-center text-center py-16 px-4 mx-auto'>
+              <div className="p-4 bg-white dark:bg-zinc-700 shadow-sm rounded-2xl text-zinc-400 dark:text-zinc-400 mb-4 inline-block mx-auto">
+                <FileText className='size-10' strokeWidth={1.5} />
+              </div>
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Crie sua primeira categoria</h3>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm mx-auto">
+                Organize seu planejamento criando categorias personalizadas para gerenciar suas despesas.
+              </p>
+              <Button 
+                onClick={() => setCategoryModalOpen(true)}
+                variants="standard"
+                colors="primary"
+                className="text-sm flex items-center gap-2 px-5 mx-auto"
               >
-                <X size={16}/>
-              </button>
-            </PanelItem>
-          ))}
-          
-          <button 
-            onClick={() => setCategoryModalOpen(true)}
-            className="flex items-center justify-center h-18 rounded-md border-2 border-slate-300 dark:border-slate-700 hover:border-candy-corn-600 hover:text-candy-corn-600 dark:hover:border-candy-corn-300 dark:hover:text-candy-corn-300 bg-slate-50/50 dark:bg-slate-900/20 text-slate-400 transition-all cursor-pointer"
-          >
-            <Plus size={20} />
-          </button>
+                <Plus size={16} />
+                <span>Nova Categoria</span>
+              </Button>
+            </Panel>
+          )}
+
+          {!isCategoriesLoading && !categoriesError && categories.length > 0 && (
+            filteredCategories.length === 0 ? (
+              <p className="col-span-full text-center text-sm text-zinc-500 py-12">
+                Nenhuma categoria encontrada para a sua busca
+              </p>
+            ) : (
+              filteredCategories.map((category) => (
+                <PanelItem key={category.id} className="w-full">
+                  <NavLink className="flex w-full items-center min-w-0" to={category.id}>
+                    <PanelItemIcon style={{ backgroundColor: `#${category.color}`}} className="group-hover:brightness-110 transition shadow-md shrink-0">
+                      {category.icon ? <DynamicIcon name={category.icon as IconName} /> : <Home />}
+                    </PanelItemIcon>
+                    <PanelItemInfo className="flex-1 lg:ml-3 truncate">
+                      <PanelItemInfoTitle className="font-semibold text-slate-800 dark:text-slate-200 truncate">
+                        {category.name}
+                      </PanelItemInfoTitle>
+                      <PanelItemInfoDetail className="text-slate-500 dark:text-slate-400 font-medium">
+                        R$ {sumBalanceCategory(category.transactions)}
+                      </PanelItemInfoDetail>
+                    </PanelItemInfo>
+                  </NavLink>
+                  <button 
+                    onClick={() => deleteCategoryMutation.mutate(category.id)} 
+                    className="p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors shrink-0 ml-2 cursor-pointer"
+                  >
+                    <X size={16}/>
+                  </button>
+                </PanelItem>
+              ))
+            )
+          )}
         </div>
       </div>
 
-      {isCategoryModalOpen && <CreateCategoryModal onClose={() => setCategoryModalOpen(false)}/>}
+      {isCategoryModalOpen && <CreateCategoryModal onClose={() => setCategoryModalOpen(false)} createCategory={createCategoryMutation.mutate}/>}
+      {isInfoPlanningModalOpen && <InfoPlanningSectionModal onClose={() => setInfoPlanningModalOpen(false)} />}
     </section>
   );
 };

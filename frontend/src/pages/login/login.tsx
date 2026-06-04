@@ -3,7 +3,7 @@ import Button from "../../components/button"
 import Input from "../../components/input"
 import Label from "../../components/label"
 import Panel from "../../components/panel"
-import type { UserLogin } from "../../types/authDTO/userLogin"
+import type { UserLogin } from "../../types/auth"
 import { login_for_access_token } from "../../services/auth"
 import { useNavigate } from "react-router-dom"
 
@@ -40,7 +40,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
             const token = loginResponse.data.access_token;
             localStorage.setItem("token", token);
 
-            nav("/")
+            nav("/dashboard")
         } catch (err: any) {
             setError(err.message);
             console.error(err);

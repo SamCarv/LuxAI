@@ -1,10 +1,10 @@
 {
     "dashboard": "Dashboard",
     "planning": "Planejamento",
-    "investment": "Investimento",
+    "goals": "Metas",
     "bank": "Banco",
     "files": "Arquivos",
-    "chat": "Chat",
+    "chat": "Assistente Pessoal",
 
 
     "bank.accounts": "Contas",

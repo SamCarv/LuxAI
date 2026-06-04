@@ -1,19 +1,21 @@
 import { X, Calendar, Repeat, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
-import type { Transaction } from '../../types/transaction'
+import type { TransactionView } from '../../types/transaction'
 import Modal from '../modal'
 import Button from '../button'
 import { DynamicIcon, type IconName } from '../../pages/planning/dynamic-icon'
-import { categories } from '../../utils/constants.planning'
+import { useQuery } from '@tanstack/react-query'
+import { get_one_category } from '../../services/category'
 
 interface TransactionDetailsModalProps {
-    transaction: Transaction | null
+    transaction: TransactionView | null
     onClose: () => void
 }
 
 export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
-    if (!transaction) return null
+    if (!transaction) return
 
-    const category = categories.find(c => c.id === transaction.category_id)
+    const { data: category } = useQuery({queryKey: ['category', transaction.category_id], queryFn: () => get_one_category(transaction.category_id!) });
+
 
     return (
         <Modal className="max-w-sm p-6">
@@ -31,7 +33,7 @@ export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDet
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 px-4">{transaction.description}</h3>
                 <p className={`text-2xl font-black mt-2 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                    {transaction.type === 'income' ? '+' : '-'} R$ {transaction.amount.toFixed(2)}
+                    {transaction.type === 'income' ? '+' : '-'} R$ {transaction.amount}
                 </p>
             </div>
 
@@ -39,7 +41,7 @@ export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDet
                 <div className="flex items-center justify-between py-2.5 border-b border-gray-100 dark:border-zinc-800/60">
                     <span className="text-gray-400">Categoria</span>
                     {category ? (
-                        <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold text-[12px]`} style={{ backgroundColor: `#${category.color}`}}>
+                        <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold text-sm text-black`} style={{ backgroundColor: `#${category.color}`}}>
                             <DynamicIcon name={category.icon as IconName} size={14} />
                             {category.name}
                         </span>
@@ -60,7 +62,7 @@ export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDet
                     <span className="text-gray-400">Periodicidade</span>
                     <span className="flex items-center gap-1.5 text-gray-800 dark:text-gray-200 font-semibold capitalize">
                         <Repeat size={14} className="text-gray-400" />
-                        {transaction.periodicity}
+                        {transaction.recurrence_frequency}
                     </span>
                 </div>
 

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { ChevronLeft, Plus, Wallet, PiggyBank, CreditCard, Landmark } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -13,11 +12,13 @@ import { AmountCurrency, AmountValue } from '../../components/amount/price'
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../components/ui/chart"
 import Button from '../../components/button'
-import type { Account } from '../../types/account'
+import { useQuery } from '@tanstack/react-query'
+import { get_bank_accounts } from '../../services/account'
+import type { AccountType } from '../../types/account'
 
-const getAccountIcon = (type: 'CHECKING' | 'SAVING' | 'CREDIT') => {
+const getAccountIcon = (type: AccountType) => {
   switch (type) {
-    case 'SAVING': 
+    case 'SAVINGS': 
       return <PiggyBank size={24} className="text-emerald-500" />;
     case 'CREDIT': 
       return <CreditCard size={24} className="text-amber-500" />;
@@ -36,17 +37,12 @@ const chartConfig = {
 const Wallets = () => {
   const { t } = useTranslation();
   const nav = useNavigate();
-
-  const [accounts] = useState<Account[]>([
-    { id: '1', name: 'Conta Corrente Itaú', balance: 7500.00, currency: 'BRL', account_type: 'CHECKING' },
-    { id: '2', name: 'Reserva de Emergência', balance: 4500.12, currency: 'BRL', account_type: 'SAVING' },
-    { id: '3', name: 'Cartão de Crédito Nu', balance: 1200.00, currency: 'BRL', account_type: 'CREDIT' },
-  ]);
+  const { error: accountsError, isLoading: accountsLoading, data: accounts = [] } = useQuery({ queryKey: ['accounts'], queryFn: get_bank_accounts})
 
   const chartData = accounts.map(acc => ({
     name: acc.name,
     value: acc.balance,
-    fill: acc.account_type === 'CHECKING' ? '#3b82f6' : acc.account_type === 'SAVING' ? '#10b981' : '#f59e0b'
+    fill: acc.account_type === 'CHECKING' ? '#3b82f6' : acc.account_type === 'SAVINGS' ? '#10b981' : '#f59e0b'
   }));
 
   return (
@@ -73,43 +69,41 @@ const Wallets = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         <div className="lg:col-span-1 flex flex-col gap-y-6">
           <Panel className="flex flex-col justify-between h-full">
-            <div>
-              <PanelLabel className="dark:text-zinc-400">Distribuição do Saldo</PanelLabel>
-              <div className="h-56 w-full mt-4 flex items-center justify-center">
-                <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-50 w-full">
-                  <PieChart>
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      nameKey="name"
-                      innerRadius={60}
-                      strokeWidth={5}
-                      className="stroke-white dark:stroke-zinc-900"
-                    >
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ChartContainer>
-              </div>
-            </div>
+            {accounts && (
+              <>
+                <div>
+                  <PanelLabel className="dark:text-zinc-400">Distribuição do Saldo</PanelLabel>
+                  <div className="h-56 w-full mt-4 flex items-center justify-center">
+                    <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-50 w-full">
+                      <PieChart>
+                        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                        <Pie
+                          data={chartData}
+                          dataKey="value"
+                          nameKey="name"
+                          innerRadius={60}
+                          strokeWidth={5}
+                          className="stroke-white dark:stroke-zinc-900"
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ChartContainer>
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-y-2 border-t border-zinc-100 dark:border-zinc-800 pt-4 mt-2">
-              <div className="flex justify-between text-xs font-medium">
-                <span className="flex items-center gap-2 text-zinc-500"><span className="w-3 h-3 rounded-full bg-blue-500" /> Checking</span>
-                <span className="dark:text-zinc-300">R$ {accounts.filter(a => a.account_type === 'CHECKING').reduce((acc, c) => acc + c.balance, 0).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-xs font-medium">
-                <span className="flex items-center gap-2 text-zinc-500"><span className="w-3 h-3 rounded-full bg-emerald-500" /> Saving</span>
-                <span className="dark:text-zinc-300">R$ {accounts.filter(a => a.account_type === 'SAVING').reduce((acc, c) => acc + c.balance, 0).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-xs font-medium">
-                <span className="flex items-center gap-2 text-zinc-500"><span className="w-3 h-3 rounded-full bg-amber-500" /> Credit</span>
-                <span className="dark:text-zinc-300">R$ {accounts.filter(a => a.account_type === 'CREDIT').reduce((acc, c) => acc + c.balance, 0).toFixed(2)}</span>
-              </div>
-            </div>
+                <div className="flex flex-col gap-y-2 border-t border-zinc-100 dark:border-zinc-800 pt-4 mt-2">
+                  {accounts.map(account => (
+                    <div className="flex justify-between text-xs font-medium">
+                      <span className="flex items-center gap-2 text-zinc-500"><span className="w-3 h-3 rounded-full bg-amber-500" />{account.account_type}</span>
+                      <span className="dark:text-zinc-300">R$ {account.balance}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </Panel>
         </div>
 
@@ -118,7 +112,7 @@ const Wallets = () => {
             <PanelLabel className="dark:text-zinc-400 mb-4">Suas Carteiras</PanelLabel>
             
             <PanelGroup className="space-y-3">
-              {accounts.map((account) => (
+              {!accountsError && !accountsLoading && !(accounts.length === 0) &&  accounts.map((account) => (
                 <PanelItem key={account.id} className="dark:hover:bg-zinc-800/40 rounded-xl transition-colors border border-zinc-100 dark:border-zinc-800/40 p-4 cursor-pointer">
                   <PanelItemIcon className="dark:bg-zinc-800">
                     {getAccountIcon(account.account_type)}
