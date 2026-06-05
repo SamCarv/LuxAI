@@ -11,5 +11,5 @@ export const sumBalanceCategory = (transactions: TransactionView[] | undefined):
 
     if (isNaN(sum)) return "0.00"
 
-    return sum.toFixed(2)
+    return sum.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }

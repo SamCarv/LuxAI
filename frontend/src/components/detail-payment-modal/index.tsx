@@ -16,7 +16,6 @@ export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDet
 
     const { data: category } = useQuery({queryKey: ['category', transaction.category_id], queryFn: () => get_one_category(transaction.category_id!) });
 
-
     return (
         <Modal className="max-w-sm p-6">
             <div className="absolute right-6 top-6">
@@ -33,7 +32,7 @@ export const TransactionDetailsModal = ({ transaction, onClose }: TransactionDet
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 px-4">{transaction.description}</h3>
                 <p className={`text-2xl font-black mt-2 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                    {transaction.type === 'income' ? '+' : '-'} R$ {transaction.amount}
+                    {transaction.type === 'income' ? '+' : '-'} R$ {Number(transaction.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
             </div>
 

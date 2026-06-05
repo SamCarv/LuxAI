@@ -1,4 +1,4 @@
-import { ArrowRight, BanknoteArrowDown, BanknoteArrowUp, CreditCard, HelpCircle, Loader2} from 'lucide-react'
+import { ArrowRight, BanknoteArrowDown, BanknoteArrowUp, CreditCard, HelpCircle, Loader2, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Panel from '../../components/panel'
 import PanelLabel from '../../components/panel/panel.label'
@@ -8,42 +8,38 @@ import PanelItemIcon from '../../components/panel/panel.icon'
 import { PanelItemInfo, PanelItemInfoDetail, PanelItemInfoTitle } from '../../components/panel/panel.info'
 import Amount from '../../components/amount'
 import { AmountCurrency, AmountValue } from '../../components/amount/price'
-import { walletItems } from '../../components/panel/constants'
 import { groupTransaction } from '../../utils/sort'
 import { dateToHour } from '../../utils/date'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/button'
 import { useState } from 'react'
-import TransactionModal from './transaction-modal'
-import type { Transaction, TransactionView } from '../../types/transaction'
-import { categories } from '../../utils/constants.planning'
-import { bankOptions } from '../bank/constants'
-import ButtonIcon from '../../components/button/icon'
-import ButtonLabel from '../../components/button/text'
+import type { TransactionView } from '../../types/transaction'
 import { TransactionDetailsModal } from '../../components/detail-payment-modal'
 import { useQuery } from '@tanstack/react-query'
 import { get_bank_accounts } from '../../services/account'
 import { list_transactions } from '../../services/transaction'
 import InfoBankSectionModal from './info-section-modal'
+import CreateAccountModal from './create-account-modal'
 
 const Bank = () => {
   const { t } = useTranslation();
   const nav = useNavigate();
-  const {isPending: accountsLoading, error: accountsError, data: accounts} = useQuery({queryKey: ['accounts'], queryFn: get_bank_accounts});
-  const {isPending: transactionsLoading, error: transactionsError, data: transactions = []} = useQuery({queryKey:['transactions'], queryFn: list_transactions});
-  const [isTranscationModalOpen, setIsTransactionOpen] = useState(false);
+  const { isPending: accountsLoading, error: accountsError, data: accounts } = useQuery({ queryKey: ['accounts'], queryFn: get_bank_accounts });
+  const { isPending: transactionsLoading, error: transactionsError, data: transactions = [] } = useQuery({ queryKey: ['transactions'], queryFn: list_transactions });
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionView | null>(null);
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
-  
+  const navigate = useNavigate()
+
   const transactionsGrouped = groupTransaction(transactions);
-  
+
   return (
     <section className="p-6 w-full max-w-7xl mx-auto h-full">
       <Button onClick={() => setIsBankModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
         <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Banco</h1>
-        <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in'/>
+        <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in' />
       </Button>
-      
+
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
         <div className='flex-col space-y-6 w-full'>
@@ -51,9 +47,10 @@ const Bank = () => {
             <div className='flex w-full justify-between items-center mb-4'>
               <PanelLabel className='dark:text-zinc-400'>{t('bank.wallets')}</PanelLabel>
 
-              <button type='button' onClick={() => nav('wallets')} className='bg-gray-50 dark:bg-zinc-800 size-9 flex justify-center items-center border border-gray-300 dark:border-zinc-600 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer'>
-                <ArrowRight size={20} className="dark:text-zinc-300" />
-              </button>
+              <Button onClick={() => setIsAccountModalOpen(true)} variants='standard' colors='primary' className="flex items-center gap-x-2 px-4 py-2 rounded-xl font-medium text-sm">
+                <Plus size={20} strokeWidth={2.2} />
+                <span className='hidden md:flex font-bold'>Criar carteira</span>
+              </Button>
             </div>
 
             <PanelGroup className="space-y-2">
@@ -80,7 +77,7 @@ const Bank = () => {
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-xs">
                     Você ainda não possui contas ou carteiras cadastradas. Adicione uma para começar a gerenciar seu saldo.
                   </p>
-                  <Button 
+                  <Button
                     onClick={() => nav('wallets')}
                     variants="standard"
                     colors="primary"
@@ -108,7 +105,7 @@ const Bank = () => {
                     </PanelItemInfo>
                     <Amount className='flex-1 py-2.5 justify-end font-medium'>
                       <AmountCurrency>{wallet.currency === 'BRL' ? 'R$' : '$'}</AmountCurrency>
-                      <AmountValue>{wallet.balance}</AmountValue>
+                      <AmountValue>{Number(wallet.balance).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</AmountValue>
                     </Amount>
                   </PanelItem>
                 ))
@@ -149,13 +146,13 @@ const Bank = () => {
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-xs">
                   Você ainda não possui movimentações registradas nesta conta. Clique abaixo para adicionar a primeira.
                 </p>
-                <Button 
-                  onClick={() => setIsTransactionOpen(true)}
+                <Button
+                  onClick={() => navigate('/planning')}
                   variants="standard"
                   colors="primary"
                   className="text-xs flex items-center gap-2 px-4 py-2"
                 >
-                  <span>Nova Movimentação</span>
+                  Começar a planejar
                 </Button>
               </div>
             )}
@@ -182,7 +179,7 @@ const Bank = () => {
                         </PanelItemInfo>
                         <Amount transactionType={item.type} className='flex-1 py-2.5 justify-end font-medium'>
                           <AmountCurrency>R$</AmountCurrency>
-                          <AmountValue>{item.amount}</AmountValue>
+                          <AmountValue>{Number(item.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</AmountValue>
                         </Amount>
                       </button>
                     </PanelItem>
@@ -194,18 +191,14 @@ const Bank = () => {
         </Panel>
       </div>
 
-      {isTranscationModalOpen && <TransactionModal onClose={() => setIsTransactionOpen(false)} onSave={function (transaction: Omit<Transaction, 'id'>): void {
-        throw new Error('Function not implemented.')
-      }} categories={categories} wallets={walletItems} />
-      }
-
-      <TransactionDetailsModal 
+      <TransactionDetailsModal
         transaction={selectedTransaction}
         onClose={() => setSelectedTransaction(null)}
       />
 
-      {isBankModalOpen && <InfoBankSectionModal onClose={() => setIsBankModalOpen(false)}/>}
-      
+      {isBankModalOpen && <InfoBankSectionModal onClose={() => setIsBankModalOpen(false)} />}
+
+      {isAccountModalOpen && <CreateAccountModal onClose={() => setIsAccountModalOpen(false)} />}
     </section>
   );
 };

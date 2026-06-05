@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Home, Plus, HelpCircle, Loader2, FileText, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import Panel from "../../components/panel";
@@ -29,10 +29,6 @@ const Planning = () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       setCategoryModalOpen(false);
     },
-    onError: (error) => {
-      console.error("Erro ao criar categoria:", error);
-
-    }
   });
 
   const deleteCategoryMutation = useMutation({
@@ -49,6 +45,19 @@ const Planning = () => {
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPlannedBalance = useMemo(() => {
+    return categories.reduce((acc, category) => {
+      if (!category.transactions) return acc;
+
+      const categorySum = category.transactions.reduce((sum, transaction) => {
+        const amount = transaction && transaction.amount ? Number(transaction.amount) : 0;
+        return sum + (isNaN(amount) ? 0 : amount);
+      }, 0);
+
+      return acc + categorySum;
+    }, 0);
+  }, [categories]);
 
   return (
     <section className="flex flex-col w-full h-full gap-y-6 max-w-7xl mx-auto p-4 text-slate-900 dark:text-slate-100 transition-colors duration-200">
@@ -84,7 +93,14 @@ const Planning = () => {
       </div>
 
       <div className="flex flex-col gap-y-4 mt-2">
-        {categories.length > 0 && <p className="text-lg font-bold  py-1 rounded-lg">Total de saldo planejado para o próximo mês: <span className="text-red-500">R$ 7.600,00</span></p>}
+        {categories.length > 0 && (
+          <p className="text-lg font-bold py-1 rounded-lg">
+            Total de saldo planejado para o próximo mês:{" "}
+            <span className="text-red-500">
+              R$ {totalPlannedBalance.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+          </p>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {isCategoriesLoading && (

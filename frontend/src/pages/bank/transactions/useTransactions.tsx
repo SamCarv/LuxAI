@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { TransactionView } from '../../../types/transaction'
-import { transactions, transactionsDetails } from '../constants'
+import { useQuery } from '@tanstack/react-query'
+import { list_transactions } from '../../../services/transaction'
+import { list_categories } from '../../../services/category'
 
 export const useTransactions = () => {
     const nav = useNavigate()
@@ -15,14 +17,25 @@ export const useTransactions = () => {
         approxAmount: '',
         categoryId: ''
     })
+    
+    const { data: transactions = []} = useQuery({queryKey:['transactions'], queryFn: list_transactions});
+    const { data: categories = [] } = useQuery({queryKey: ['categories'],queryFn: list_categories});
+
+    const categoriesMap = useMemo(() => {
+        const map = new Map();
+        categories.forEach(cat => {
+            map.set(cat.id, cat);
+        });
+        return map;
+    }, [categories]);
 
     const filteredTransactions = useMemo(() => {
-        return transactionsDetails.filter(t => {
-            if (t.status !== 'successful') return false
+        return transactions.filter(t => {
+            if (t.status !== 'success') return false
 
             const matchesSearch = t.description.toLowerCase().includes(search.toLowerCase())
             const matchesType = advancedFilters.type === 'all' ? true : t.type === advancedFilters.type
-            const matchesCategory = advancedFilters.categoryId === '' ? true : t.category_id === Number(advancedFilters.categoryId)
+            const matchesCategory = advancedFilters.categoryId === '' ? true : t.category_id === advancedFilters.categoryId
             const matchesAmount = advancedFilters.approxAmount === '' ? true : t.amount <= Number(advancedFilters.approxAmount)
             
             let matchesDate = true
@@ -34,17 +47,17 @@ export const useTransactions = () => {
 
             return matchesSearch && matchesType && matchesCategory && matchesAmount && matchesDate
         })
-    }, [search, advancedFilters])
+    }, [transactions, search, advancedFilters])
 
     const totals = useMemo(() => {
         return transactions
-            .filter(t => t.status === 'successful')
+            .filter(t => t.status === 'success')
             .reduce((acc, t) => {
-                if (t.type === 'income') acc.income += t.amount
-                if (t.type === 'expense') acc.expense += t.amount
+                if (t.type === 'income') acc.income += Number(t.amount)
+                if (t.type === 'expense') acc.expense += Number(t.amount)
                 return acc
             }, { income: 0, expense: 0 })
-    }, [])
+    }, [transactions])
 
     return {
         nav,
@@ -57,6 +70,8 @@ export const useTransactions = () => {
         advancedFilters,
         setAdvancedFilters,
         filteredTransactions,
+        categoriesMap,
+        categories,
         totals
     }
 }
