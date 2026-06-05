@@ -54,7 +54,7 @@ export const FileCard: FC<FileCardProps> = ({ file, isSelectionMode, isSelected,
       className={`relative flex flex-col items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl aspect-square shadow-sm cursor-pointer transition-all hover:scale-[1.02] border-2 group ${
         isSelected 
           ? 'border-yellow-500 ring-2 ring-yellow-500/20 bg-yellow-50/30 dark:bg-yellow-950/10' 
-          : 'border-transparent hover:bg-gray-200 dark:hover:bg-zinc-700'
+          : 'border-2 border-gray-400 dark:border-zinc-700 hover:border-yellow-500 dark:hover:border-yellow-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
       }`}
     >
       {isSelectionMode && (

@@ -89,7 +89,7 @@ const CategoryDetail = () => {
           </div>
           <div className="ml-auto text-right">
             <p className="text-sm text-gray-500 font-medium">Total</p>
-            <p className="text-xl font-bold text-yellow-500">R$ {sumBalanceCategory(category?.transactions)}/mês</p>
+            <p className="text-xl font-bold text-yellow-600">R$ {sumBalanceCategory(category?.transactions)}/mês</p>
           </div>
         </div>
 
@@ -102,10 +102,6 @@ const CategoryDetail = () => {
           <Button variants='ghost' colors='no_color'> 
             <ButtonIcon><BarChart2/></ButtonIcon>
             <ButtonLabel>Gráfico</ButtonLabel>
-          </Button>
-          <Button variants='ghost' colors='no_color'> 
-            <ButtonIcon><GitCompare/></ButtonIcon>
-            <ButtonLabel>Comparação</ButtonLabel>
           </Button>
           <Button onClick={() => setIsCategoryModalOpen(true)} variants='ghost' colors='no_color'> 
             <ButtonIcon><Edit3/></ButtonIcon>
@@ -124,8 +120,9 @@ const CategoryDetail = () => {
                <h3 className="font-bold text-lg text-gray-800 dark:text-zinc-100">Transações</h3>
             </div>
             <div className="flex items-center gap-2">
-              <Button variants='circle' colors='primary' onClick={handleOpenCreate}>
+              <Button variants='circle' colors='primary' onClick={handleOpenCreate} className='flex gap-2 py-2 px-4 md:rounded-lg items-center'>
                 <Plus size={20} strokeWidth={3} />
+                <span className='hidden md:flex font-bold'>Criar Transação</span>
               </Button>
               <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors rounded-full cursor-pointer">
                 <Trash2 size={20} />
@@ -138,7 +135,7 @@ const CategoryDetail = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               <input 
                 type="text" 
-                placeholder="Pesquisar..."
+                placeholder="Pesquisar transações"
                 className="w-full pl-10 pr-4 py-2 bg-white dark:bg-zinc-800 border-none rounded-xl text-sm dark:text-white shadow-sm outline-paris-daisy-400 dark:outline-paris-daisy-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -194,7 +191,7 @@ const CategoryDetail = () => {
 
               <div className="flex items-center gap-6">
                 <div className="text-right">
-                  <p className="font-bold text-gray-900 dark:text-white">R$ {transaction.amount}</p>
+                  <p className="font-bold text-gray-900 dark:text-white">R$ {Number(transaction.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   <span className={`text-[10px] uppercase font-bold text-gray-400 ${transaction.status === 'success' ? 'text-green-500' : ' text-yellow-500'}`}>Status: {transaction.status}</span>
                 </div>
                 <div className="w-2 h-10 bg-gray-100 dark:bg-zinc-700 rounded-full overflow-hidden flex flex-col justify-end">

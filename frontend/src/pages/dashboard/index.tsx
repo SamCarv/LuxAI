@@ -16,17 +16,18 @@ import type { CreateDocument } from '../../types/document';
 import { upload_document } from '../../services/document';
 
 const Dashboard = () => {
-  const [hasApiKey, setHasApiKey] = useState(() => {return localStorage.getItem('luxai_api_key_configured') === 'true';}); 
+  const [hasApiKey, setHasApiKey] = useState(() => {return localStorage.getItem('luxai_api_key_configured') === 'true';});
+  const [isVisibleReport, setIsVisibleReport] = useState(false)
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
-  const { data: report, isLoading, isError, refetch } = useQuery({
+  const { data: report, isLoading, isError } = useQuery({
     queryKey: ['financialReports', hasApiKey],
     queryFn: () => get_analyze(),
-    enabled: hasApiKey 
+    enabled: isVisibleReport 
   });
 
   const configureKeySetup = () => {
@@ -134,18 +135,33 @@ const Dashboard = () => {
             )}
           </div>
 
-          <div className="p-8 flex-1">
+          <div className="p-8 flex flex-col flex-1 items-center">
             {!hasApiKey ? (
-              <div className="max-w-md mx-auto py-12 text-center space-y-6">
-                <KeyRound size={40} className="mx-auto text-zinc-300" />
-                <div className="space-y-2">
-                  <h3 className="text-base font-bold">Módulo de IA Desativado</h3>
-                  <p className="text-xs text-zinc-500 leading-relaxed">
-                    Conecte sua chave Gemini nas configurações de perfil para que o algoritmo possa processar seus dados e sugerir melhorias estratégicas.
+              <div className="bg-zinc-50 w-full max-w-lg dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700 rounded-xl p-5 space-y-5 my-auto">
+                <div className="p-3 bg-yellow-400/10 text-yellow-600 dark:text-yellow-400 rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+                  <KeyRound size={22} />
+                </div>
+                
+                <div className="space-y-2 text-center">
+                  <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Conecte sua Inteligência Artificial</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Para habilitar os módulos analíticos e os relatórios de diagnóstico, insira sua própria chave de acesso do <strong className="text-zinc-800 dark:text-zinc-200">Google Gemini</strong>.
                   </p>
                 </div>
-                <Button variants='standard' colors='primary' onClick={configureKeySetup} className="w-full">
-                  Configurar Chave API
+
+                <div className="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] space-y-2 text-zinc-600 dark:text-zinc-400">
+                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">Passo a passo para configurar:</p>
+                  <ol className="list-decimal list-inside space-y-1.5 pl-1">
+                    <li>Acesse o site do <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a> e crie uma chave API gratuita.</li>
+                    <li>Aqui na nossa plataforma, vá até a <span className="font-medium text-zinc-900 dark:text-white">Sidebar (barra lateral esquerda)</span>.</li>
+                    <li>Na parte inferior, procure pelo seu <span className="font-medium text-zinc-900 dark:text-white">Nome de Usuário</span> e clique nele.</li>
+                    <li>No painel/modal que se abrir, acesse a seção <span className="font-medium text-zinc-900 dark:text-white">"IA"</span>.</li>
+                    <li>Selecione o provedor <span className="font-semibold">Gemini</span> e cole a chave copiada.</li>
+                  </ol>
+                </div>
+
+                <Button variants='standard' colors='primary' onClick={configureKeySetup} className="w-full text-xs font-semibold">
+                  Entendi, já configurei
                 </Button>
               </div>
             ) : isLoading ? (
@@ -157,48 +173,54 @@ const Dashboard = () => {
               <div className="py-12 text-center text-red-500 space-y-3">
                 <AlertCircle size={32} className="mx-auto" />
                 <p className="text-sm font-medium">Houve um erro na comunicação com a API.</p>
-                <button onClick={() => refetch()} className="text-xs underline">Tentar novamente</button>
+                <p className="text-xs underline">Tente novamente mais tarde</p>
               </div>
             ) : (
-              <div className="max-w-4xl animate-fade-in space-y-8">
-                <div className="prose dark:prose-invert prose-zinc max-w-none">
-                   <div className="flex items-start gap-4">
-                      <Sparkles className="text-yellow-500 shrink-0 mt-1" size={20} />
-                      <div className="space-y-4">
-                        <div className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap font-medium">
-                          <ReactMarkdown>
-                            {report?.analysis}
-                          </ReactMarkdown>  
+              isVisibleReport ? (
+                <div className="max-w-4xl animate-fade-in space-y-8">
+                  <div className="prose dark:prose-invert prose-zinc max-w-none">
+                    <div className="flex items-start gap-4">
+                        <Sparkles className="text-yellow-500 shrink-0 mt-1" size={20} />
+                        <div className="space-y-4">
+                          <div className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap font-medium">
+                            <ReactMarkdown>
+                              {report?.analysis}
+                            </ReactMarkdown>  
+                          </div>
                         </div>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="bg-linear-to-r from-zinc-50 to-white dark:from-zinc-800/50 dark:to-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-white dark:bg-zinc-800 rounded-full shadow-sm">
-                      <MessageSquare size={20} className="text-yellow-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">Deseja agir sobre essa análise?</p>
-                      <p className="text-xs text-zinc-500">Inicie um chat para traçar planos de ação específicos.</p>
                     </div>
                   </div>
-                  <Button 
-                    variants='standard' 
-                    colors='primary'
-                    onClick={goToChat}
-                    className="flex items-center gap-2 px-6 py-2.5 group shadow-lg shadow-yellow-500/10"
-                  >
-                    <span>Abrir Consultoria</span>
-                    <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                  </Button>
+
+                  <div className="bg-linear-to-r from-zinc-50 to-white dark:from-zinc-800/50 dark:to-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-white dark:bg-zinc-800 rounded-full shadow-sm">
+                        <MessageSquare size={20} className="text-yellow-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold">Deseja agir sobre essa análise?</p>
+                        <p className="text-xs text-zinc-500">Inicie um chat para traçar planos de ação específicos.</p>
+                      </div>
+                    </div>
+                    <Button 
+                      variants='standard' 
+                      colors='primary'
+                      onClick={goToChat}
+                      className="flex items-center gap-2 px-6 py-2.5 group shadow-lg shadow-yellow-500/10"
+                    >
+                      <span>Abrir Consultoria</span>
+                      <ChevronRight size={16} className="group-hover:translate-x-2 transition-transform" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              ): (
+                <Button onClick={() => setIsVisibleReport(true)} variants='standard' colors='primary'>
+                  Quero minha Análise
+                </Button>)
             )}
           </div>
         </section>
       </div>
+      
       {isCategoryModalOpen && <CreateCategoryModal createCategory={createCategoryMutation.mutate} onClose={() => setIsCategoryModalOpen(false)}/>}
       {isGoalModalOpen && <CreateGoalModal onSave={createGoalMutation.mutate} onClose={() => setIsGoalModalOpen(false)}/>}
       {isDocumentModalOpen && <UploadModal onUpload={uploadMutation.mutate} onClose={() => setIsDocumentModalOpen(false)} />}

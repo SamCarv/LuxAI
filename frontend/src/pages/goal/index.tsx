@@ -84,7 +84,7 @@ export const Goals = () => {
         <div className="w-full md:max-w-xs">
           <Input 
             type="text" 
-            placeholder="Pesquisar por tema ou nome..." 
+            placeholder="Pesquisar metas" 
             value={search} 
             onChange={(e) => setSearch(e.target.value)} 
             className='w-full'
@@ -187,9 +187,6 @@ export const Goals = () => {
         <GoalDetailsModal 
           goal={selectedGoal} 
           onClose={() => setSelectedGoal(null)}
-          onWithdraw={(updatedData: UpdateGoal) => 
-            updateGoalMutation.mutate({ id: selectedGoal.id, updateGoal: updatedData })
-          }
         />
       )}
 

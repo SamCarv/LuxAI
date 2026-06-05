@@ -4,7 +4,7 @@ import Modal from '../modal'
 import Button from '../button'
 import Label from '../label'
 import Input from '../input'
-import { categories } from '../../utils/constants.planning'
+import type { CategoryView } from '../../types/category'
 
 interface FilterValues {
     startDate: string
@@ -18,9 +18,10 @@ interface FilterModalProps {
     onClose: () => void
     onApplyFilters: (filters: FilterValues) => void
     currentFilters: FilterValues
+    categories: CategoryView[]
 }
 
-export const FilterModal = ({ onClose, onApplyFilters, currentFilters }: FilterModalProps) => {
+export const FilterModal = ({ onClose, onApplyFilters, currentFilters, categories }: FilterModalProps) => {
     const [filters, setFilters] = useState<FilterValues>(currentFilters)
 
     const handleClear = () => {

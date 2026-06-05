@@ -19,6 +19,8 @@ const Transactions = () => {
         advancedFilters,
         setAdvancedFilters,
         filteredTransactions,
+        categoriesMap,
+        categories,
         totals
     } = useTransactions();
 
@@ -30,11 +32,11 @@ const Transactions = () => {
             </button>
 
             <div className='flex justify-between items-center'>
-                <h1 className='text-3xl font-bold tracking-tight'>Histórico de Pagamentos</h1>
+                <h1 className='text-3xl font-bold tracking-tight'>Histórico de Transações</h1>
                 <button title='Ir para planejamento' onClick={() => nav('../planning')} className='flex gap-4 px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-sm transition-all cursor-pointer text-sm'>
-                    <span className='flex items-center gap-1 text-green-600 font-medium'><ArrowUp size={16} /> R$ {totals.income.toFixed(2)}</span>
-                    <span className='flex items-center gap-1 text-red-600 font-medium'><ArrowDown size={16} /> R$ {totals.expense.toFixed(2)}</span>
-                    <span className='flex items-center gap-1 text-zinc-600 dark:text-gray-300 font-medium'><ArrowUpDown size={16} /> R$ {(totals.income - totals.expense).toFixed(2)}</span>
+                    <span className='flex items-center gap-1 text-green-600 font-medium'><ArrowUp size={16} /> R$ {Number(totals.income).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span className='flex items-center gap-1 text-red-600 font-medium'><ArrowDown size={16} /> R$ {Number(totals.expense).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span className='flex items-center gap-1 text-zinc-600 dark:text-gray-300 font-medium'><ArrowUpDown size={16} /> R$ {Number(totals.income - totals.expense).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </button>
             </div>
 
@@ -43,7 +45,7 @@ const Transactions = () => {
                     <Search className='absolute left-4 top-3.5 h-4 w-4 text-gray-400 z-10' />
                     <Input 
                         type="text"
-                        placeholder="Buscar por descrição..."
+                        placeholder="Buscar por descrição"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pl-11"
@@ -62,18 +64,20 @@ const Transactions = () => {
             </div>
 
             <table className='bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-sm'>
-                <tr className='grid grid-cols-5 bg-gray-50 dark:bg-zinc-800/50 px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-zinc-800'>
-                    <th className='text-left'>Descrição</th>
-                    <th className='text-center'>Tipo</th>
-                    <th className='text-center'>Categoria</th>
-                    <th className='text-center'>Data</th>
-                    <th className='text-right'>Valor</th>
-                </tr>
+                <thead>
+                    <tr className='grid grid-cols-5 bg-gray-50 dark:bg-zinc-800/50 px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-zinc-800'>
+                        <th className='text-left'>Descrição</th>
+                        <th className='text-center'>Tipo</th>
+                        <th className='text-center'>Categoria</th>
+                        <th className='text-center'>Data</th>
+                        <th className='text-right'>Valor</th>
+                    </tr>
+                </thead>
 
-                <div className='divide-y divide-gray-100 dark:divide-zinc-800/60'>
+                <tbody className='divide-y divide-gray-100 dark:divide-zinc-800/60'>
                     {filteredTransactions.length > 0 ? (
                         filteredTransactions.map((transaction) => {
-                            const category = categories.find(c => c.id === transaction.category_id)
+                            const category = categoriesMap.get(transaction.category_id)
                             
                             return (
                                 <tr 
@@ -83,7 +87,7 @@ const Transactions = () => {
                                 >
                                     <td>
                                         <p className='font-semibold text-gray-900 dark:text-white'>{transaction.description}</p>
-                                        <span className='text-xs text-gray-400 capitalize'>{transaction.periodicity}</span>
+                                        <span className='text-xs text-gray-400 capitalize'>{transaction.recurrence_frequency}</span>
                                     </td>
                                     
                                     <td className='flex justify-center'>
@@ -109,7 +113,7 @@ const Transactions = () => {
 
                                     <td className={`text-right font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                                         {transaction.type === 'income' ? '+ ' : '- '}
-                                        R$ {transaction.amount.toFixed(2)}
+                                        R$ {Number(transaction.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </td>
                                 </tr>
                             )
@@ -119,7 +123,7 @@ const Transactions = () => {
                             Nenhum registro encontrado para os filtros aplicados.
                         </div>
                     )}
-                </div>
+                </tbody>
             </table>
 
             {isFilterModalOpen && <FilterModal 
@@ -129,6 +133,7 @@ const Transactions = () => {
                     setAdvancedFilters(filters)
                     setIsFilterModalOpen(false)
                 }}
+                categories={categories}
             />}
 
             <TransactionDetailsModal 
