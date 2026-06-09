@@ -22,7 +22,7 @@ class User(UserBase, table=True):
         nullable=False,
     )
     hashed_password: str
-    ai_provider: str = Field(default="ollama")
+    ai_provider: str = Field(default="google")
     encrypted_google_api_key: str | None = Field(default=None)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
