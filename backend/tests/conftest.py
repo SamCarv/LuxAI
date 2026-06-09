@@ -1,71 +1,65 @@
-import sys
-from pathlib import Path
+from __future__ import annotations
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from contextlib import asynccontextmanager
+from collections.abc import AsyncGenerator
 
 import pytest
-import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel.pool import StaticPool
 
-from app.core.security import get_current_user
 from app.db.database import get_session
 from app.main import app
-from app.models.user import User
 
 
 @pytest.fixture()
-def test_engine():
+def anyio_backend():
+    return "asyncio"
+
+
+@pytest.fixture()
+def session():
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
     SQLModel.metadata.create_all(engine)
-    return engine
+    with Session(engine) as s:
+        yield s
 
 
 @pytest.fixture()
-def test_user(test_engine):
-    with Session(test_engine) as session:
-        user = User(
-            full_name="Test User",
-            email="test-user@example.com",
-            hashed_password="hashed",
-        )
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-        return user
+async def client(session: Session) -> AsyncGenerator[AsyncClient, None]:
+    def _override():
+        return session
 
-
-@pytest_asyncio.fixture()
-async def client(test_engine, test_user):
-    def override_get_session():
-        with Session(test_engine) as session:
-            yield session
-
-    def override_get_current_user():
-        return test_user
-
-    app.dependency_overrides[get_session] = override_get_session
-    app.dependency_overrides[get_current_user] = override_get_current_user
-
-    @asynccontextmanager
-    async def _lifespan(_app):
-        yield
-
-    original_lifespan = app.router.lifespan_context
-    app.router.lifespan_context = _lifespan
-
+    app.dependency_overrides[get_session] = _override
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
-        yield client
-
-    app.router.lifespan_context = original_lifespan
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def mock_storage_local(monkeypatch: pytest.MonkeyPatch, tmp_path):
+    """Override storage to use a temporary local directory."""
+    from app.services.storage import LocalStorage
+
+    storage = LocalStorage(root=str(tmp_path))
+    monkeypatch.setattr(
+        "app.services.document_service.get_storage_backend",
+        lambda: storage,
+    )
+    return tmp_path
+
+
+@pytest.fixture()
+def mock_embedding(monkeypatch: pytest.MonkeyPatch):
+    """Mock embedding generation for document tests."""
+
+    async def fake_get_embedding(*args, **kwargs):
+        return [0.1] * 768
+
+    monkeypatch.setattr(
+        "app.services.document_service.get_embedding", fake_get_embedding
+    )
