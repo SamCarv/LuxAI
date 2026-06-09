@@ -24,7 +24,7 @@ from app.services.ai_service import get_embedding
 MAX_DOCUMENT_BYTES = int(os.getenv("DOCUMENT_MAX_BYTES", str(25 * 1024 * 1024)))
 CHUNK_SIZE = int(os.getenv("DOCUMENT_CHUNK_SIZE", "1200"))
 CHUNK_OVERLAP = int(os.getenv("DOCUMENT_CHUNK_OVERLAP", "200"))
-STORAGE_ROOT = os.getenv("DOCUMENT_STORAGE_PATH", "uploads")
+STORAGE_ROOT = os.getenv("DOCUMENT_STORAGE_PATH", "/tmp/uploads")
 OCR_LANG = os.getenv("OCR_LANG", "eng")
 
 
