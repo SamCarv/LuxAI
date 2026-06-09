@@ -39,14 +39,6 @@ if "ondigitalocean.com" in DATABASE_URL:
             "&sslmode=require" if "?" in DATABASE_URL else "?sslmode=require"
         )
 
-    if "prepared_statements=" not in DATABASE_URL:
-        DATABASE_URL += (
-            "&prepared_statements=false"
-            if "?" in DATABASE_URL
-            else "?prepared_statements=false"
-        )
-# ---------------------------------------------------------
-
 engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
 
