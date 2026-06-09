@@ -1,7 +1,8 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING, List, Optional
 from uuid import UUID, uuid7
+from zoneinfo import ZoneInfo
 
 from pgvector.sqlalchemy import Vector
 from sqlmodel import Field, Relationship
@@ -34,7 +35,7 @@ class Transaction(TransactionBase, table=True):
     amount: Decimal = Field(sa_column=Column(Numeric(10, 2), nullable=False))
 
     date: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(ZoneInfo("America/Sao_Paulo")),
         sa_column=Column(
             DateTime(timezone=True),
             nullable=False,

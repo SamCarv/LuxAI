@@ -269,6 +269,9 @@ async def search_document_chunks(
         api_key=api_key,
     )
 
+    if query_vector is None:
+        return []
+
     statement = (
         select(DocumentChunk, Document)
         .join(Document, DocumentChunk.document_id == Document.id)

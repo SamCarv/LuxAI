@@ -80,6 +80,9 @@ async def search_transactions_service(
         query, is_search=True, provider=current_user.ai_provider, api_key=api_key
     )
 
+    if query_vector is None:
+        return []
+
     statement = (
         select(Transaction)
         .where(Transaction.account_id.in_(account_ids))  # type: ignore[attr-defined]
