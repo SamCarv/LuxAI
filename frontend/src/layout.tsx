@@ -7,6 +7,8 @@ import { get_user_by_id } from './services/user'
 import { jwtDecode } from 'jwt-decode'
 import SideChat from './components/side-chat'
 import { Toaster } from 'sonner'
+import { useThemeContext } from './hooks/use-theme-context'
+
 
 const Layout = () => {
     const { setUser } = useUserContext()
@@ -15,6 +17,7 @@ const Layout = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     const token = localStorage.getItem("token")
+    const {theme} = useThemeContext();
 
     useEffect(() => {
         const init = async () => {
@@ -88,7 +91,7 @@ const Layout = () => {
             <aside>
                 {isAssistentAIOpen && <SideChat toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>}
             </aside>
-            <Toaster richColors position='top-center'/>
+            <Toaster richColors position='top-center' theme={theme} />
         </div>
     ): <Navigate to={'/login'} replace />
 }

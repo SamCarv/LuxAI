@@ -8,7 +8,7 @@ const get_bank_accounts = async (): Promise<AccountView[]> => {
     return api.get(`/${ROUTE}/`, {headers:{Authorization: `Bearer ${token}`}}).then((response) => response.data)
 }
 
-const create_bank_account = async (createAccount: CreateAccount): Promise<AccountView[]> => {
+const create_bank_account = async (createAccount: CreateAccount): Promise<AccountView> => {
     const token = localStorage.getItem("token");
     return api.post(`/${ROUTE}/`, createAccount, {headers:{Authorization: `Bearer ${token}`}}).then((response) => response.data)
 }

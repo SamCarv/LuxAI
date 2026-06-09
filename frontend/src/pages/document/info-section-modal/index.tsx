@@ -27,7 +27,7 @@ const InfoDocumentSectionModal = ({ onClose }: InfoDocumentSectionModalProps ) =
                 </div>
 
                 <div className="flex items-start gap-2.5 pt-2">
-                    <p><strong>Importante:</strong> Seus dados são criptografados, processados de forma isolada e nunca compartilhados com terceiros.</p>
+                    <p><strong>Importante:</strong> Seus dados são processados e compartilhados para o provedor da IA. Se usar o Ollama estará totalmente seguro com apenas você.</p>
                 </div>
             </div>
 

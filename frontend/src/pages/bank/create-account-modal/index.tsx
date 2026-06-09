@@ -1,10 +1,12 @@
 import { useState, type FC, type FormEvent } from "react";
-import type { CreateAccount } from "../../../types/account";
+import type { AccountView, CreateAccount } from "../../../types/account";
 import { create_bank_account } from "../../../services/account";
 import Modal from "../../../components/modal";
 import Input from "../../../components/input";
 import Button from "../../../components/button";
 import Label from "../../../components/label";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 
 interface CreateAccountModalProps {
@@ -19,9 +21,23 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
     currency: "BRL",
     account_type: "CHECKING",
   });
+  const queryClient = useQueryClient();
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const createAccountMutation = useMutation({
+    mutationFn: (createAccount: CreateAccount) => create_bank_account(createAccount),
+    onSuccess: (newAccountCreated) => {
+      queryClient.setQueryData(['accounts'], (oldAccountList: AccountView[]) => {
+        return oldAccountList? [...oldAccountList, newAccountCreated] : [newAccountCreated]
+      })
+      toast.success(`Sua conta ${newAccountCreated.name} foi criada!`)
+    },
+    onError: () => {
+      toast.error('Não foi possível criar sua conta.')
+    }
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -37,7 +53,7 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
     setError(null);
 
     try {
-      await create_bank_account(formData);
+      createAccountMutation.mutate(formData);
       if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
@@ -55,9 +71,6 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Nova Conta Bancária
           </h2>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Insira os dados abaixo para registrar uma nova conta.
-          </p>
         </div>
 
         {error && (
@@ -120,7 +133,7 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
               >
                 <option value="CHECKING">Corrente</option>
                 <option value="SAVINGS">Poupança</option>
-                <option value="INVESTMENT">Investimento</option>
+                <option value="CREDIT">Crédito</option>
               </select>
             </div>
           </div>

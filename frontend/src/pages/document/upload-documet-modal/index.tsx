@@ -13,7 +13,7 @@ export const UploadModal: FC<UploadModalProps> = ({ onClose, onUpload }) => {
   const [title, setTitle] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const submit = (e: FormEvent) => {
     e.preventDefault();
     if (selectedFile) {
       console.log(selectedFile)
@@ -28,10 +28,10 @@ export const UploadModal: FC<UploadModalProps> = ({ onClose, onUpload }) => {
     <Modal>
       <h2 className="text-xl font-bold mb-4 text-zinc-800 dark:text-zinc-100">Upload de Documento</h2>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={submit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">Título do Documento</label>
-          <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Extrato de Março"/>
+          <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Extrato de Março"/>
         </div>
 
         <div>

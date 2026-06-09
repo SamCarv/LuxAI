@@ -1,7 +1,9 @@
 import { createContext, useContext } from 'react'
 
+export type Theme = 'light' | 'dark' | 'system'
+
 interface ThemeProps {
-  theme: string,
+  theme: Theme,
   switchTheme: ()=>void,
 }
 
