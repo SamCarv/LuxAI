@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeft, Trash2, Plus, Calendar, CheckCircle2, Clock, Search, Filter, CreditCard, BarChart2, GitCompare, Edit3 } from 'lucide-react';
+import { ChevronLeft, Trash2, Plus, Calendar, CheckCircle2, Clock, Search, Filter, CreditCard, BarChart2, Edit3 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import type {  CreateTransaction, TransactionView, UpdateTransaction } from '../../types/transaction';
+import type { TransactionView } from '../../types/transaction';
 import Button from '../../components/button';
 import TransactionCategoryModal from './create-transaction-modal';
 import { DynamicIcon, type IconName } from './dynamic-icon';
@@ -15,7 +15,6 @@ import { format } from 'date-fns/format';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import type { UpdateCategory } from '../../types/category';
 import CreateCategoryModal from './create-category-modal';
-import { create_transaction, update_transaction } from '../../services/transaction';
 
 const CategoryDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,21 +54,7 @@ const CategoryDetail = () => {
     }
   });
 
-  const createTransactionMutation = useMutation({
-    mutationFn: (createTransaction: CreateTransaction) => create_transaction(createTransaction),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['category', id]})
-      queryClient.invalidateQueries({ queryKey: ['categories']})
-    }
-  })
-
-  const updateTransactionMutation = useMutation({
-    mutationFn: ({id, updateTransaction}: {id: string, updateTransaction: UpdateTransaction}) => update_transaction(id, updateTransaction),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['category', id]})
-      queryClient.invalidateQueries({ queryKey: ['categories']})
-    }
-  })
+  
 
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-150 gap-6 p-4 md:p-8 animate-in fade-in duration-500">
@@ -204,7 +189,7 @@ const CategoryDetail = () => {
       </div>
       
       {isCategoryModalOpen && <CreateCategoryModal onClose={() => setIsCategoryModalOpen(false)} category={category} updateCategory={updateCategoryMutation.mutate} />}
-      {isTransactionModalOpen &&  <TransactionCategoryModal category={category} createTransaction={createTransactionMutation.mutate} updateTransaction={updateTransactionMutation.mutate} selectedTransaction={selectedTransaction} onClose={() => setIsTransactionModalOpen(false)}/>}
+      {isTransactionModalOpen &&  <TransactionCategoryModal category={category} selectedTransaction={selectedTransaction} onClose={() => setIsTransactionModalOpen(false)}/>}
     </div>
   );
 };

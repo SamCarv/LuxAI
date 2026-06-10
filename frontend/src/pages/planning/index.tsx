@@ -14,11 +14,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { create_category, delete_category, list_categories } from "../../services/category";
 import type { CreateCategory } from "../../types/category";
 import { sumBalanceCategory } from "./functions/sum_category";
+import TransactionCategoryModal from "./create-transaction-modal";
 
 const Planning = () => {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('');
-  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [isInfoPlanningModalOpen, setInfoPlanningModalOpen] = useState(false);
   
   const { error: categoriesError, isLoading: isCategoriesLoading, data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: list_categories });
@@ -27,7 +29,7 @@ const Planning = () => {
     mutationFn: (newCategory: CreateCategory) => create_category(newCategory),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
-      setCategoryModalOpen(false);
+      setIsCategoryModalOpen(false);
     },
   });
 
@@ -61,12 +63,13 @@ const Planning = () => {
 
   return (
     <section className="flex flex-col w-full h-full gap-y-6 max-w-7xl mx-auto p-4 text-slate-900 dark:text-slate-100 transition-colors duration-200">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <Button onClick={() => setInfoPlanningModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
+      <header onClick={() => setInfoPlanningModalOpen(true)} className='cursor-pointer group' title='Saber mais sobre essa seção'>
+        <Button variants='ghost' colors='no_color' className="relative flex flex-row items-center gap-4 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current group-hover:before:w-full before:transition-all before:duration-300 before:ease-in-out">
           <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Planejamento de Despesas e Receitas</h1>
           <HelpCircle className='fill-white size-10 sm:size-min group-hover:fill-slate-200 stroke-gray-600 duration-100 ease-in'/>
         </Button>
-      </div>
+         <p className='group-hover:text-gray-500 dark:group-hover:text-gray-400'>Essa seção gerencia gastos, receitas e previsão do próximo mês. Saber mais...</p>
+      </header>
 
       <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800">
         <div className="w-full md:max-w-xs">
@@ -81,13 +84,22 @@ const Planning = () => {
         
         <div className="flex items-center gap-2 w-full md:w-auto">
           <Button 
-            onClick={() => setCategoryModalOpen(true)}
+            onClick={() => setIsCategoryModalOpen(true)}
             variants="standard"
             colors="primary"
             className="text-sm py-3 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 min-w-35"
           >
             <Plus size={18} strokeWidth={2.4}/> 
             <span>Nova Categoria</span>
+          </Button>
+          <Button 
+            onClick={() => setIsTransactionModalOpen(true)}
+            variants="standard"
+            colors="primary"
+            className="text-sm py-3 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 min-w-35"
+          >
+            <Plus size={18} strokeWidth={2.4}/> 
+            <span>Nova Transação</span>
           </Button>
         </div>
       </div>
@@ -129,7 +141,7 @@ const Planning = () => {
                 Organize seu planejamento criando categorias personalizadas para gerenciar suas despesas.
               </p>
               <Button 
-                onClick={() => setCategoryModalOpen(true)}
+                onClick={() => setIsCategoryModalOpen(true)}
                 variants="standard"
                 colors="primary"
                 className="text-sm flex items-center gap-2 px-5 mx-auto"
@@ -174,7 +186,8 @@ const Planning = () => {
         </div>
       </div>
 
-      {isCategoryModalOpen && <CreateCategoryModal onClose={() => setCategoryModalOpen(false)} createCategory={createCategoryMutation.mutate}/>}
+      {isCategoryModalOpen && <CreateCategoryModal onClose={() => setIsCategoryModalOpen(false)} createCategory={createCategoryMutation.mutate}/>}
+      {isTransactionModalOpen && <TransactionCategoryModal onClose={() => setIsTransactionModalOpen(false)} categories={categories}/>}
       {isInfoPlanningModalOpen && <InfoPlanningSectionModal onClose={() => setInfoPlanningModalOpen(false)} />}
     </section>
   );

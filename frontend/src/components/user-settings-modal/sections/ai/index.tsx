@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react"
-import type { UserUpdate } from "../../../../types/userDTO/userUpdate"
+import type { UserUpdate } from "../../../../types/user"
 
 interface AISectionProps {
     settings: UserUpdate

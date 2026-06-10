@@ -60,8 +60,8 @@ const SideBar = () => {
                                 onClick={() => {setIsOpenModal(true); setIsOpenMenu(false)}} className="gap-3 p-3"
                             >
                                 <Avatar className='h-9 w-9'>
-                                    <AvatarImage src="https://github.com/fernando-cruz-cavina.png" />
-                                    <AvatarFallback>N</AvatarFallback>
+                                    <AvatarImage src="/" />
+                                    <AvatarFallback>{user?.full_name?.charAt(0) || "N"}</AvatarFallback>
                                 </Avatar>
                                 <span className="font-medium text-slate-700 dark:text-zinc-300">Configurações</span>
                             </Button>
@@ -73,7 +73,7 @@ const SideBar = () => {
             <nav className={`hidden sticky top-0 lg:flex flex-col bg-smoke-100 dark:bg-zinc-950 h-screen border-r border-slate-200 dark:border-zinc-800 transition-all duration-300 z-30 ${isHideSidebar ? 'w-24' : 'w-66'}`}>
                 <section>
                     <div className={`flex items-center justify-between bg-slate-200/40 dark:bg-zinc-900/40 w-full h-13 px-4 ${isHideSidebar && 'flex-col py-4 gap-4 h-fit'}`}>
-                        <a className='flex gap-2 items-center' href='/'>
+                        <a className='flex gap-2 items-center' href='/login'>
                             <img className='size-8 rounded-md' src={logo} alt="logo" />  
                             {!isHideSidebar && <h1 className='heading-md dark:text-white'>LuxAI</h1>}
                         </a>
@@ -108,7 +108,7 @@ const SideBar = () => {
                     >
                         <div className='flex items-center gap-3'>
                             <Avatar className='h-9 w-9 border border-zinc-200 dark:border-zinc-700'>
-                                <AvatarImage src="https://github.com/fernando-cruz-cavina.png" />
+                                <AvatarImage src="/" />
                                 <AvatarFallback className="dark:bg-zinc-800 dark:text-zinc-200">{user?.full_name?.charAt(0) || "N"}</AvatarFallback>
                             </Avatar>
                             {!isHideSidebar && <p className='font-medium text-sm text-slate-700 dark:text-zinc-300'>{user?.full_name || "Nome"}</p>}

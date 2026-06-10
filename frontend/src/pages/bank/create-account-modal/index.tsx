@@ -94,7 +94,7 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Saldo Inicial</Label>
+            <Label>Saldo Inicial <span className="text-xs text-gray-500 dark:text-gray-300">(permitido tanto 5 quanto 5,00)</span></Label>
             <Input
               id="balance"
               name="balance"

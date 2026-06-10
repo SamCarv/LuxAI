@@ -35,10 +35,13 @@ const Bank = () => {
 
   return (
     <section className="p-6 w-full max-w-7xl mx-auto h-full">
-      <Button onClick={() => setIsBankModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
-        <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Banco</h1>
-        <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in' />
-      </Button>
+      <header onClick={() => setIsBankModalOpen(true)} className='mb-8 cursor-pointer group' title='Saber mais sobre essa seção'>
+        <Button variants='ghost' colors='no_color' className="relative flex flex-row items-center gap-4  before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current group-hover:before:w-full before:transition-all before:duration-300 before:ease-in-out">
+          <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Banco</h1>
+          <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in' />
+        </Button>
+        <p className='group-hover:text-gray-500 dark:group-hover:text-gray-400'>Essa seção gerencia contas e visualiza todas suas transações. Saber mais...</p>
+      </header>
 
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
@@ -77,12 +80,7 @@ const Bank = () => {
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-xs">
                     Você ainda não possui contas ou carteiras cadastradas. Adicione uma para começar a gerenciar seu saldo.
                   </p>
-                  <Button
-                    onClick={() => nav('wallets')}
-                    variants="standard"
-                    colors="primary"
-                    className="text-xs flex items-center gap-2 px-4 py-2"
-                  >
+                  <Button onClick={() => setIsAccountModalOpen(true)} variants="standard" colors="primary"className="text-xs flex items-center gap-2 px-4 py-2">
                     <span>Criar Carteira</span>
                   </Button>
                 </div>

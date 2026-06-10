@@ -76,21 +76,26 @@ const Layout = () => {
     }
 
     return isAuthenticated ? (
-        <div className="flex w-full h-full">
-            <aside>
+        <div className="flex w-full h-screen overflow-hidden">    
+            <aside className="h-full shrink-0">
                 <Sidebar />
             </aside>
-            <div className="flex flex-col flex-1">
-                <header className="flex justify-end items-center">
+
+            <div className="flex flex-col flex-1 h-full overflow-y-auto">
+                <header className="flex justify-end items-center shrink-0">
                     <NavBar toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>
                 </header>
                 <main className="flex flex-1 p-10 justify-center">
                     <Outlet />
                 </main>
             </div>
-            <aside>
-                {isAssistentAIOpen && <SideChat toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>}
+
+            <aside className="flex items-start h-full shrink-0">
+                {isAssistentAIOpen && (
+                    <SideChat toggleSideChat={() => setIsAssistentAIOpen(!isAssistentAIOpen)}/>
+                )}
             </aside>
+
             <Toaster richColors position='top-center' theme={theme} />
         </div>
     ): <Navigate to={'/login'} replace />

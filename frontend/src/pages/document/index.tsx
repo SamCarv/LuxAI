@@ -59,11 +59,14 @@ export const Files = () => {
   );
 
   return (
-    <div className="p-6 w-full max-w-7xl mx-auto h-full">
-      <Button onClick={() => setIsInfoModalOpen(true)} variants='ghost' colors='no_color' className="relative group flex flex-row items-center gap-4 mb-8 before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current hover:before:w-full before:transition-all before:duration-300 before:ease-in-out" title='Saber mais sobre essa seção'>
-        <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Arquivos</h1>
-        <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in'/>
-      </Button>
+    <section className="flex flex-col w-full h-full gap-y-6 max-w-7xl mx-auto p-4 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <header onClick={() => setIsInfoModalOpen(true)} className='cursor-pointer group' title='Saber mais sobre essa seção'>
+        <Button variants='ghost' colors='no_color' className="relative flex flex-row items-center gap-4  before:absolute before:bottom-0 before:left-0 before:h-1 before:w-0 before:bg-current group-hover:before:w-full before:transition-all before:duration-300 before:ease-in-out">
+          <h1 className="heading-lg tracking-tight group-hover:text-gray-500 dark:group-hover:text-gray-300">Arquivos</h1>
+          <HelpCircle className='fill-white group-hover:fill-slate-200 stroke-gray-600 group-hover:gray-400 duration-100 ease-in'/>
+        </Button>
+        <p className='group-hover:text-gray-500 dark:group-hover:text-gray-400'>Essa seção possibilita inserir dados financeiros. Saber mais...</p>
+      </header>
 
       <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6 bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800">
         <div className="w-full md:max-w-xs">
@@ -162,6 +165,6 @@ export const Files = () => {
       {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} onUpload={uploadFile}/>}
       {isInfoModalOpen && <InfoDocumentSectionModal onClose={() => setIsInfoModalOpen(false)} />}
       {previewFile && <PreviewDocumentModal previewFile={previewFile} onClose={() => setPreviewFile(null)} />}
-    </div>
+    </section>
   );
 };

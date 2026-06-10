@@ -4,29 +4,31 @@ import Input from "../../../components/input"
 import Label from "../../../components/label"
 import Modal from "../../../components/modal"
 import type { CreateTransaction, PeriodicityType, StatusTransactionType, TransactionType, TransactionView, UpdateTransaction } from "../../../types/transaction"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { CategoryView } from "../../../types/category"
 import { get_bank_accounts } from "../../../services/account"
 import { formatDateForInput } from "../functions/date"
+import { create_transaction, update_transaction } from "../../../services/transaction"
 
 interface TransactionCategoryModalProps {
     selectedTransaction?: TransactionView | null,
-    category?: CategoryView | null, 
-    createTransaction?: (createTransaction: CreateTransaction) => void,
-    updateTransaction?: ({id, updateTransaction}: {id: string, updateTransaction: UpdateTransaction}) => void,
+    category?: CategoryView | null,
+    categories?: CategoryView[] | null,
     onClose: () => void
 }
 
-const TransactionCategoryModal = ({ selectedTransaction, category, onClose, createTransaction, updateTransaction }: TransactionCategoryModalProps) => {
+const TransactionCategoryModal = ({ selectedTransaction, category, categories, onClose }: TransactionCategoryModalProps) => {
+    const queryClient = useQueryClient();
     const {data: accounts = []} = useQuery({queryKey: ["accounts"], queryFn: get_bank_accounts});
     const [type, setType] = useState<TransactionType>(selectedTransaction?.type || "expense");
     const [description, setDescription] = useState(selectedTransaction?.description ||"");
     const [amount, setAmount] = useState<number>(selectedTransaction?.amount || 0);
     const [date, setDate] = useState<string>(formatDateForInput(selectedTransaction?.date) || new Date().toISOString().slice(0,16));
     const [status, setStatus] = useState<StatusTransactionType>(selectedTransaction?.status || "pending");
-    const [periodicity, setPeriodicity] = useState<PeriodicityType>(selectedTransaction?.recurrence_frequency ||"none");
+    const [periodicity, setPeriodicity] = useState<PeriodicityType>(selectedTransaction?.recurrence_frequency || "none");
     const [recurrencyDay, setRecurrencyDay] = useState<number | null>(selectedTransaction?.recurrence_day || null);
     const [accountId, setAccountId] = useState<string>(accounts[0]?.id || "");
+    const [categoryId, setCategoryId] = useState<string>(category?.id || (categories && categories[0]?.id)  || "");
 
     useEffect(() => {
         if (accounts.length > 0 && !selectedTransaction && !accountId) {
@@ -34,27 +36,50 @@ const TransactionCategoryModal = ({ selectedTransaction, category, onClose, crea
         }
     }, [accounts, selectedTransaction, accountId]);
 
+    useEffect(() => {
+        if (category?.id) {
+            setCategoryId(category.id);
+        } else if (categories && categories.length > 0 && !categoryId) {
+            setCategoryId(categories[0].id);
+        }
+    }, [category, categories]);
+
+    const createTransactionMutation = useMutation({
+        mutationFn: (createTransaction: CreateTransaction) => create_transaction(createTransaction),
+        onSuccess: () => {
+            if(category) queryClient.invalidateQueries({ queryKey: ['category', category.id]})
+            queryClient.invalidateQueries({ queryKey: ['categories']})
+        }
+    })
+
+    const updateTransactionMutation = useMutation({
+        mutationFn: ({id, updateTransaction}: {id: string, updateTransaction: UpdateTransaction}) => update_transaction(id, updateTransaction),
+        onSuccess: () => {
+            if(category) queryClient.invalidateQueries({ queryKey: ['category', category.id]})
+            queryClient.invalidateQueries({ queryKey: ['categories']})
+        }
+    })
+
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        
-        if (!category) return
 
-        if(createTransaction && !selectedTransaction) {
-            createTransaction({
+        if(!selectedTransaction) {
+            createTransactionMutation.mutate({
                 description,
                 amount,
                 type,
                 status,
+                date,
                 account_id: accountId,
-                category_id: category.id,
+                category_id: categoryId,
                 recurrence_frequency: periodicity,
                 recurrence_day: recurrencyDay,
                 failure_reason: null,
             })
         };
 
-        if(updateTransaction && selectedTransaction) {
-            updateTransaction({
+        if(selectedTransaction) {
+            updateTransactionMutation.mutate({
                 id: selectedTransaction.id,
                 updateTransaction: {
                     description,
@@ -62,7 +87,7 @@ const TransactionCategoryModal = ({ selectedTransaction, category, onClose, crea
                     type,
                     status,
                     account_id: accountId,
-                    category_id: category.id,
+                    category_id: categoryId,
                     recurrence_frequency: periodicity,
                     recurrence_day: recurrencyDay,
                     failure_reason: null,
@@ -124,7 +149,7 @@ const TransactionCategoryModal = ({ selectedTransaction, category, onClose, crea
                     <div className="flex flex-col gap-1.5 w-1/2">
                         <Label>Conta</Label>
                         <select 
-                            className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
+                            className="w-full bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
                             value={accountId}
                             onChange={(e) => setAccountId(e.target.value)}
                         >
@@ -137,7 +162,7 @@ const TransactionCategoryModal = ({ selectedTransaction, category, onClose, crea
                     <div className="flex flex-col gap-1.5 w-1/2">
                         <Label>Status da transação</Label>
                         <select 
-                            className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
+                            className="w-full bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
                             value={status}
                             onChange={(e) => setStatus(e.target.value as StatusTransactionType)}
                         >
@@ -147,12 +172,13 @@ const TransactionCategoryModal = ({ selectedTransaction, category, onClose, crea
                         </select>
                     </div>
                 </div>
+
                 
                 <div className="flex gap-3">
                     <div className={`flex flex-col gap-1.5 ${periodicity === "monthly" ? "w-1/2" : "w-full"} transition-all`}>
                         <Label>Frequência</Label>
                         <select 
-                            className="w-full bg-gray-100 dark:bg-zinc-800 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
+                            className="w-full bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
                             value={periodicity}
                             onChange={(e) => {
                                 const val = e.target.value as PeriodicityType;
@@ -181,6 +207,26 @@ const TransactionCategoryModal = ({ selectedTransaction, category, onClose, crea
                             />
                         </div>
                     )}
+                </div>
+
+                <div className="flex gap-3">
+                    <div className={`flex flex-col gap-1.5 w-full transition-all`}>
+                        <Label>Categoria</Label>
+                        <select 
+                            className="w-full disabled:bg-gray-200 dark:disabled:bg-zinc-800 bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl dark:text-white border-none text-sm outline-none cursor-pointer"
+                            value={categoryId}
+                            onChange={(e) => {setCategoryId(e.target.value)}}
+                            disabled={!!category}
+                        >
+                            {category ? (
+                                <option value={category.id}>{category.name}</option>
+                            ) : (
+                                categories?.map(categoryUnique => (
+                                    <option key={categoryUnique.id} value={categoryUnique.id}>{categoryUnique.name}</option>
+                                ))
+                            )}
+                        </select>
+                    </div>
                 </div>
 
                 <div className="flex gap-2 pt-4">

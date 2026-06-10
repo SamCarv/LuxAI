@@ -6,16 +6,16 @@ export const sections = [
         icon: Home,
     },
     {
+        id: "bank",
+        icon: CreditCard,
+    },
+    {
         id: "planning",
         icon: ChartNoAxesCombined,
     },
     {
         id: "goals",
         icon: Flag,
-    },
-    {
-        id: "bank",
-        icon: CreditCard,
     },
     {
         id: "files",
