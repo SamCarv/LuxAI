@@ -5,7 +5,7 @@ import Label from "../../components/label";
 import Panel from "../../components/panel";
 import { useUserContext } from "../../hooks/use-user-context";
 import { create_user } from "../../services/user";
-import type { UserCreate } from "../../types/userDTO/userCreate";
+import type { UserCreate } from "../../types/user";
 import { toast } from "sonner";
 
 interface RegisterFormProps {
@@ -19,14 +19,12 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     async function register(e: React.FormEvent) {
         e.preventDefault();
-        setError(null);
 
         if (password !== confirmPassword) {
-            setError("As senhas não coincidem!");
+            toast.error("As senhas não coincidem!", {duration: 2000});
             return;
         }
 
@@ -59,9 +57,7 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
             toast.success("Conta criada com sucesso! Faça login para continuar.")
             onClose();
         } catch (err: any) {
-            setError(err.message);
-            console.log(err)
-            toast.error("Erro ao criar conta. Tente novamente.");
+            toast.error("Erro ao criar conta. Talvez exista um usuário com esse Email.");
         } finally {
             setIsLoading(false);
         }
@@ -70,12 +66,6 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
     return (
         <Panel className="border-none p-8 bg-white dark:bg-zinc-800/60">
             <h2 className="text-2xl font-bold text-center mb-8">Crie sua conta</h2>
-
-            {error && (
-                <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-4 text-center font-medium">
-                    {error}
-                </div>
-            )}
 
             <form onSubmit={register} className="space-y-4">
                 <div className="space-y-1.5">

@@ -33,6 +33,7 @@ type CreateTransaction = {
     type: TransactionType,
     category_id: string,
     account_id: string,
+    date: string,
     recurrence_frequency: PeriodicityType,
     recurrence_day: number | null,
     status: StatusTransactionType,

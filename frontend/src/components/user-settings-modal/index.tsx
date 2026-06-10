@@ -11,8 +11,7 @@ import { useShortcutContext } from "../../hooks/use-shortcut-context"
 import { useKeyboardShortcut } from "../../hooks/use-keyboard-shortcut"
 import Button from "../button"
 import { useUserContext } from "../../hooks/use-user-context"
-import type { UserView } from "../../context/user-provider"
-import type { UserUpdate } from "../../types/userDTO/userUpdate"
+import type { UserUpdate } from "../../types/user"
 import { update_user } from "../../services/user"
 import { jwtDecode } from "jwt-decode"
 import { toast } from "sonner"
@@ -116,7 +115,7 @@ const UserSettingsModal = ({ onClose }: UserSettingsModal) => {
                 </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-44 pt-4 h border-t border-slate-100 dark:border-zinc-600">
+            <div className="flex justify-end gap-3 mt-2 pt-4">
                 <Button variants="standard" colors="secondary" onClick={onClose} className="text-sm font-medium">
                     Cancelar
                 </Button>

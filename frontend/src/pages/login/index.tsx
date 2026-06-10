@@ -6,6 +6,7 @@ import LoginForm from './login';
 import RegisterForm from './register';
 import logo from '../../assets/logo.svg'
 import { useThemeContext } from '../../hooks/use-theme-context';
+import { Toaster } from 'sonner';
 
 const Login = () => {
     const {theme, switchTheme} = useThemeContext()
@@ -86,6 +87,7 @@ const Login = () => {
                     </a>
                 </div>
             </footer>
+            <Toaster richColors position='top-center'/>
         </div>
     );
 };

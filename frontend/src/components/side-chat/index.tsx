@@ -35,7 +35,7 @@ const SideChat: FC<SideChatProps> = ({ toggleSideChat }) => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory, isGenerating]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || isGenerating) return;
 
@@ -143,7 +143,7 @@ const SideChat: FC<SideChatProps> = ({ toggleSideChat }) => {
       </div>
 
       <div className="p-4 border-t border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm">
-        <form onSubmit={handleSendMessage} className="flex flex-col gap-3">
+        <form onSubmit={sendMessage} className="flex flex-col gap-3">
           <textarea
             ref={textareaRef}
             rows={1}
@@ -152,7 +152,7 @@ const SideChat: FC<SideChatProps> = ({ toggleSideChat }) => {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSendMessage(e);
+                sendMessage(e);
               }
             }}
             placeholder="Digite sua mensagem"

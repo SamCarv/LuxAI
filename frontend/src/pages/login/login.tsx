@@ -6,6 +6,7 @@ import Panel from "../../components/panel"
 import type { UserLogin } from "../../types/auth"
 import { login_for_access_token } from "../../services/auth"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 interface LoginFormProps {
     onClose: () => void
@@ -15,13 +16,10 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
     const nav = useNavigate()
 
     async function login(event: FormEvent) {
         event.preventDefault();
-        setError(null);
         setIsLoading(true);
 
         const userLogin: UserLogin = {
@@ -42,9 +40,8 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
 
             nav("/dashboard")
         } catch (err: any) {
-            setError(err.message);
-            console.error(err);
-        } {
+            toast.error("Erro no login! Email ou senha está errado", {duration: 3000})
+        } finally {
             setIsLoading(false);
         }
     }
@@ -52,12 +49,6 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
     return (
         <Panel className="border-none p-8 bg-white dark:bg-zinc-800/60">
             <h2 className="text-2xl font-bold text-center mb-8">Bem-vindo de volta</h2>
-
-            {error && (
-                <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-4 text-center font-medium">
-                    {error}
-                </div>
-            )}
 
             <form onSubmit={login} className="space-y-5">
                 <div className="space-y-1.5">

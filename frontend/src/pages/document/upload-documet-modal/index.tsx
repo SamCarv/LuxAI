@@ -3,12 +3,13 @@ import Modal from "../../../components/modal";
 import Input from "../../../components/input";
 import Button from "../../../components/button";
 import type { CreateDocument } from "../../../types/document";
-import { Loader2 } from "lucide-react"; // Importei para o feedback visual
+import Label from "../../../components/label";
+import { Loader2 } from "lucide-react";
 
 interface UploadModalProps {
   onClose: () => void;
   onUpload: (createDocument: CreateDocument) => void;
-  isPending: boolean; // 👈 Nova prop para controlar o estado de envio
+  isPending: boolean;
 }
 
 export const UploadModal: FC<UploadModalProps> = ({
@@ -22,7 +23,6 @@ export const UploadModal: FC<UploadModalProps> = ({
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (selectedFile) {
-      // Apenas dispara. Quem fecha o modal é o sucesso da mutação no arquivo pai!
       onUpload({ title, file: selectedFile });
     }
   };
@@ -35,28 +35,28 @@ export const UploadModal: FC<UploadModalProps> = ({
 
       <form onSubmit={submit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <Label>
             Título do Documento
-          </label>
+          </Label>
           <Input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Extrato de Março"
-            disabled={isPending} // Desabilita enquanto envia
+            disabled={isPending}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <Label>
             Selecionar Arquivo (pdf, jpg, png)
-          </label>
+          </Label>
           <input
             type="file"
             accept="image/*, application/pdf"
             required
             onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-            disabled={isPending} // Desabilita enquanto envia
+            disabled={isPending}
             className="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-100 file:text-yellow-600 hover:file:bg-yellow-100 disabled:opacity-50"
           />
         </div>

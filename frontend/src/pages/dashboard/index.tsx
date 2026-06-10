@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, TrendingUp, Sparkles, FileText, DollarSign, Target, Calendar, AlertCircle, KeyRound, Eye, MessageSquare, ChevronRight } from 'lucide-react';
+import { PlusCircle, TrendingUp, Sparkles, FileText, DollarSign, Target, Calendar, AlertCircle, KeyRound, Eye, MessageSquare, ChevronRight, Copy } from 'lucide-react';
 import Button from '../../components/button';
 import { get_analyze } from '../../services/dashboar';
 import ReactMarkdown from 'react-markdown';
@@ -10,17 +10,20 @@ import CreateCategoryModal from '../planning/create-category-modal';
 import type { CreateGoal } from '../../types/goals';
 import { create_goal } from '../../services/goal';
 import type { CreateCategory } from '../../types/category';
-import { create_category } from '../../services/category';
+import { create_category, list_categories } from '../../services/category';
 import { UploadModal } from '../document/upload-documet-modal';
 import type { CreateDocument } from '../../types/document';
 import { upload_document } from '../../services/document';
+import TransactionCategoryModal from '../planning/create-transaction-modal';
 
 const Dashboard = () => {
   const [hasApiKey, setHasApiKey] = useState(() => {return localStorage.getItem('luxai_api_key_configured') === 'true';});
   const [isVisibleReport, setIsVisibleReport] = useState(false)
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: list_categories });
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
@@ -33,6 +36,7 @@ const Dashboard = () => {
   const configureKeySetup = () => {
     localStorage.setItem('luxai_api_key_configured', 'true');
     setHasApiKey(true);
+    setIsVisibleReport(true);
   };
 
   const goToChat = () => {
@@ -75,6 +79,24 @@ const Dashboard = () => {
           <h1 className="heading-lg">Dashboard</h1>
         </div>
 
+        <section className="w-full bg-linear-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
+            <div className="p-3 bg-yellow-400/10 text-yellow-600 dark:text-yellow-400 rounded-xl shrink-0">
+              <Sparkles size={24} className="animate-pulse" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-bold text-sm md:text-base">Não sabe por onde começar a se organizar?</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xl">
+                Fale com o nosso assistente pessoal <span className="font-semibold text-yellow-600 dark:text-yellow-400">LuxAI</span>! Ele está pronto para te dar dicas personalizadas e te orientar no uso de todo o sistema.
+              </p>
+            </div>
+          </div>
+          <Button variants="standard" colors="primary" onClick={() => navigate('/chat')} className="flex items-center justify-center gap-2">
+            <span>Conversar</span>
+            <ChevronRight className='size-5' />
+          </Button>
+        </section>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <section className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
             <h2 className="text-sm font-bold tracking-wider text-zinc-400 mb-4 flex items-center gap-2">
@@ -87,7 +109,7 @@ const Dashboard = () => {
                   <span className="font-medium text-sm">Criar Categoria</span>
                 </button>
 
-                <button onClick={() => navigate('/planning')} className="flex flex-col items-center justify-center p-4 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-yellow-400/10 dark:hover:bg-yellow-400/10  border border-zinc-200 dark:border-zinc-800 hover:border-yellow-400 rounded-xl transition-all group cursor-pointer">
+                <button onClick={() => setIsTransactionModalOpen(true)} className="flex flex-col items-center justify-center p-4 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-yellow-400/10 dark:hover:bg-yellow-400/10  border border-zinc-200 dark:border-zinc-800 hover:border-yellow-400 rounded-xl transition-all group cursor-pointer">
                   <Calendar className="text-zinc-600 dark:text-zinc-400 mb-2 group-hover:scale-110 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-all" size={24} />
                   <span className="font-medium text-sm">Criar Transação</span>
                 </button>
@@ -152,10 +174,11 @@ const Dashboard = () => {
                 <div className="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] space-y-2 text-zinc-600 dark:text-zinc-400">
                   <p className="font-semibold text-zinc-800 dark:text-zinc-200">Passo a passo para configurar:</p>
                   <ol className="list-decimal list-inside space-y-1.5 pl-1">
-                    <li>Acesse o site do <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a> e crie uma chave API gratuita.</li>
+                    <li>Acesse o site do <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a>(Caso seja rediricionado, faça a confirmação de idade).</li>
+                    <li>Na parte lateral inferior, clique em <span className="font-medium text-zinc-900 dark:text-white">"Get API Key"</span> e copie a sua chave clicando no ícone de copiar <Copy size={8} className="inline-block ml-1 align-middle"/></li>
                     <li>Aqui na nossa plataforma, vá até a <span className="font-medium text-zinc-900 dark:text-white">Sidebar (barra lateral esquerda)</span>.</li>
                     <li>Na parte inferior, procure pelo seu <span className="font-medium text-zinc-900 dark:text-white">Nome de Usuário</span> e clique nele.</li>
-                    <li>No painel/modal que se abrir, acesse a seção <span className="font-medium text-zinc-900 dark:text-white">"IA"</span>.</li>
+                    <li>No painel que se abrir, acesse a seção <span className="font-medium text-zinc-900 dark:text-white">"IA"</span>.</li>
                     <li>Selecione o provedor <span className="font-semibold">Gemini</span> e cole a chave copiada.</li>
                   </ol>
                 </div>
@@ -172,8 +195,10 @@ const Dashboard = () => {
             ) : isError ? (
               <div className="py-12 text-center text-red-500 space-y-3">
                 <AlertCircle size={32} className="mx-auto" />
-                <p className="text-sm font-medium">Houve um erro na comunicação com a API.</p>
-                <p className="text-xs underline">Tente novamente mais tarde</p>
+                <p className="text-sm font-medium">Houve um erro na comunicação com a API ou sua chave é inválida.</p>
+                <Button onClick={() => {setHasApiKey(false); localStorage.setItem('luxai_api_key_configured', 'false');}} variants='standard' colors='secondary'>
+                  Voltar e configurar chave novamente
+                </Button>
               </div>
             ) : (
               isVisibleReport ? (
@@ -213,15 +238,20 @@ const Dashboard = () => {
                   </div>
                 </div>
               ): (
-                <Button onClick={() => setIsVisibleReport(true)} variants='standard' colors='primary'>
-                  Quero minha Análise
-                </Button>)
+                <>
+                  <p className='mb-4'>Você está conectado com o seu Assistente Pessoal.</p>
+                  <Button onClick={() => setIsVisibleReport(true)} variants='standard' colors='primary'>
+                    Quero minha Análise
+                  </Button>
+                </>
+              )
             )}
           </div>
         </section>
       </div>
       
       {isCategoryModalOpen && <CreateCategoryModal createCategory={createCategoryMutation.mutate} onClose={() => setIsCategoryModalOpen(false)}/>}
+      {isTransactionModalOpen && <TransactionCategoryModal onClose={() => setIsTransactionModalOpen(false)} categories={categories}/>}
       {isGoalModalOpen && <CreateGoalModal onSave={createGoalMutation.mutate} onClose={() => setIsGoalModalOpen(false)}/>}
       {isDocumentModalOpen && <UploadModal onUpload={uploadMutation.mutate} onClose={() => setIsDocumentModalOpen(false)} />}
     </section>

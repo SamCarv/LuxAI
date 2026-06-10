@@ -52,7 +52,7 @@ const GoalCard = ({ goal, isSelectionMode, isSelected, onToggleSelect, onClick }
                 
                 <div className="w-full bg-zinc-100 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">
                     <div 
-                        className="bg-primary-500 h-full transition-all duration-500" 
+                        className="bg-yellow-500 dark:bg-yellow-400 h-full transition-all duration-500" 
                         style={{ width: `${percent}%` }} 
                     />
                 </div>
