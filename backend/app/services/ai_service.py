@@ -2,7 +2,7 @@ from app.ai.providers import google, ollama
 
 
 async def get_embedding(
-    text: str, is_search: bool, provider: str = "ollama", api_key: str | None = None
+    text: str, is_search: bool, provider: str = "google", api_key: str | None = None
 ) -> list[float]:
     """
     Process the text to generate an embedding vector using the specified provider.

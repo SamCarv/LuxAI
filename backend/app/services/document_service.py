@@ -20,11 +20,12 @@ from app.models.document import Document
 from app.models.document_chunk import DocumentChunk
 from app.models.user import User
 from app.services.ai_service import get_embedding
+from app.services.storage import StorageBackend, get_storage_backend
 
 MAX_DOCUMENT_BYTES = int(os.getenv("DOCUMENT_MAX_BYTES", str(25 * 1024 * 1024)))
 CHUNK_SIZE = int(os.getenv("DOCUMENT_CHUNK_SIZE", "1200"))
 CHUNK_OVERLAP = int(os.getenv("DOCUMENT_CHUNK_OVERLAP", "200"))
-STORAGE_ROOT = os.getenv("DOCUMENT_STORAGE_PATH", "uploads")
+STORAGE_ROOT = os.getenv("DOCUMENT_STORAGE_PATH", "/tmp/uploads")
 OCR_LANG = os.getenv("OCR_LANG", "eng")
 
 
@@ -162,11 +163,10 @@ async def create_document_service(
     if len(data) > MAX_DOCUMENT_BYTES:
         raise HTTPException(status_code=400, detail="Document too large")
 
-    storage_dir = _ensure_storage_dir(current_user.id)
+    storage: StorageBackend = get_storage_backend()
     ext = Path(filename).suffix
     stored_name = f"{uuid7()}{ext}"
-    storage_path = storage_dir / stored_name
-    storage_path.write_bytes(data)
+    storage_path = await storage.save(current_user.id, stored_name, data)
 
     extracted_text = _extract_text(filename, upload.content_type, data)
     if not extracted_text.strip():

@@ -8,7 +8,7 @@ class UserBase(SQLModel):
     full_name: str
     email: str = Field(unique=True, index=True)
     is_active: bool = Field(default=True)
-    ai_provider: str = Field(default="ollama")
+    ai_provider: str = Field(default="google")
 
 
 class UserUpdate(SQLModel):

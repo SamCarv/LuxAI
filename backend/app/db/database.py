@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import time
 
@@ -26,6 +28,17 @@ if not DATABASE_URL:
     db_name = os.getenv("DB_NAME", "luxai_db")
     DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db_name}"
 
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+
+if "ondigitalocean.com" in DATABASE_URL:
+    if "sslmode=" not in DATABASE_URL:
+        DATABASE_URL += (
+            "&sslmode=require" if "?" in DATABASE_URL else "?sslmode=require"
+        )
+
 engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
 
@@ -41,10 +54,14 @@ def init_db():
                     conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
 
             SQLModel.metadata.create_all(engine)
+            print("Banco de dados e extensões inicializados com sucesso!")
             return
         except OperationalError as exc:
             last_error = exc
             retries -= 1
+            print(
+                f"Banco de dados não está pronto. Retentando em {retry_delay}s... ({retries} tentativas restantes)"
+            )
             time.sleep(retry_delay)
 
     raise Exception(f"Failed to connect to database: {last_error}")
