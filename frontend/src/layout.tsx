@@ -12,7 +12,7 @@ import { useThemeContext } from './hooks/use-theme-context'
 
 const Layout = () => {
     const { setUser } = useUserContext()
-    const [isAssistentAIOpen, setIsAssistentAIOpen] = useState(false)
+    const [isAssistentAIOpen, setIsAssistentAIOpen] = useState(true)
     const [isValidating, setIsValidating] = useState(true)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 

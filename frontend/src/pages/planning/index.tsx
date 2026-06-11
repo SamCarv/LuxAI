@@ -15,6 +15,7 @@ import { create_category, delete_category, list_categories } from "../../service
 import type { CreateCategory } from "../../types/category";
 import { sumBalanceCategory } from "./functions/sum_category";
 import TransactionCategoryModal from "./create-transaction-modal";
+import { toast } from "sonner";
 
 const Planning = () => {
   const queryClient = useQueryClient()
@@ -27,9 +28,10 @@ const Planning = () => {
 
   const createCategoryMutation = useMutation({
     mutationFn: (newCategory: CreateCategory) => create_category(newCategory),
-    onSuccess: () => {
+    onSuccess: (newCategory) => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       setIsCategoryModalOpen(false);
+      toast.success(`Categoria ${newCategory.name} criada com sucesso`)
     },
   });
 
@@ -40,7 +42,7 @@ const Planning = () => {
     },
     onError: (error) => {
       console.error("Erro ao deletar categoria:", error);
-      alert("Não foi possível deletar a categoria. Verifique se ela possui transações vinculadas.");
+      toast.error("Não foi possível deletar a categoria. Verifique se ela possui transações vinculadas.");
     }
   });
 
@@ -138,7 +140,7 @@ const Planning = () => {
               </div>
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Crie sua primeira categoria</h3>
               <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm mx-auto">
-                Organize seu planejamento criando categorias personalizadas para gerenciar suas despesas.
+                Organize seu planejamento criando categorias personalizadas para gerenciar suas despesas. Crie categorias e coloque Transações dentro delas.
               </p>
               <Button 
                 onClick={() => setIsCategoryModalOpen(true)}

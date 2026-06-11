@@ -20,12 +20,6 @@ const Login = () => {
                     <span className="text-2xl font-bold">Lux<span className="font-light">AI</span></span>
                 </div>
 
-                <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-                    <a href="#" className="hover:text-yellow-500">Início</a>
-                    <a href="#" className="hover:text-yellow-500">Funcionalidades</a>
-                    <a href="#" className="hover:text-yellow-500">Visualização</a>
-                </nav>
-
                 <div className="flex items-center gap-4">
                     <Button variants="ghost" colors="secondary" className="text-sm px-4 py-2">Entrar</Button>
                     <Button variants="standard" colors="primary" className="text-sm">Começar Agora</Button>
@@ -39,7 +33,7 @@ const Login = () => {
                         Gerencie suas finanças com <span className="text-yellow-500 dark:text-yellow-400">clareza inteligente.</span>
                     </h1>
                     <p className="text-lg text-slate-600 dark:text-zinc-400">
-                        Acesso o LuxAI e visualize seus ativos através de insights inteligentes e automação financeira.
+                        Acesse o LuxAI e converse com o seu Assistente Pessoal para receber orientação e automação de organização financeira
                     </p>
                 </div>
 

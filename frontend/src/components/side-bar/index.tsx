@@ -75,7 +75,7 @@ const SideBar = () => {
                     <div className={`flex items-center justify-between bg-slate-200/40 dark:bg-zinc-900/40 w-full h-13 px-4 ${isHideSidebar && 'flex-col py-4 gap-4 h-fit'}`}>
                         <a className='flex gap-2 items-center' href='/login'>
                             <img className='size-8 rounded-md' src={logo} alt="logo" />  
-                            {!isHideSidebar && <h1 className='heading-md dark:text-white'>LuxAI</h1>}
+                            {!isHideSidebar && <h1 className="text-2xl font-bold">Lux<span className="font-light">AI</span></h1>}
                         </a>
                         <Button variants='outline' colors='secondary' onClick={() => setIsHideSidebar(!isHideSidebar)} className='size-8'>
                             <Sidebar size={20}/>

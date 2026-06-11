@@ -92,8 +92,8 @@ const Dashboard = () => {
             </div>
           </div>
           <Button variants="standard" colors="primary" onClick={() => navigate('/chat')} className="flex items-center justify-center gap-2">
-            <span>Conversar</span>
-            <ChevronRight className='size-5' />
+            <span>Conversar com Assistente Pessoal</span>
+            <ChevronRight className='size-5 stroke-4 md:stroke-3' />
           </Button>
         </section>
 
@@ -174,9 +174,9 @@ const Dashboard = () => {
                 <div className="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] space-y-2 text-zinc-600 dark:text-zinc-400">
                   <p className="font-semibold text-zinc-800 dark:text-zinc-200">Passo a passo para configurar:</p>
                   <ol className="list-decimal list-inside space-y-1.5 pl-1">
-                    <li>Acesse o site do <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a>(Caso seja rediricionado, faça a confirmação de idade).</li>
+                    <li>Acesse o site do <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a>(Caso seja rediricionado, faça a confirmação de idade).</li>
                     <li>Na parte lateral inferior, clique em <span className="font-medium text-zinc-900 dark:text-white">"Get API Key"</span> e copie a sua chave clicando no ícone de copiar <Copy size={8} className="inline-block ml-1 align-middle"/></li>
-                    <li>Aqui na nossa plataforma, vá até a <span className="font-medium text-zinc-900 dark:text-white">Sidebar (barra lateral esquerda)</span>.</li>
+                    <li>Aqui na nossa plataforma, vá até a <span className="font-medium text-zinc-900 dark:text-white">Sidebar (barra lateral esquerda inferior)</span>.</li>
                     <li>Na parte inferior, procure pelo seu <span className="font-medium text-zinc-900 dark:text-white">Nome de Usuário</span> e clique nele.</li>
                     <li>No painel que se abrir, acesse a seção <span className="font-medium text-zinc-900 dark:text-white">"IA"</span>.</li>
                     <li>Selecione o provedor <span className="font-semibold">Gemini</span> e cole a chave copiada.</li>

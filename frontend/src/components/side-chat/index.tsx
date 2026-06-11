@@ -11,7 +11,7 @@ interface SideChatProps extends HTMLAttributes<HTMLDivElement> {
     toggleSideChat: () => void
 }
 
-const models = ["ollama", "Gemini"];
+const models = ["Gemini", "ollama"];
 
 const SideChat: FC<SideChatProps> = ({ toggleSideChat }) => {
   const [message, setMessage] = useState("");

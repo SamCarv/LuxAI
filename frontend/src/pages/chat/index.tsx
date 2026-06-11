@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import { SUGGESTIONS } from "./constants";
 import { toast } from "sonner";
 
-const models = ["ollama", "Gemini"];
+const models = ["Gemini", "ollama"];
 
 const Chat = () => {
   const [message, setMessage] = useState("");
@@ -138,27 +138,27 @@ const Chat = () => {
               </div>
               
               <div className="space-y-2 text-center">
-                <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Conecte sua Inteligência Artificial</h3>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Para habilitar os módulos analíticos e os relatórios de diagnóstico, insira sua própria chave de acesso do <strong className="text-zinc-800 dark:text-zinc-200">Google Gemini</strong>.
-                </p>
-              </div>
+                  <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Conecte sua Inteligência Artificial</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Para habilitar os módulos analíticos e os relatórios de diagnóstico, insira sua própria chave de acesso do <strong className="text-zinc-800 dark:text-zinc-200">Google Gemini</strong>.
+                  </p>
+                </div>
 
-              <div className="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] space-y-2 text-zinc-600 dark:text-zinc-400">
-                <p className="font-semibold text-zinc-800 dark:text-zinc-200">Passo a passo para configurar:</p>
-                <ol className="list-decimal list-inside space-y-1.5 pl-1">
-                  <li>Acesse o site do <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a>.</li>
-                  <li>Na parte lateral inferior, clique em <span className="font-medium text-zinc-900 dark:text-white">"Get API Key"</span> e copie a sua chave clicando no ícone de copiar <Copy size={10} className="inline-block ml-1 align-middle"/></li>
-                  <li>Aqui na nossa plataforma, vá até a <span className="font-medium text-zinc-900 dark:text-white">Sidebar (barra lateral esquerda)</span>.</li>
-                  <li>Na parte inferior, procure pelo seu <span className="font-medium text-zinc-900 dark:text-white">Nome de Usuário</span> e clique nele.</li>
-                  <li>No painel que se abrir, acesse a seção <span className="font-medium text-zinc-900 dark:text-white">"IA"</span>.</li>
-                  <li>Selecione o provedor <span className="font-semibold">Gemini</span> e cole a chave copiada.</li>
-                </ol>
-              </div>
+                <div className="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[11px] space-y-2 text-zinc-600 dark:text-zinc-400">
+                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">Passo a passo para configurar:</p>
+                  <ol className="list-decimal list-inside space-y-1.5 pl-1">
+                    <li>Acesse o site do <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="text-yellow-600 dark:text-yellow-400 underline font-medium">Google AI Studio</a>(Caso seja rediricionado, faça a confirmação de idade).</li>
+                    <li>Na parte lateral inferior, clique em <span className="font-medium text-zinc-900 dark:text-white">"Get API Key"</span> e copie a sua chave clicando no ícone de copiar <Copy size={8} className="inline-block ml-1 align-middle"/></li>
+                    <li>Aqui na nossa plataforma, vá até a <span className="font-medium text-zinc-900 dark:text-white">Sidebar (barra lateral esquerda inferior)</span>.</li>
+                    <li>Na parte inferior, procure pelo seu <span className="font-medium text-zinc-900 dark:text-white">Nome de Usuário</span> e clique nele.</li>
+                    <li>No painel que se abrir, acesse a seção <span className="font-medium text-zinc-900 dark:text-white">"IA"</span>.</li>
+                    <li>Selecione o provedor <span className="font-semibold">Gemini</span> e cole a chave copiada.</li>
+                  </ol>
+                </div>
 
-              <Button type="button" variants='standard' colors='primary' onClick={checkConfiguration} className="w-full text-xs font-semibold">
-                Entendi, já configurei
-              </Button>
+                <Button variants='standard' colors='primary' onClick={checkConfiguration} className="w-full text-xs font-semibold">
+                  Entendi, já configurei
+                </Button>
             </div>
           ) : chatHistory.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 mb-12 select-none animate-fade-in w-full">
@@ -242,7 +242,7 @@ const Chat = () => {
                   sendMessage(e);
                 }
               }}
-              placeholder={!isGeminiConfigured ? "Envie uma mensagem para o Lux..." : "Configure a sua chave Gemini no perfil para conversar..."}
+              placeholder={!isGeminiConfigured ? "Envie uma mensagem para o LuxAI" : "Configure a sua chave Gemini no perfil para conversar"}
               className="w-full resize-none bg-transparent px-2 pt-1 text-base sm:text-sm text-slate-800 dark:text-zinc-200 focus:outline-none max-h-48 placeholder:text-slate-400 dark:placeholder:text-zinc-500 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] disabled:cursor-not-allowed"
             />
 

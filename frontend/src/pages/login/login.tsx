@@ -53,7 +53,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
             <form onSubmit={login} className="space-y-5">
                 <div className="space-y-1.5">
                     <Label>Email</Label>
-                    <Input type="email" placeholder="nome@exemplo.com" value={email} onChange={(e: any) => setEmail(e.target.value)} required />
+                    <Input type="email" placeholder="nome@gmail.com" value={email} onChange={(e: any) => setEmail(e.target.value)} required />
                 </div>
 
                 <div className="space-y-1.5">

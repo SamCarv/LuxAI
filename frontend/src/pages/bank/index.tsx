@@ -78,7 +78,7 @@ const Bank = () => {
                   </div>
                   <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Nenhuma carteira vinculada</h3>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-xs">
-                    Você ainda não possui contas ou carteiras cadastradas. Adicione uma para começar a gerenciar seu saldo.
+                    Você ainda não possui carteiras cadastradas. Adicione uma para começar a gerenciar seu saldo.
                   </p>
                   <Button onClick={() => setIsAccountModalOpen(true)} variants="standard" colors="primary"className="text-xs flex items-center gap-2 px-4 py-2">
                     <span>Criar Carteira</span>
@@ -142,7 +142,7 @@ const Bank = () => {
                 </div>
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Nenhuma transação encontrada</h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-xs">
-                  Você ainda não possui movimentações registradas nesta conta. Clique abaixo para adicionar a primeira.
+                  Você ainda não possui movimentações registradas nesta conta. Clique abaixo para se planejar.
                 </p>
                 <Button
                   onClick={() => navigate('/planning')}

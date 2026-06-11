@@ -101,7 +101,7 @@ class S3Storage(StorageBackend):
 
 
 def get_storage_backend() -> StorageBackend:
-    storage_type = os.getenv("STORAGE_TYPE", "s3")
+    storage_type = os.getenv("STORAGE_TYPE", "local")
 
     if storage_type == "s3":
         endpoint_url = os.getenv("SPACES_ENDPOINT_URL", "")

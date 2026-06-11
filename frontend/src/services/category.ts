@@ -13,9 +13,9 @@ const get_one_category = (id: string): Promise<CategoryView> => {
     return api.get(`/${ROUTE}/${id}`, {headers:{Authorization: `Bearer ${token}`}}).then((response) => response.data);
 }
 
-const create_category = (createCategory: CreateCategory) => {
+const create_category = (createCategory: CreateCategory): Promise<CategoryView> => {
     const token = localStorage.getItem("token");
-    return api.post(`/${ROUTE}/`, createCategory, {headers:{Authorization: `Bearer ${token}`}});
+    return api.post(`/${ROUTE}/`, createCategory, {headers:{Authorization: `Bearer ${token}`}}).then((response) => response.data);
 }
 
 const update_category = (id: string, updateCategory: UpdateCategory): Promise<CategoryView> => {

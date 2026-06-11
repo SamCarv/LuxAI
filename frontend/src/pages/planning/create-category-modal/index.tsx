@@ -66,7 +66,7 @@ const CreateCategoryModal: FC<CreateCategoryModalProps> = ({ onClose, createCate
           </div>
 
           <div className='flex flex-col gap-1 w-full'>
-            <label htmlFor="description" className='heading-sm dark:text-zinc-300'>Descrição</label>
+            <label htmlFor="description" className='heading-sm dark:text-zinc-300'>Descrição <span className='text-xs text-gray-500 dark:text-zinc-400'>(Opcional)</span></label>
             <textarea id='description' name='description' value={description} onChange={(event) => setDescription(event.target.value)} className='w-full bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl placeholder:text-zinc-400 dark:text-white outline-none text-sm focus:ring-2 focus:ring-candy-corn-400' />
             <p className='text-end body-sm text-smoke-500 dark:text-zinc-500 font-light'>Caracteres {description.length}/250</p>
           </div>

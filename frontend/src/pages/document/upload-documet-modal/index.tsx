@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 interface UploadModalProps {
   onClose: () => void;
   onUpload: (createDocument: CreateDocument) => void;
-  isPending: boolean;
+  isPending?: boolean;
 }
 
 export const UploadModal: FC<UploadModalProps> = ({
@@ -36,7 +36,7 @@ export const UploadModal: FC<UploadModalProps> = ({
       <form onSubmit={submit} className="space-y-4">
         <div>
           <Label>
-            Título do Documento
+            Título do Documento <span className='text-xs text-gray-500 dark:text-zinc-400'>(Opcional)</span>
           </Label>
           <Input
             type="text"
@@ -61,13 +61,14 @@ export const UploadModal: FC<UploadModalProps> = ({
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t dark:border-zinc-800">
+        <div className="flex justify-end gap-3">
           <Button
             variants="standard"
             colors="secondary"
             type="button"
             onClick={onClose}
             disabled={isPending}
+            className="flex-1"
           >
             Cancelar
           </Button>
@@ -77,7 +78,7 @@ export const UploadModal: FC<UploadModalProps> = ({
             colors="primary"
             type="submit"
             disabled={isPending || !selectedFile}
-            className="flex items-center gap-2"
+            className="flex-1 flex items-center justify-center gap-2"
           >
             {isPending ? (
               <>

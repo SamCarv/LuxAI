@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import { cn } from "../../lib/utils"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input: FC<InputProps> = ({className, ...props}) => {
     return (

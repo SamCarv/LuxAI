@@ -14,6 +14,7 @@ import {
   upload_document,
 } from "../../services/document";
 import InfoDocumentSectionModal from "./info-section-modal";
+import { toast } from "sonner";
 
 export const Files = () => {
   const queryClient = useQueryClient();
@@ -23,11 +24,7 @@ export const Files = () => {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const {
-    isPending: documentsLoading,
-    error: documentsError,
-    data: documents = [],
-  } = useQuery({ queryKey: ["documents"], queryFn: list_documents });
+  const {isPending: documentsLoading,error: documentsError,data: documents = []} = useQuery({ queryKey: ["documents"], queryFn: list_documents });
 
   const deleteMutation = useMutation({
     mutationFn: (ids: string[]) => delete_documents(ids),
@@ -47,7 +44,7 @@ export const Files = () => {
     },
     onError: (err) => {
       console.error("Erro ao subir arquivo:", err);
-      alert("Falha ao enviar o arquivo. Verifique o console.");
+      toast.error("Falha ao enviar o arquivo. Verifique o console.");
     },
   });
 

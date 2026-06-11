@@ -1,5 +1,5 @@
 import { useState, type FC, type FormEvent } from "react";
-import type { AccountView, CreateAccount } from "../../../types/account";
+import { type AccountType, type AccountView, type CreateAccount } from "../../../types/account";
 import { create_bank_account } from "../../../services/account";
 import Modal from "../../../components/modal";
 import Input from "../../../components/input";
@@ -7,7 +7,7 @@ import Button from "../../../components/button";
 import Label from "../../../components/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
+import InputMoney from "../../../components/input/input-money";
 
 interface CreateAccountModalProps {
   onClose: () => void;
@@ -15,12 +15,10 @@ interface CreateAccountModalProps {
 }
 
 const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess }) => {
-  const [formData, setFormData] = useState<CreateAccount>({
-    name: "",
-    balance: 0,
-    currency: "BRL",
-    account_type: "CHECKING",
-  });
+  const [name, setName] = useState<string>("")
+  const [balance, setBalance] = useState<number>(0)
+  const [currency, setCurrency] = useState<string>("BRL")
+  const [account_type, setAccount_type] = useState<AccountType>('CHECKING')
   const queryClient = useQueryClient();
   
   const [loading, setLoading] = useState(false);
@@ -39,22 +37,16 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
     }
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "balance" ? Number(value) : value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      createAccountMutation.mutate(formData);
+      createAccountMutation.mutate({name, balance, account_type, currency});
+
       if (onSuccess) onSuccess();
+
       onClose();
     } catch (err) {
       console.error(err);
@@ -79,7 +71,7 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={submit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label>Nome da Conta</Label>
             <Input
@@ -88,37 +80,27 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
               type="text"
               required
               placeholder="Nubank, Itaú"
-              value={formData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Saldo Inicial <span className="text-xs text-gray-500 dark:text-gray-300">(permitido tanto 5 quanto 5,00)</span></Label>
-            <Input
+            <Label>Saldo Inicial</Label>
+            <InputMoney
               id="balance"
               name="balance"
-              type="number"
-              step="0.01"
               required
               placeholder="0,00"
-              value={formData.balance || ""}
-              onChange={handleChange}
+              value={balance}
+              onChange={(e) => setBalance(parseFloat(e.target.value))}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label>Moeda</Label>
-              <Input
-                id="currency"
-                name="currency"
-                type="text"
-                required
-                placeholder="BRL, USD..."
-                value={formData.currency}
-                onChange={handleChange}
-              />
+              <Input id="currency" name="currency"type="text" required placeholder="BRL, USD" value={currency} onChange={(e) => setCurrency(e.target.value)}/>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -128,8 +110,8 @@ const CreateAccountModal: FC<CreateAccountModalProps> = ({ onClose, onSuccess })
                 name="account_type"
                 required
                 className="w-full bg-gray-100 dark:bg-zinc-700 p-3 rounded-xl dark:text-white outline-none text-sm focus:ring-2 focus:ring-candy-corn-400 cursor-pointer"
-                value={formData.account_type}
-                onChange={handleChange}
+                value={account_type}
+                onChange={(e) => setAccount_type(e.target.value as AccountType)}
               >
                 <option value="CHECKING">Corrente</option>
                 <option value="SAVINGS">Poupança</option>

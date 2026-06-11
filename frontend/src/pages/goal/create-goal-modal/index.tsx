@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import type { CreateGoal } from '../../../types/goals';
 import Input from '../../../components/input';
 import Button from '../../../components/button';
+import InputMoney from '../../../components/input/input-money';
 
 interface CreateGoalModalProps {
   onClose: () => void;
@@ -11,8 +12,8 @@ interface CreateGoalModalProps {
 
 const CreateGoalModal = ({ onClose, onSave }: CreateGoalModalProps) => {
     const [title, setTitle] = useState('');
-    const [targetAmount, setTargetAmount] = useState('');
-    const [initialAmount, setInitialAmount] = useState('');
+    const [targetAmount, setTargetAmount] = useState(0);
+    const [initialAmount, setInitialAmount] = useState(0);
     const [deadline, setDeadline] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -44,11 +45,11 @@ const CreateGoalModal = ({ onClose, onSave }: CreateGoalModalProps) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="text-xs font-semibold mb-1 block">Capital Inicial (R$)</label>
-                            <Input type="number" step="0.01" placeholder="0,00" value={initialAmount} onChange={e => setInitialAmount(e.target.value)}/>
+                            <InputMoney placeholder="0,00" value={initialAmount} onChange={e => setInitialAmount(parseFloat(e.target.value))}/>
                         </div>
                         <div>
                             <label className="text-xs font-semibold mb-1 block">Valor Alvo (R$)</label>
-                            <Input required type="number" step="0.01" placeholder="1.000,00" value={targetAmount} onChange={e => setTargetAmount(e.target.value)}/>
+                            <InputMoney required placeholder="1.000,00" value={targetAmount} onChange={e => setTargetAmount(parseFloat(e.target.value))}/>
                         </div>
                     </div>
 

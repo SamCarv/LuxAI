@@ -9,6 +9,7 @@ import type { CategoryView } from "../../../types/category"
 import { get_bank_accounts } from "../../../services/account"
 import { formatDateForInput } from "../functions/date"
 import { create_transaction, update_transaction } from "../../../services/transaction"
+import InputMoney from "../../../components/input/input-money"
 
 interface TransactionCategoryModalProps {
     selectedTransaction?: TransactionView | null,
@@ -136,7 +137,7 @@ const TransactionCategoryModal = ({ selectedTransaction, category, categories, o
                 <div className="flex gap-3">
                     <div className="flex flex-col gap-1.5 w-1/2">
                         <Label>Valor</Label>
-                        <Input type="number" step="0.01" required placeholder="R$ 0,00" value={amount || ""} onChange={(e) => setAmount(parseFloat(e.target.value))}/>
+                        <InputMoney required placeholder="R$ 0,00" value={amount} onChange={(e) => setAmount(parseFloat(e.target.value))} />
                     </div>
 
                     <div className="flex flex-col gap-1.5 w-1/2">
