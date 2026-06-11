@@ -158,14 +158,14 @@ const CategoryDetail = () => {
             <div 
               key={transaction.id}
               onClick={() => handleOpenEdit(transaction)}
-              className="group flex items-center justify-between p-4 bg-white dark:bg-zinc-800 rounded-2xl border border-transparent hover:border-yellow-500/50 transition-all shadow-sm cursor-pointer"
+              className="group flex items-center justify-between p-4 bg-white dark:bg-zinc-800 rounded-2xl border-2 border-gray-300 dark:border-gray-600 hover:border-yellow-500 dark:hover:border-yellow-400 transition-all shadow-sm cursor-pointer group"
             >
               <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-xl ${transaction.status === 'success' ? 'bg-green-100 text-green-500' : 'bg-yellow-100 text-yellow-500'}`}>
+                <div className={`p-3 rounded-xl ${transaction.status === 'success' ? 'bg-green-100 text-green-500' : 'bg-yellow-200/70 text-yellow-500'}`}>
                   {transaction.status === 'success' ? <CheckCircle2 size={20} /> : <Clock size={20} />}
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 dark:text-white">{transaction.description}</h4>
+                  <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-400">{transaction.description}</h4>
                   <div className="flex gap-2 text-[10px] uppercase font-bold text-gray-400">
                     <span>{format(transaction.date, "dd MMM. yyyy", { locale: ptBR })}</span>
                     <span>•</span>
